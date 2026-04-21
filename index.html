@@ -468,13 +468,13 @@
 
 <script>
 /* ═══════════════════════════════════════
-   CONFIGURACIÓN — edita estos valores
+    CONFIGURACIÓN — edita estos valores
 ═══════════════════════════════════════ */
-const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
-const STAFF_PIN       = '1234';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcJB00jVaEbPl0wkhy0t819qYWsVkplmCpxoxMEuvdXcTh8ddU0J0LCsie37oD7cZ_Aw/exec';
+const STAFF_PIN       = '1234'; 
 /* ═══════════════════════════════════════ */
 
-const IS_CONFIGURED = APPS_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycby1CVHqZ8GY_GVDgR44pQFyG2GWx9m2AWN6koA9lX7D_N5vzl82g2MxWkfBPByUS-M/exec';
+const IS_CONFIGURED = APPS_SCRIPT_URL.includes('macros/s/');
 let billingData = [], expenseData = [], sessionUnlocked = false;
 let pendingPage = null, pendingTab = null;
 let revenueChart = null, servicesChart = null, methodChart = null;
