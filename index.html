@@ -503,15 +503,20 @@ function requireAuth(pageId, tabEl) {
   setTimeout(()=>document.getElementById('pin-input').focus(), 100);
 }
 function checkPin() {
-  if (document.getElementById('pin-input').value===STAFF_PIN) {
-    sessionUnlocked=true;
+  if (document.getElementById('pin-input').value === STAFF_PIN) {
+    sessionUnlocked = true;
     document.getElementById('lock-screen').classList.add('hidden');
-    document.getElementById('lock-btn').style.display='inline-block';
+    document.getElementById('lock-btn').style.display = 'inline-block';
     showPage(pendingPage, pendingTab);
-    if (IS_CONFIGURED) { loadSheetData('billing'); loadSheetData('expenses'); }
+    
+    if (IS_CONFIGURED) { 
+      loadSheetData('Patients'); 
+      loadSheetData('billing'); 
+      loadSheetData('expenses'); 
+    }
   } else {
     document.getElementById('pin-error').classList.add('show');
-    document.getElementById('pin-input').value='';
+    document.getElementById('pin-input').value = '';
     document.getElementById('pin-input').focus();
   }
 }
@@ -705,15 +710,45 @@ function buildCharts() {
   });
 }
 
-// LOAD FROM SHEETS
+// LOAD FROM SHEETS - Versión Corregida
 async function loadSheetData(section) {
   if (!IS_CONFIGURED) return;
+  
+  // Mapeamos el nombre de la sección al nombre exacto de la pestaña en Google Sheets
+  const sheetMap = {
+    'patients': 'Patients',
+    'billing': 'Billing',
+    'expenses': 'Expenses'
+  };
+  
+  const sheetName = sheetMap[section] || section;
+
   try {
-    const res=await fetch(APPS_SCRIPT_URL+'?action=get&sheet='+(section==='billing'?'Billing':'Expenses'));
-    const json=await res.json();
-    if (section==='billing'){billingData=json.data||[];renderBilling();}
-    else{expenseData=json.data||[];renderExpenses();}
-  } catch(e){console.warn('No se pudo cargar datos:',e);}
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=get&sheet=${sheetName}`);
+    const json = await res.json();
+    
+    if (json.data) {
+      if (section === 'patients') {
+        // Guardamos los pacientes para el contador del Dashboard
+        window.patientsData = json.data; 
+        const pCount = document.getElementById('d-patients');
+        if(pCount) pCount.textContent = json.data.length;
+      } 
+      else if (section === 'billing') {
+        billingData = json.data;
+        renderBilling(); 
+      } 
+      else if (section === 'expenses') {
+        expenseData = json.data;
+        renderExpenses();
+      }
+      
+      // Siempre intentamos refrescar el Dashboard para que los números se actualicen
+      renderDashboard();
+    }
+  } catch(e) {
+    console.warn('No se pudo cargar datos de ' + section + ':', e);
+  }
 }
 
 // SHEETS BRIDGE
