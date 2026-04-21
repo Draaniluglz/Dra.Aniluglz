@@ -62,11 +62,28 @@
   select option{background:#1e293b;}
   textarea{resize:vertical;min-height:60px;}
   .required::after{content:' *';color:var(--danger);}
-  input[type="radio"],input[type="checkbox"]{width:auto;accent-color:var(--teal);margin-right:.3rem;}
+  input[type="checkbox"]{width:auto;accent-color:var(--teal);margin-right:.3rem;}
+  /* Hide native radios — we use custom toggle buttons instead */
+  input[type="radio"]{display:none;}
 
-  /* INLINE RADIO GROUP */
-  .radio-group{display:flex;gap:1rem;align-items:center;padding:.55rem 0;}
-  .radio-group label{font-size:.84rem;color:var(--ink-soft);font-weight:400;display:flex;align-items:center;gap:.3rem;cursor:pointer;}
+  /* CUSTOM TOGGLE BUTTON GROUP
+     Usage: <div class="radio-group">
+              <button class="rtoggle" data-group="UNIQUE_KEY" data-value="Sí">Sí</button>
+              <button class="rtoggle" data-group="UNIQUE_KEY" data-value="No">No</button>
+            </div>
+     JS reads value via: radioVal('UNIQUE_KEY')
+  */
+  .radio-group{display:flex;gap:.45rem;align-items:center;padding:.45rem 0;}
+  .rtoggle{
+    font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;
+    padding:.32rem .85rem;border-radius:20px;cursor:pointer;
+    border:1px solid var(--border);background:#0f172a;color:var(--muted);
+    transition:all .15s;line-height:1.4;
+  }
+  .rtoggle:hover{border-color:var(--teal-dim);color:var(--ink-soft);}
+  .rtoggle.selected{
+    background:var(--teal-glow);border-color:var(--teal);color:var(--teal);font-weight:600;
+  }
 
   /* SECTION HEADINGS inside form */
   .form-section{font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin:1.4rem 0 .75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
@@ -265,24 +282,22 @@
     </div>
 
     <!-- ── PASO 2: ANTECEDENTES ── -->
-    <!--
-      FIX: Every radio pair now has a globally unique name attribute.
-      Format: p2-[section]-[field] so no two groups ever collide.
-    -->
+    <!-- All yes/no questions use custom .rtoggle buttons with data-group keys.
+         No <input type="radio"> → zero browser grouping conflicts. -->
     <div id="intake-step-2" style="display:none;">
 
       <div class="form-section">Antecedentes Médicos del Embarazo</div>
       <div class="form-grid g4">
         <div class="field"><label>Embarazo</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-emb-tipo" value="Normal"> Normal</label>
-            <label><input type="radio" name="p2-emb-tipo" value="Alto riesgo"> Alto riesgo</label>
+            <button type="button" class="rtoggle" data-group="emb-tipo" data-value="Normal">Normal</button>
+            <button type="button" class="rtoggle" data-group="emb-tipo" data-value="Alto riesgo">Alto riesgo</button>
           </div>
         </div>
         <div class="field"><label>Tipo de parto</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-parto-tipo" value="Normal"> Normal</label>
-            <label><input type="radio" name="p2-parto-tipo" value="Cesárea"> Cesárea</label>
+            <button type="button" class="rtoggle" data-group="parto-tipo" data-value="Normal">Normal</button>
+            <button type="button" class="rtoggle" data-group="parto-tipo" data-value="Cesárea">Cesárea</button>
           </div>
         </div>
         <div class="field"><label>Meses de gestación</label><input type="number" id="i-gestacion" min="1" max="10" placeholder="meses"/></div>
@@ -294,24 +309,24 @@
       <div class="form-grid g3">
         <div class="field"><label>Leche materna</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-alim-materna" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-alim-materna" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="alim-materna" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="alim-materna" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-materna-meses" min="0" placeholder="meses"/></div>
         <div class="field"></div>
         <div class="field"><label>Biberón</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-alim-biberon" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-alim-biberon" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="alim-biberon" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="alim-biberon" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-biberon-meses" min="0" placeholder="meses"/></div>
         <div class="field"></div>
         <div class="field"><label>Chupón</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-alim-chupon" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-alim-chupon" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="alim-chupon" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="alim-chupon" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-chupon-meses" min="0" placeholder="meses"/></div>
@@ -320,8 +335,8 @@
       <div class="form-grid">
         <div class="field"><label>¿Dieta balanceada?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-alim-dieta" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-alim-dieta" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="alim-dieta" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="alim-dieta" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Consume golosinas entre comidas? ¿Cuáles?</label><input type="text" id="i-golosinas" placeholder="Especifique"/></div>
@@ -331,35 +346,35 @@
       <div class="form-grid">
         <div class="field"><label>¿Ha sido hospitalizado?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-med-hosp" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-med-hosp" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="med-hosp" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="med-hosp" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>Fecha y motivo de hospitalización</label><input type="text" id="i-hosp-detalle" placeholder="Fecha — Motivo"/></div>
         <div class="field"><label>¿Ha sido sometido a cirugía?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-med-cirugia" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-med-cirugia" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="med-cirugia" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="med-cirugia" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>Especifique cirugía</label><input type="text" id="i-cirugia-detalle"/></div>
         <div class="field"><label>¿Está bajo algún medicamento?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-med-medic" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-med-medic" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="med-medic" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="med-medic" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>Especifique medicamento</label><input type="text" id="i-medic-detalle"/></div>
         <div class="field"><label>¿Cartilla de vacunación?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-med-vacuna" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-med-vacuna" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="med-vacuna" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="med-vacuna" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Esquema completo?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-med-esquema" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-med-esquema" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="med-esquema" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="med-esquema" data-value="No">No</button>
           </div>
         </div>
         <div class="field full"><label>Especifique vacuna faltante</label><input type="text" id="i-vacuna-falta"/></div>
@@ -369,20 +384,20 @@
       <div class="form-grid g3">
         <div class="field"><label>¿Alergia a algún alimento?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-alg-alim" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-alg-alim" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="alg-alim" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="alg-alim" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Alergia a antibióticos?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-alg-anti" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-alg-anti" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="alg-anti" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="alg-anti" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Alergia a analgésicos?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-alg-anal" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-alg-anal" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="alg-anal" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="alg-anal" data-value="No">No</button>
           </div>
         </div>
         <div class="field full"><label>Especifique alergias y reacción alérgica</label><textarea id="i-alergias-detalle" placeholder="Especifique la reacción para cada alergia mencionada..."></textarea></div>
@@ -392,29 +407,29 @@
       <div class="form-grid">
         <div class="field"><label>¿Ha sufrido algún traumatismo dental?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-dent-trauma" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-dent-trauma" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="dent-trauma" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="dent-trauma" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>Especifique traumatismo</label><input type="text" id="i-trauma-detalle"/></div>
         <div class="field"><label>¿Cuántas veces al día se cepilla?</label><input type="number" id="i-cepillado" min="0" max="10" placeholder="veces"/></div>
         <div class="field"><label>¿Recibe ayuda de padres/cuidadores?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-dent-ayuda" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-dent-ayuda" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="dent-ayuda" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="dent-ayuda" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Qué pasta dental utiliza?</label><input type="text" id="i-pasta"/></div>
         <div class="field"><label>¿Utiliza hilo dental?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-dent-hilo" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-dent-hilo" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="dent-hilo" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="dent-hilo" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Ha ido anteriormente al dentista?</label>
           <div class="radio-group">
-            <label><input type="radio" name="p2-dent-prev" value="Sí"> Sí</label>
-            <label><input type="radio" name="p2-dent-prev" value="No"> No</label>
+            <button type="button" class="rtoggle" data-group="dent-prev" data-value="Sí">Sí</button>
+            <button type="button" class="rtoggle" data-group="dent-prev" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Cuál fue su última visita?</label>
@@ -620,29 +635,57 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function setToday(id){const el=document.getElementById(id);if(el)el.value=new Date().toISOString().split('T')[0];}
 
+/* ── TOGGLE BUTTON ENGINE ──────────────────────────────────
+   All yes/no questions use <button class="rtoggle" data-group="KEY" data-value="VAL">
+   instead of <input type="radio">. This avoids ALL browser radio-grouping bugs.
+
+   API:
+     radioVal('group-key')        → current selected value or ''
+     resetAllToggles()            → deselect everything (used on form reset)
+   The click handler is delegated on document so it works for
+   dynamically built rows (disease table) too.
+──────────────────────────────────────────────────────────── */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.rtoggle');
+  if (!btn) return;
+  const group = btn.dataset.group;
+  // Deselect all siblings in same group
+  document.querySelectorAll(`.rtoggle[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+  // Select clicked one
+  btn.classList.add('selected');
+});
+
+function radioVal(group) {
+  const sel = document.querySelector(`.rtoggle[data-group="${group}"].selected`);
+  return sel ? sel.dataset.value : '';
+}
+
+function resetAllToggles() {
+  document.querySelectorAll('.rtoggle').forEach(b => b.classList.remove('selected'));
+}
+
 function buildDiseaseTable(){
   const tbody=document.getElementById('disease-tbody');
-  // Each disease radio pair gets its own unique name: enf-ROW_INDEX
-  // These are already isolated per row so no collision is possible.
+  // Each disease row uses data-group="enf-ROW_INDEX" — completely independent
   tbody.innerHTML=DISEASES.map((d,i)=>`
     <tr>
       <td>${d}</td>
-      <td><input type="radio" name="enf-${i}" value="Sí"></td>
-      <td><input type="radio" name="enf-${i}" value="No" checked></td>
+      <td><button type="button" class="rtoggle" data-group="enf-${i}" data-value="Sí" style="padding:.2rem .65rem;font-size:.75rem;">Sí</button></td>
+      <td><button type="button" class="rtoggle selected" data-group="enf-${i}" data-value="No" style="padding:.2rem .65rem;font-size:.75rem;">No</button></td>
       <td><input class="trat-input" type="text" id="enf-trat-${i}" placeholder="Tratamiento..." style="width:100%;"></td>
     </tr>`).join('');
 }
 
 function getDiseaseData(){
   return DISEASES.map((d,i)=>{
-    const sel=document.querySelector(`input[name="enf-${i}"]:checked`);
+    const val = radioVal(`enf-${i}`) || 'No';
     const trat=document.getElementById(`enf-trat-${i}`).value.trim();
-    return{enfermedad:d,respuesta:sel?sel.value:'No',tratamiento:trat};
+    return{enfermedad:d,respuesta:val,tratamiento:trat};
   });
 }
 
-// Reads a radio group by its unique name (Step 2 uses p2-* names)
-function getRadio(name){const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:'';}
+// Alias — reads via the new toggle engine
+function getRadio(group){ return radioVal(group); }
 
 /* ── SHA-256 helper (Web Crypto API — available in all modern browsers) ── */
 async function sha256hex(str){
@@ -822,23 +865,23 @@ async function submitIntake(){
     madre:gv('i-madre'), telMadre:gv('i-tel-madre'),
     pediatra:gv('i-pediatra'), telPediatra:gv('i-tel-pediatra'),
     motivo:gv('i-motivo'),
-    // Paso 2 — uses new p2-* radio names
-    embarazo:getRadio('p2-emb-tipo'), parto:getRadio('p2-parto-tipo'),
+    // Paso 2 — keys match data-group attributes on .rtoggle buttons
+    embarazo:radioVal('emb-tipo'), parto:radioVal('parto-tipo'),
     gestacion:gv('i-gestacion'), enfViral:gv('i-enf-viral'), enfTransmisible:gv('i-enf-transmisible'),
-    lecheMaterna:getRadio('p2-alim-materna'), lactMeses:gv('i-materna-meses'),
-    biberon:getRadio('p2-alim-biberon'), bibMeses:gv('i-biberon-meses'),
-    chupon:getRadio('p2-alim-chupon'), chupMeses:gv('i-chupon-meses'),
-    ablactacion:gv('i-ablactacion'), dieta:getRadio('p2-alim-dieta'), golosinas:gv('i-golosinas'),
-    hospitalizado:getRadio('p2-med-hosp'), hospDetalle:gv('i-hosp-detalle'),
-    cirugia:getRadio('p2-med-cirugia'), cirugiaDetalle:gv('i-cirugia-detalle'),
-    medicamento:getRadio('p2-med-medic'), medicDetalle:gv('i-medic-detalle'),
-    vacunacion:getRadio('p2-med-vacuna'), esquema:getRadio('p2-med-esquema'), vacunaFalta:gv('i-vacuna-falta'),
-    alergiaAlimento:getRadio('p2-alg-alim'), alergiaAntibiotico:getRadio('p2-alg-anti'),
-    alergiaAnalgésico:getRadio('p2-alg-anal'), alergiasDetalle:gv('i-alergias-detalle'),
-    traumaDental:getRadio('p2-dent-trauma'), traumaDetalle:gv('i-trauma-detalle'),
-    cepillado:gv('i-cepillado'), ayudaCepillado:getRadio('p2-dent-ayuda'),
-    pasta:gv('i-pasta'), hiloDental:getRadio('p2-dent-hilo'),
-    dentistaPrev:getRadio('p2-dent-prev'), ultimaVisita:document.getElementById('i-ultima-visita').value,
+    lecheMaterna:radioVal('alim-materna'), lactMeses:gv('i-materna-meses'),
+    biberon:radioVal('alim-biberon'), bibMeses:gv('i-biberon-meses'),
+    chupon:radioVal('alim-chupon'), chupMeses:gv('i-chupon-meses'),
+    ablactacion:gv('i-ablactacion'), dieta:radioVal('alim-dieta'), golosinas:gv('i-golosinas'),
+    hospitalizado:radioVal('med-hosp'), hospDetalle:gv('i-hosp-detalle'),
+    cirugia:radioVal('med-cirugia'), cirugiaDetalle:gv('i-cirugia-detalle'),
+    medicamento:radioVal('med-medic'), medicDetalle:gv('i-medic-detalle'),
+    vacunacion:radioVal('med-vacuna'), esquema:radioVal('med-esquema'), vacunaFalta:gv('i-vacuna-falta'),
+    alergiaAlimento:radioVal('alg-alim'), alergiaAntibiotico:radioVal('alg-anti'),
+    alergiaAnalgésico:radioVal('alg-anal'), alergiasDetalle:gv('i-alergias-detalle'),
+    traumaDental:radioVal('dent-trauma'), traumaDetalle:gv('i-trauma-detalle'),
+    cepillado:gv('i-cepillado'), ayudaCepillado:radioVal('dent-ayuda'),
+    pasta:gv('i-pasta'), hiloDental:radioVal('dent-hilo'),
+    dentistaPrev:radioVal('dent-prev'), ultimaVisita:document.getElementById('i-ultima-visita').value,
     tratamientosPrev:gv('i-tratamientos-prev'),
     // Paso 3
     enfermedades:JSON.stringify(getDiseaseData()),
@@ -864,12 +907,13 @@ async function submitIntake(){
 function resetIntakeForm(){
   document.querySelectorAll('#page-intake input[type="text"],#page-intake input[type="number"],#page-intake input[type="tel"],#page-intake input[type="email"],#page-intake input[type="date"],#page-intake textarea').forEach(el=>el.value='');
   document.querySelectorAll('#page-intake select').forEach(el=>el.selectedIndex=0);
-  document.querySelectorAll('#page-intake input[type="radio"]').forEach(el=>el.checked=false);
   document.getElementById('i-acepto').checked=false;
   clearSig();
+  // Reset all toggle buttons — deselect everything, then re-default disease table to "No"
+  resetAllToggles();
   DISEASES.forEach((_,i)=>{
-    const noRadio=document.querySelector(`input[name="enf-${i}"][value="No"]`);
-    if(noRadio)noRadio.checked=true;
+    const noBtn=document.querySelector(`.rtoggle[data-group="enf-${i}"][data-value="No"]`);
+    if(noBtn)noBtn.classList.add('selected');
     const trat=document.getElementById(`enf-trat-${i}`);
     if(trat)trat.value='';
   });
