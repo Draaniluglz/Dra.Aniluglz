@@ -31,7 +31,6 @@
   html { color-scheme: dark; }
   body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; }
 
-  /* NAV */
   nav { background: #0a1628; border-bottom: 1px solid var(--border); padding: 0 1.25rem; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
   .nav-brand { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--teal); padding: 1rem 1rem 1rem 0; margin-right: auto; white-space: nowrap; }
   .nav-tabs { display: flex; }
@@ -41,12 +40,10 @@
   .nav-lock { background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.32rem 0.7rem; font-size: 0.72rem; color: var(--muted); cursor: pointer; margin-left: 0.5rem; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
   .nav-lock:hover { border-color: var(--teal); color: var(--teal); }
 
-  /* PAGES */
   .page { display: none; padding: 1.5rem 1.25rem; max-width: 740px; margin: 0 auto; }
   .page.active { display: block; }
   #page-dashboard { max-width: 900px; }
 
-  /* LOCK */
   #lock-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 200; }
   #lock-screen.hidden { display: none; }
   .lock-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; width: min(340px, 90vw); text-align: center; }
@@ -54,12 +51,10 @@
   .lock-card h2 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; margin-bottom: 0.4rem; }
   .lock-card p { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; }
 
-  /* CARDS */
   .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; margin-bottom: 1rem; }
   .card-title { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 0.2rem; }
   .card-sub { font-size: 0.77rem; color: var(--muted); margin-bottom: 1.2rem; }
 
-  /* FORMS */
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
   .form-grid.single { grid-template-columns: 1fr; }
   .field { display: flex; flex-direction: column; gap: 0.28rem; }
@@ -71,7 +66,6 @@
   textarea { resize: vertical; min-height: 68px; }
   .required::after { content: ' *'; color: var(--danger); }
 
-  /* BUTTONS */
   .btn { font-family: 'DM Sans', sans-serif; font-size: 0.87rem; font-weight: 500; padding: 0.65rem 1.4rem; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
   .btn-primary { background: var(--teal); color: #0a1628; }
   .btn-primary:hover { background: #5eead4; }
@@ -80,21 +74,17 @@
   .btn-outline:hover { background: var(--teal-glow); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ALERTS */
   .alert { border-radius: var(--radius-sm); padding: 0.7rem 1rem; font-size: 0.81rem; margin-bottom: 1rem; display: none; }
   .alert.show { display: block; }
   .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
   .alert-error { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(248,113,113,0.25); }
 
-  /* STEPS */
   .steps { display: flex; gap: 4px; margin-bottom: 1.4rem; }
   .step { flex: 1; height: 3px; background: var(--border); border-radius: 2px; transition: background 0.3s; }
   .step.done { background: var(--teal); }
 
-  /* SECTION TITLE */
   .section-title { font-size: 0.68rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 1.4rem 0 0.7rem; }
 
-  /* ENTRY LIST */
   .entry-list { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.75rem; }
   .entry-item { background: var(--card2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.7rem; }
   .entry-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--teal-glow); color: var(--teal); font-size: 0.78rem; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -106,7 +96,6 @@
   .entry-amount.income { color: var(--success); }
   .entry-amount.expense { color: var(--danger); }
 
-  /* PILLS */
   .method-pill { font-size: 0.67rem; padding: 1px 6px; border-radius: 20px; font-weight: 500; }
   .pill-card { background: rgba(59,130,246,0.15); color: #93c5fd; }
   .pill-cash { background: var(--success-bg); color: var(--success); }
@@ -117,7 +106,6 @@
   .s-pending { background: var(--warn-bg); color: var(--warn); }
   .s-overdue { background: var(--danger-bg); color: var(--danger); }
 
-  /* METRICS */
   .metrics-row { display: grid; gap: 0.75rem; margin-bottom: 1rem; }
   .metrics-4 { grid-template-columns: repeat(4, 1fr); }
   .metrics-3 { grid-template-columns: repeat(3, 1fr); }
@@ -128,23 +116,19 @@
   .metric-value.red { color: var(--danger); }
   .metric-sub { font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
 
-  /* DASHBOARD */
   .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
   .dash-grid .card { margin-bottom: 0; }
   .chart-wrap { position: relative; width: 100%; height: 190px; margin-top: 0.75rem; }
 
-  /* RECENT TABLE */
   .recent-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 0.75rem; table-layout: fixed; }
   .recent-table th { text-align: left; font-size: 0.67rem; font-weight: 500; color: var(--muted); padding: 0 0.5rem 0.5rem; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; overflow: hidden; }
   .recent-table td { padding: 0.55rem 0.5rem; color: var(--ink-soft); border-bottom: 1px solid rgba(30,41,59,0.6); vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .recent-table tr:last-child td { border-bottom: none; }
   .recent-table td:first-child { color: var(--ink); font-weight: 500; }
 
-  /* EMPTY */
   .empty { text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: 0.84rem; }
   .empty-icon { font-size: 1.8rem; margin-bottom: 0.5rem; opacity: 0.35; }
 
-  /* CONFIG */
   .config-banner { background: var(--warn-bg); border: 1px solid rgba(251,191,36,0.25); border-radius: var(--radius-sm); padding: 0.7rem 1rem; font-size: 0.79rem; color: var(--warn); margin-bottom: 1rem; }
   .config-banner code { background: rgba(0,0,0,0.2); border-radius: 3px; padding: 1px 5px; font-size: 0.76rem; }
 
@@ -165,7 +149,6 @@
 </head>
 <body>
 
-<!-- LOCK SCREEN -->
 <div id="lock-screen" class="hidden">
   <div class="lock-card">
     <div class="lock-icon">🔒</div>
@@ -182,7 +165,6 @@
   </div>
 </div>
 
-<!-- NAV -->
 <nav>
   <div class="nav-brand">🦷 Smile Clinic</div>
   <div class="nav-tabs">
@@ -194,7 +176,7 @@
   <button class="nav-lock" id="lock-btn" onclick="lockSession()" style="display:none;">🔒</button>
 </nav>
 
-<!-- ═══════════════════════ PAGE: REGISTRO ═══════════════════════ -->
+<!-- REGISTRO -->
 <div id="page-intake" class="page active">
   <div id="config-notice" class="config-banner" style="display:none;">
     ⚙️ <strong>Configuración pendiente:</strong> Edita el archivo y agrega tu <code>APPS_SCRIPT_URL</code> y tu <code>STAFF_PIN</code>.
@@ -208,8 +190,6 @@
       <div class="step" id="step-3"></div>
     </div>
     <div id="alert-intake" class="alert"></div>
-
-    <!-- Paso 1 -->
     <div id="intake-step-1">
       <div class="section-title">Información Personal</div>
       <div class="form-grid">
@@ -224,8 +204,6 @@
         <button class="btn btn-primary" onclick="nextStep(2)">Continuar →</button>
       </div>
     </div>
-
-    <!-- Paso 2 -->
     <div id="intake-step-2" style="display:none;">
       <div class="section-title">Historial Médico</div>
       <div class="form-grid">
@@ -236,21 +214,16 @@
           <label>Última visita al dentista</label>
           <select id="i-last-visit">
             <option value="">Selecciona...</option>
-            <option>Hace menos de 6 meses</option>
-            <option>6 a 12 meses</option>
-            <option>1 a 2 años</option>
-            <option>Más de 2 años</option>
-            <option>Nunca</option>
+            <option>Hace menos de 6 meses</option><option>6 a 12 meses</option>
+            <option>1 a 2 años</option><option>Más de 2 años</option><option>Nunca</option>
           </select>
         </div>
         <div class="field">
           <label>¿Fuma o consume tabaco?</label>
           <select id="i-tobacco">
             <option value="">Selecciona...</option>
-            <option>No</option>
-            <option>Sí — cigarrillos</option>
-            <option>Sí — otro tabaco</option>
-            <option>Ex fumador/a</option>
+            <option>No</option><option>Sí — cigarrillos</option>
+            <option>Sí — otro tabaco</option><option>Ex fumador/a</option>
           </select>
         </div>
       </div>
@@ -259,8 +232,6 @@
         <button class="btn btn-primary" onclick="nextStep(3)">Continuar →</button>
       </div>
     </div>
-
-    <!-- Paso 3 -->
     <div id="intake-step-3" style="display:none;">
       <div class="section-title">Motivo de la Consulta</div>
       <div class="form-grid single">
@@ -268,15 +239,10 @@
           <label class="required">Motivo de consulta de hoy</label>
           <select id="i-reason">
             <option value="">Selecciona...</option>
-            <option>Revisión / limpieza de rutina</option>
-            <option>Dolor de muelas</option>
-            <option>Diente roto o fracturado</option>
-            <option>Caries / empaste</option>
-            <option>Consulta de ortodoncia</option>
-            <option>Extracción</option>
-            <option>Endodoncia (canal)</option>
-            <option>Blanqueamiento dental</option>
-            <option>Otro</option>
+            <option>Revisión / limpieza de rutina</option><option>Dolor de muelas</option>
+            <option>Diente roto o fracturado</option><option>Caries / empaste</option>
+            <option>Consulta de ortodoncia</option><option>Extracción</option>
+            <option>Endodoncia (canal)</option><option>Blanqueamiento dental</option><option>Otro</option>
           </select>
         </div>
         <div class="field"><label>Notas adicionales para el dentista</label><textarea id="i-notes" placeholder="Cualquier cosa que quieras que el dentista sepa..."></textarea></div>
@@ -284,11 +250,8 @@
           <label>¿Cómo nos encontraste?</label>
           <select id="i-referral">
             <option value="">Selecciona...</option>
-            <option>Búsqueda en Google</option>
-            <option>Recomendación de familiar o amigo</option>
-            <option>Redes sociales</option>
-            <option>Pasé por aquí</option>
-            <option>Otro</option>
+            <option>Búsqueda en Google</option><option>Recomendación de familiar o amigo</option>
+            <option>Redes sociales</option><option>Pasé por aquí</option><option>Otro</option>
           </select>
         </div>
       </div>
@@ -300,9 +263,8 @@
   </div>
 </div>
 
-<!-- ═══════════════════════ PAGE: PANEL ═══════════════════════ -->
+<!-- PANEL -->
 <div id="page-dashboard" class="page">
-
   <div class="metrics-row metrics-4">
     <div class="metric-card">
       <div class="metric-label">Pacientes totales</div>
@@ -325,29 +287,24 @@
       <div class="metric-sub">ingresos − gastos</div>
     </div>
   </div>
-
   <div class="dash-grid">
     <div class="card">
       <div class="card-title" style="font-size:0.95rem;">Ingresos por mes</div>
-      <div class="chart-wrap"><canvas id="revenueChart" role="img" aria-label="Ingresos mensuales">Gráfica de barras de ingresos.</canvas></div>
+      <div class="chart-wrap"><canvas id="revenueChart" role="img" aria-label="Ingresos mensuales">Gráfica de barras.</canvas></div>
     </div>
     <div class="card">
       <div class="card-title" style="font-size:0.95rem;">Servicios más frecuentes</div>
-      <div class="chart-wrap"><canvas id="servicesChart" role="img" aria-label="Servicios frecuentes">Gráfica de dona de servicios.</canvas></div>
+      <div class="chart-wrap"><canvas id="servicesChart" role="img" aria-label="Servicios">Gráfica de dona.</canvas></div>
     </div>
   </div>
-
   <div class="card">
     <div class="card-title" style="font-size:0.95rem;">Cobros recientes</div>
     <div style="overflow-x:auto;">
       <table class="recent-table">
         <thead><tr>
-          <th style="width:22%">Paciente</th>
-          <th style="width:20%">Servicio</th>
-          <th style="width:14%">Fecha</th>
-          <th style="width:13%">Monto</th>
-          <th style="width:18%">Método</th>
-          <th style="width:13%">Estado</th>
+          <th style="width:22%">Paciente</th><th style="width:20%">Servicio</th>
+          <th style="width:14%">Fecha</th><th style="width:13%">Monto</th>
+          <th style="width:18%">Método</th><th style="width:13%">Estado</th>
         </tr></thead>
         <tbody id="dash-recent-body">
           <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr>
@@ -355,7 +312,6 @@
       </table>
     </div>
   </div>
-
   <div class="dash-grid">
     <div class="card">
       <div class="card-title" style="font-size:0.95rem;">Gastos recientes</div>
@@ -370,7 +326,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════════ PAGE: COBROS ═══════════════════════ -->
+<!-- COBROS -->
 <div id="page-billing" class="page">
   <div class="metrics-row metrics-3">
     <div class="metric-card"><div class="metric-label">Hoy</div><div class="metric-value green" id="m-today">$0</div></div>
@@ -422,7 +378,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════════ PAGE: GASTOS ═══════════════════════ -->
+<!-- GASTOS -->
 <div id="page-expenses" class="page">
   <div class="metrics-row metrics-3">
     <div class="metric-card"><div class="metric-label">Este mes</div><div class="metric-value red" id="e-month">$0</div></div>
@@ -468,10 +424,10 @@
 
 <script>
 /* ═══════════════════════════════════════
-    CONFIGURACIÓN — edita estos valores
+   CONFIGURACIÓN — edita estos valores
 ═══════════════════════════════════════ */
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1CVHqZ8GY_GVDgR44pQFyG2GWx9m2AWN6koA9lX7D_N5vzl82g2MxWkfBPByUS-M/exec';
-const STAFF_PIN       = '1234'; 
+const STAFF_PIN       = '1234';
 /* ═══════════════════════════════════════ */
 
 const IS_CONFIGURED = APPS_SCRIPT_URL.includes('macros/s/');
@@ -486,7 +442,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function setToday(id) { const el=document.getElementById(id); if(el) el.value=new Date().toISOString().split('T')[0]; }
 
-// NAV
 function showPage(pageId, tabEl) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
@@ -508,11 +463,10 @@ function checkPin() {
     document.getElementById('lock-screen').classList.add('hidden');
     document.getElementById('lock-btn').style.display = 'inline-block';
     showPage(pendingPage, pendingTab);
-    
-    if (IS_CONFIGURED) { 
-      loadSheetData('Patients'); 
-      loadSheetData('billing'); 
-      loadSheetData('expenses'); 
+    if (IS_CONFIGURED) {
+      loadSheetData('patients');
+      loadSheetData('billing');
+      loadSheetData('expenses');
     }
   } else {
     document.getElementById('pin-error').classList.add('show');
@@ -528,7 +482,6 @@ function lockSession() {
   document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
 }
 
-// INTAKE STEPS
 let currentStep=1;
 function nextStep(n) {
   if (n>currentStep && !validateStep(currentStep)) return;
@@ -550,7 +503,6 @@ function validateStep(step) {
   al.classList.remove('show'); return true;
 }
 
-// SUBMIT INTAKE
 async function submitIntake() {
   if (!validateStep(3)) return;
   const btn=document.getElementById('submit-btn');
@@ -576,7 +528,6 @@ async function submitIntake() {
   btn.disabled=false; btn.textContent='Enviar ✓';
 }
 
-// SUBMIT BILLING
 async function submitBilling() {
   const al=document.getElementById('alert-billing');
   const patient=gv('b-patient'), date=document.getElementById('b-date').value,
@@ -595,7 +546,6 @@ async function submitBilling() {
   } else { showAlert(al,'error','Error al guardar. Verifica tu conexión.'); }
 }
 
-// SUBMIT EXPENSE
 async function submitExpense() {
   const al=document.getElementById('alert-expenses');
   const desc=gv('e-desc'), date=document.getElementById('e-date').value,
@@ -613,7 +563,6 @@ async function submitExpense() {
   } else { showAlert(al,'error','Error al guardar. Verifica tu conexión.'); }
 }
 
-// RENDER BILLING
 const methodClass={'Efectivo':'pill-cash','Tarjeta de crédito':'pill-card','Tarjeta de débito':'pill-card','Transferencia':'pill-transfer','Seguro médico':'pill-insurance'};
 const statusClass={'Pagado':'s-paid','Pendiente':'s-pending','Parcial':'s-pending'};
 
@@ -625,12 +574,11 @@ function renderBilling() {
   document.getElementById('m-month').textContent='$'+billingData.reduce((s,e)=>s+Number(e.amount),0).toFixed(0);
   document.getElementById('m-count').textContent=billingData.length;
   list.innerHTML=billingData.slice(0,25).map(e=>{
-    const ini=e.patient.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const ini=(e.patient||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     return `<div class="entry-item"><div class="entry-avatar">${ini}</div><div class="entry-body"><div class="entry-name">${e.patient}</div><div class="entry-meta">${e.service} · ${e.date} <span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method}</span></div></div><div class="entry-amount income">+$${Number(e.amount).toFixed(2)}</div></div>`;
   }).join('');
 }
 
-// RENDER EXPENSES
 function renderExpenses() {
   const list=document.getElementById('expense-list');
   if (!expenseData.length) { list.innerHTML='<div class="empty"><div class="empty-icon">🧾</div>Aún no hay gastos registrados.</div>'; document.getElementById('e-month').textContent='$0'; document.getElementById('e-largest').textContent='—'; document.getElementById('e-count').textContent='0'; return; }
@@ -640,7 +588,6 @@ function renderExpenses() {
   list.innerHTML=expenseData.slice(0,25).map(e=>`<div class="entry-item"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc}</div><div class="entry-meta">${e.category} · ${e.date}${e.vendor?' · '+e.vendor:''}</div></div><div class="entry-amount expense">-$${Number(e.amount).toFixed(2)}</div></div>`).join('');
 }
 
-// RENDER DASHBOARD
 function renderDashboard() {
   const totalRev=billingData.reduce((s,e)=>s+Number(e.amount),0);
   const totalExp=expenseData.reduce((s,e)=>s+Number(e.amount),0);
@@ -652,24 +599,20 @@ function renderDashboard() {
   netEl.className='metric-value '+(net>=0?'green':'red');
   document.getElementById('d-revenue-sub').textContent=billingData.length+' cobros';
   document.getElementById('d-expenses-sub').textContent=expenseData.length+' gastos';
-  document.getElementById('d-patients').textContent=billingData.length||'—';
 
-  // Recent table
   const tbody=document.getElementById('dash-recent-body');
   if (!billingData.length) {
     tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr>';
   } else {
-    tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td>${e.patient}</td><td style="color:var(--muted)">${e.service}</td><td style="color:var(--muted)">${e.date}</td><td style="color:var(--success)">$${Number(e.amount).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method}</span></td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status}</span></td></tr>`).join('');
+    tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td>${e.patient||''}</td><td style="color:var(--muted)">${e.service||''}</td><td style="color:var(--muted)">${e.date||''}</td><td style="color:var(--success)">$${Number(e.amount).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span></td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status||''}</span></td></tr>`).join('');
   }
 
-  // Expense mini-list
   const deList=document.getElementById('dash-expense-list');
-  deList.innerHTML=!expenseData.length?'<div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos aún.</div>':expenseData.slice(0,4).map(e=>`<div class="entry-item" style="margin-bottom:0.4rem;"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc}</div><div class="entry-meta">${e.category}</div></div><div class="entry-amount expense">-$${Number(e.amount).toFixed(2)}</div></div>`).join('');
+  deList.innerHTML=!expenseData.length?'<div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos aún.</div>':expenseData.slice(0,4).map(e=>`<div class="entry-item" style="margin-bottom:0.4rem;"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc||''}</div><div class="entry-meta">${e.category||''}</div></div><div class="entry-amount expense">-$${Number(e.amount).toFixed(2)}</div></div>`).join('');
 
   buildCharts();
 }
 
-// CHARTS
 function buildCharts() {
   const gc='rgba(100,116,139,0.15)', tc='#64748b';
   const months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -688,7 +631,7 @@ function buildCharts() {
   });
 
   const sCounts={};
-  billingData.forEach(e=>{sCounts[e.service]=(sCounts[e.service]||0)+1;});
+  billingData.forEach(e=>{if(e.service)sCounts[e.service]=(sCounts[e.service]||0)+1;});
   const sL=Object.keys(sCounts).length?Object.keys(sCounts):['Limpieza','Empaste','Ortodoncia','Extracción'];
   const sD=Object.values(sCounts).length?Object.values(sCounts):[40,25,20,15];
   if (servicesChart) servicesChart.destroy();
@@ -699,7 +642,7 @@ function buildCharts() {
   });
 
   const mCounts={};
-  billingData.forEach(e=>{mCounts[e.method]=(mCounts[e.method]||0)+Number(e.amount);});
+  billingData.forEach(e=>{if(e.method)mCounts[e.method]=(mCounts[e.method]||0)+Number(e.amount);});
   const mL=Object.keys(mCounts).length?Object.keys(mCounts):['Efectivo','T. Crédito','Transferencia'];
   const mD=Object.values(mCounts).length?Object.values(mCounts):[40,45,15];
   if (methodChart) methodChart.destroy();
@@ -710,61 +653,77 @@ function buildCharts() {
   });
 }
 
-// LOAD FROM SHEETS - Versión Corregida
+// ══════════════════════════════════════════════════════════════
+// THE FIX: normalizeRow maps Google Sheets header names → app keys
+// Google Sheets returns objects keyed by your exact column headers
+// (e.g. "Amount (USD)", "Payment Method") but the app looks for
+// lowercase shorthand keys (amount, method). This bridges the gap.
+// ══════════════════════════════════════════════════════════════
+function normalizeRow(row, sheet) {
+  if (sheet === 'Billing') {
+    return {
+      patient:   row['Patient']        || row['Paciente']        || row['patient']        || '',
+      date:      row['Date']           || row['Fecha']           || row['date']           || '',
+      service:   row['Service']        || row['Servicio']        || row['service']        || '',
+      amount:    parseFloat(row['Amount (USD)'] || row['Monto (USD)'] || row['Amount'] || row['Monto'] || row['amount'] || 0),
+      method:    row['Payment Method'] || row['Método de pago']  || row['Method']         || row['method']  || '',
+      status:    row['Status']         || row['Estado']          || row['status']         || 'Pagado',
+      notes:     row['Notes']          || row['Notas']           || row['notes']          || '',
+      timestamp: row['Timestamp']      || row['timestamp']       || '',
+    };
+  }
+  if (sheet === 'Expenses') {
+    return {
+      desc:      row['Description']    || row['Descripción']     || row['Descripcion']    || row['desc']     || '',
+      date:      row['Date']           || row['Fecha']           || row['date']           || '',
+      category:  row['Category']       || row['Categoría']       || row['Categoria']      || row['category'] || '',
+      amount:    parseFloat(row['Amount (USD)'] || row['Monto (USD)'] || row['Amount'] || row['Monto'] || row['amount'] || 0),
+      method:    row['Paid Via']       || row['Pagado con']      || row['Method']         || row['method']   || '',
+      vendor:    row['Vendor']         || row['Proveedor']       || row['vendor']         || '',
+      notes:     row['Notes']          || row['Notas']           || row['notes']          || '',
+      timestamp: row['Timestamp']      || row['timestamp']       || '',
+    };
+  }
+  return row;
+}
+
 async function loadSheetData(section) {
   if (!IS_CONFIGURED) return;
-  
-  // Mapeamos el nombre de la sección al nombre exacto de la pestaña en Google Sheets
-  const sheetMap = {
-    'patients': 'Patients',
-    'billing': 'Billing',
-    'expenses': 'Expenses'
-  };
-  
+  const sheetMap = { patients: 'Patients', billing: 'Billing', expenses: 'Expenses' };
   const sheetName = sheetMap[section] || section;
-
   try {
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=get&sheet=${sheetName}`);
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=get&sheet=${sheetName}`);
     const json = await res.json();
-    
     if (json.data) {
       if (section === 'patients') {
-        // Guardamos los pacientes para el contador del Dashboard
-        window.patientsData = json.data; 
+        window.patientsData = json.data;
         const pCount = document.getElementById('d-patients');
-        if(pCount) pCount.textContent = json.data.length;
-      } 
-      else if (section === 'billing') {
-        billingData = json.data;
-        renderBilling(); 
-      } 
-      else if (section === 'expenses') {
-        expenseData = json.data;
+        if (pCount) pCount.textContent = json.data.length;
+      } else if (section === 'billing') {
+        // Normalize: map sheet header names to the short keys the app uses
+        billingData = json.data.map(r => normalizeRow(r, 'Billing'));
+        renderBilling();
+      } else if (section === 'expenses') {
+        expenseData = json.data.map(r => normalizeRow(r, 'Expenses'));
         renderExpenses();
       }
-      
-      // Siempre intentamos refrescar el Dashboard para que los números se actualicen
       renderDashboard();
     }
-  } catch(e) {
-    console.warn('No se pudo cargar datos de ' + section + ':', e);
-  }
+  } catch(e) { console.warn('No se pudo cargar datos de ' + section + ':', e); }
 }
 
-// SHEETS BRIDGE
 async function sendToSheets(payload) {
-  if (!IS_CONFIGURED){console.log('Modo demo:',payload);return true;}
+  if (!IS_CONFIGURED){ console.log('Modo demo:', payload); return true; }
   try {
-    await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    await fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
     return true;
-  } catch(e){console.error(e);return false;}
+  } catch(e) { console.error(e); return false; }
 }
 
-// ALERT HELPER
-function showAlert(el,type,msg){
+function showAlert(el, type, msg) {
   el.className='alert alert-'+type+' show';
   el.textContent=msg;
-  if(type==='success') setTimeout(()=>el.classList.remove('show'),5000);
+  if (type==='success') setTimeout(()=>el.classList.remove('show'), 5000);
 }
 </script>
 </body>
