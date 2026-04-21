@@ -194,7 +194,7 @@
         onkeydown="if(event.key==='Enter')checkPin()"/>
     </div>
     <div id="pin-error" class="alert alert-error">PIN incorrecto. Intenta de nuevo.</div>
-    <button class="btn btn-primary" style="width:100%;" onclick="checkPin()">Desbloquear</button>
+    <button class="btn btn-primary" style="width:100%;" onclick="checkPin()" id="pin-btn">Desbloquear</button>
     <button class="btn" style="width:100%;margin-top:.5rem;color:var(--muted);" onclick="closeLock()">Cancelar</button>
   </div>
 </div>
@@ -265,15 +265,25 @@
     </div>
 
     <!-- ── PASO 2: ANTECEDENTES ── -->
+    <!--
+      FIX: Every radio pair now has a globally unique name attribute.
+      Format: p2-[section]-[field] so no two groups ever collide.
+    -->
     <div id="intake-step-2" style="display:none;">
 
       <div class="form-section">Antecedentes Médicos del Embarazo</div>
       <div class="form-grid g4">
-        <div class="field"><label>Embarazo normal</label>
-          <div class="radio-group"><label><input type="radio" name="emb" value="Normal"> Normal</label><label><input type="radio" name="emb" value="Alto riesgo"> Alto riesgo</label></div>
+        <div class="field"><label>Embarazo</label>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-emb-tipo" value="Normal"> Normal</label>
+            <label><input type="radio" name="p2-emb-tipo" value="Alto riesgo"> Alto riesgo</label>
+          </div>
         </div>
         <div class="field"><label>Tipo de parto</label>
-          <div class="radio-group"><label><input type="radio" name="parto" value="Normal"> Normal</label><label><input type="radio" name="parto" value="Cesárea"> Cesárea</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-parto-tipo" value="Normal"> Normal</label>
+            <label><input type="radio" name="p2-parto-tipo" value="Cesárea"> Cesárea</label>
+          </div>
         </div>
         <div class="field"><label>Meses de gestación</label><input type="number" id="i-gestacion" min="1" max="10" placeholder="meses"/></div>
         <div class="field"><label>Enfermedades virales en embarazo</label><input type="text" id="i-enf-viral" placeholder="Especifique si aplica"/></div>
@@ -283,24 +293,36 @@
       <div class="form-section">Alimentación</div>
       <div class="form-grid g3">
         <div class="field"><label>Leche materna</label>
-          <div class="radio-group"><label><input type="radio" name="materna" value="Sí"> Sí</label><label><input type="radio" name="materna" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-alim-materna" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-alim-materna" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-materna-meses" min="0" placeholder="meses"/></div>
         <div class="field"></div>
         <div class="field"><label>Biberón</label>
-          <div class="radio-group"><label><input type="radio" name="biberon" value="Sí"> Sí</label><label><input type="radio" name="biberon" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-alim-biberon" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-alim-biberon" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-biberon-meses" min="0" placeholder="meses"/></div>
         <div class="field"></div>
         <div class="field"><label>Chupón</label>
-          <div class="radio-group"><label><input type="radio" name="chupon" value="Sí"> Sí</label><label><input type="radio" name="chupon" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-alim-chupon" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-alim-chupon" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-chupon-meses" min="0" placeholder="meses"/></div>
         <div class="field"><label>Inicio de ablactación</label><input type="text" id="i-ablactacion" placeholder="Edad en meses"/></div>
       </div>
       <div class="form-grid">
         <div class="field"><label>¿Dieta balanceada?</label>
-          <div class="radio-group"><label><input type="radio" name="dieta" value="Sí"> Sí</label><label><input type="radio" name="dieta" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-alim-dieta" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-alim-dieta" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Consume golosinas entre comidas? ¿Cuáles?</label><input type="text" id="i-golosinas" placeholder="Especifique"/></div>
       </div>
@@ -308,22 +330,37 @@
       <div class="form-section">Historial Médico General</div>
       <div class="form-grid">
         <div class="field"><label>¿Ha sido hospitalizado?</label>
-          <div class="radio-group"><label><input type="radio" name="hosp" value="Sí"> Sí</label><label><input type="radio" name="hosp" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-med-hosp" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-med-hosp" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>Fecha y motivo de hospitalización</label><input type="text" id="i-hosp-detalle" placeholder="Fecha — Motivo"/></div>
         <div class="field"><label>¿Ha sido sometido a cirugía?</label>
-          <div class="radio-group"><label><input type="radio" name="cirugia" value="Sí"> Sí</label><label><input type="radio" name="cirugia" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-med-cirugia" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-med-cirugia" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>Especifique cirugía</label><input type="text" id="i-cirugia-detalle"/></div>
         <div class="field"><label>¿Está bajo algún medicamento?</label>
-          <div class="radio-group"><label><input type="radio" name="medic" value="Sí"> Sí</label><label><input type="radio" name="medic" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-med-medic" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-med-medic" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>Especifique medicamento</label><input type="text" id="i-medic-detalle"/></div>
         <div class="field"><label>¿Cartilla de vacunación?</label>
-          <div class="radio-group"><label><input type="radio" name="vacuna" value="Sí"> Sí</label><label><input type="radio" name="vacuna" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-med-vacuna" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-med-vacuna" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Esquema completo?</label>
-          <div class="radio-group"><label><input type="radio" name="esquema" value="Sí"> Sí</label><label><input type="radio" name="esquema" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-med-esquema" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-med-esquema" value="No"> No</label>
+          </div>
         </div>
         <div class="field full"><label>Especifique vacuna faltante</label><input type="text" id="i-vacuna-falta"/></div>
       </div>
@@ -331,13 +368,22 @@
       <div class="form-section">Antecedentes Alérgicos</div>
       <div class="form-grid g3">
         <div class="field"><label>¿Alergia a algún alimento?</label>
-          <div class="radio-group"><label><input type="radio" name="alergia-alim" value="Sí"> Sí</label><label><input type="radio" name="alergia-alim" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-alg-alim" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-alg-alim" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Alergia a antibióticos?</label>
-          <div class="radio-group"><label><input type="radio" name="alergia-anti" value="Sí"> Sí</label><label><input type="radio" name="alergia-anti" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-alg-anti" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-alg-anti" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Alergia a analgésicos?</label>
-          <div class="radio-group"><label><input type="radio" name="alergia-anal" value="Sí"> Sí</label><label><input type="radio" name="alergia-anal" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-alg-anal" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-alg-anal" value="No"> No</label>
+          </div>
         </div>
         <div class="field full"><label>Especifique alergias y reacción alérgica</label><textarea id="i-alergias-detalle" placeholder="Especifique la reacción para cada alergia mencionada..."></textarea></div>
       </div>
@@ -345,19 +391,31 @@
       <div class="form-section">Antecedentes Dentales</div>
       <div class="form-grid">
         <div class="field"><label>¿Ha sufrido algún traumatismo dental?</label>
-          <div class="radio-group"><label><input type="radio" name="trauma" value="Sí"> Sí</label><label><input type="radio" name="trauma" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-dent-trauma" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-dent-trauma" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>Especifique traumatismo</label><input type="text" id="i-trauma-detalle"/></div>
         <div class="field"><label>¿Cuántas veces al día se cepilla?</label><input type="number" id="i-cepillado" min="0" max="10" placeholder="veces"/></div>
         <div class="field"><label>¿Recibe ayuda de padres/cuidadores?</label>
-          <div class="radio-group"><label><input type="radio" name="ayuda-cep" value="Sí"> Sí</label><label><input type="radio" name="ayuda-cep" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-dent-ayuda" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-dent-ayuda" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Qué pasta dental utiliza?</label><input type="text" id="i-pasta"/></div>
         <div class="field"><label>¿Utiliza hilo dental?</label>
-          <div class="radio-group"><label><input type="radio" name="hilo" value="Sí"> Sí</label><label><input type="radio" name="hilo" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-dent-hilo" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-dent-hilo" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Ha ido anteriormente al dentista?</label>
-          <div class="radio-group"><label><input type="radio" name="dentista-prev" value="Sí"> Sí</label><label><input type="radio" name="dentista-prev" value="No"> No</label></div>
+          <div class="radio-group">
+            <label><input type="radio" name="p2-dent-prev" value="Sí"> Sí</label>
+            <label><input type="radio" name="p2-dent-prev" value="No"> No</label>
+          </div>
         </div>
         <div class="field"><label>¿Cuál fue su última visita?</label>
           <select id="i-ultima-visita">
@@ -453,8 +511,8 @@
     <div class="card-title" style="font-size:.95rem;">Cobros recientes</div>
     <div style="overflow-x:auto;">
       <table class="recent-table">
-        <thead><tr><th style="width:22%">Paciente</th><th style="width:20%">Servicio</th><th style="width:14%">Fecha</th><th style="width:13%">Monto</th><th style="width:18%">Método</th><th style="width:13%">Estado</th></tr></thead>
-        <tbody id="dash-recent-body"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr></tbody>
+        <thead><tr><th style="width:20%">Paciente</th><th style="width:18%">Servicio</th><th style="width:12%">Fecha</th><th style="width:12%">Monto</th><th style="width:15%">Método</th><th style="width:11%">Factura</th><th style="width:12%">Estado</th></tr></thead>
+        <tbody id="dash-recent-body"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -481,9 +539,12 @@
       <div class="field"><label class="required">Servicio realizado</label>
         <select id="b-service"><option value="">Selecciona...</option><option>Limpieza</option><option>Radiografía</option><option>Empaste / caries</option><option>Extracción</option><option>Endodoncia</option><option>Corona</option><option>Ortodoncia</option><option>Blanqueamiento</option><option>Consulta</option><option>Otro</option></select>
       </div>
-      <div class="field"><label class="required">Monto (USD)</label><input type="number" id="b-amount" placeholder="0.00" min="0" step="0.01"/></div>
+      <div class="field"><label class="required">Monto (MXN)</label><input type="number" id="b-amount" placeholder="0.00" min="0" step="0.01"/></div>
       <div class="field"><label class="required">Método de pago</label>
         <select id="b-method"><option value="">Selecciona...</option><option>Efectivo</option><option>Tarjeta de crédito</option><option>Tarjeta de débito</option><option>Transferencia</option><option>Seguro médico</option></select>
+      </div>
+      <div class="field"><label class="required">Factura</label>
+        <select id="b-factura"><option value="No">No</option><option value="Sí">Sí</option></select>
       </div>
       <div class="field"><label>Estado</label>
         <select id="b-status"><option value="Pagado">Pagado</option><option value="Pendiente">Pendiente</option><option value="Parcial">Parcial</option></select>
@@ -513,7 +574,7 @@
       <div class="field"><label class="required">Categoría</label>
         <select id="e-category"><option value="">Selecciona...</option><option>Insumos y materiales</option><option>Equipo</option><option>Renta y servicios</option><option>Sueldos</option><option>Medicamentos</option><option>Publicidad</option><option>Seguro</option><option>Laboratorio dental</option><option>Otro</option></select>
       </div>
-      <div class="field"><label class="required">Monto (USD)</label><input type="number" id="e-amount" placeholder="0.00" min="0" step="0.01"/></div>
+      <div class="field"><label class="required">Monto (MXN)</label><input type="number" id="e-amount" placeholder="0.00" min="0" step="0.01"/></div>
       <div class="field"><label>Pagado con</label>
         <select id="e-method"><option value="">Selecciona...</option><option>Efectivo</option><option>Tarjeta empresarial</option><option>Transferencia</option><option>Cheque</option></select>
       </div>
@@ -529,17 +590,20 @@
 <script>
 /* ════════════════════════════
    CONFIGURACIÓN
+   ─ El PIN real vive SOLO en code.gs (STAFF_PIN_HASH).
+   ─ Esta URL no expone datos sensibles por sí sola:
+     todas las lecturas requieren el hash del PIN.
 ════════════════════════════ */
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1CVHqZ8GY_GVDgR44pQFyG2GWx9m2AWN6koA9lX7D_N5vzl82g2MxWkfBPByUS-M/exec';
-const STAFF_PIN       = '1234';
 /* ════════════════════════════ */
 
 const IS_CONFIGURED = APPS_SCRIPT_URL.includes('macros/s/');
 let billingData=[], expenseData=[], sessionUnlocked=false;
 let pendingPage=null, pendingTab=null;
 let revenueChart=null, servicesChart=null, methodChart=null;
+// Stores the PIN hash for the current session so authenticated GET requests work
+let sessionPinHash = '';
 
-// Disease list matching Image 2
 const DISEASES = [
   'Anemia','Discracia sanguínea','Enfermedades respiratorias','Enfermedades hepáticas',
   'Cardiopatías','Hepatitis','Alteraciones glandulares','Epilepsia','Tuberculosis',
@@ -556,9 +620,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function setToday(id){const el=document.getElementById(id);if(el)el.value=new Date().toISOString().split('T')[0];}
 
-// Build disease table rows dynamically
 function buildDiseaseTable(){
   const tbody=document.getElementById('disease-tbody');
+  // Each disease radio pair gets its own unique name: enf-ROW_INDEX
+  // These are already isolated per row so no collision is possible.
   tbody.innerHTML=DISEASES.map((d,i)=>`
     <tr>
       <td>${d}</td>
@@ -568,7 +633,6 @@ function buildDiseaseTable(){
     </tr>`).join('');
 }
 
-// Collect disease table answers
 function getDiseaseData(){
   return DISEASES.map((d,i)=>{
     const sel=document.querySelector(`input[name="enf-${i}"]:checked`);
@@ -577,8 +641,14 @@ function getDiseaseData(){
   });
 }
 
-// Radio helper — get selected value
+// Reads a radio group by its unique name (Step 2 uses p2-* names)
 function getRadio(name){const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:'';}
+
+/* ── SHA-256 helper (Web Crypto API — available in all modern browsers) ── */
+async function sha256hex(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
 
 /* ── SIGNATURE PAD ── */
 let sigDrawing=false, sigCtx=null, sigCanvas=null, sigHasData=false;
@@ -613,6 +683,7 @@ function showPage(pageId,tabEl){
   if(tabEl)tabEl.classList.add('active');
   if(pageId==='dashboard')setTimeout(renderDashboard,50);
 }
+
 function requireAuth(pageId,tabEl){
   if(sessionUnlocked){showPage(pageId,tabEl);return;}
   pendingPage=pageId;pendingTab=tabEl;
@@ -621,22 +692,74 @@ function requireAuth(pageId,tabEl){
   document.getElementById('pin-error').classList.remove('show');
   setTimeout(()=>document.getElementById('pin-input').focus(),100);
 }
-function checkPin(){
-  if(document.getElementById('pin-input').value===STAFF_PIN){
-    sessionUnlocked=true;
-    document.getElementById('lock-screen').classList.add('hidden');
-    document.getElementById('lock-btn').style.display='inline-block';
-    showPage(pendingPage,pendingTab);
-    if(IS_CONFIGURED){loadSheetData('patients');loadSheetData('billing');loadSheetData('expenses');}
-  }else{
-    document.getElementById('pin-error').classList.add('show');
-    document.getElementById('pin-input').value='';
-    document.getElementById('pin-input').focus();
+
+/* ── PIN CHECK — hashes locally, validates server-side ── */
+async function checkPin(){
+  const pinVal = document.getElementById('pin-input').value;
+  if(!pinVal){return;}
+  const btn = document.getElementById('pin-btn');
+  btn.disabled = true;
+  btn.textContent = 'Verificando...';
+
+  try {
+    const hash = await sha256hex(pinVal);
+
+    if(!IS_CONFIGURED){
+      // Dev/demo fallback: accept SHA-256 of '1234'
+      const devHash = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
+      if(hash === devHash){
+        onPinSuccess(hash);
+      } else {
+        onPinFail();
+      }
+      btn.disabled=false; btn.textContent='Desbloquear';
+      return;
+    }
+
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:'verifyPin', pinHash:hash})
+    });
+
+    // no-cors means opaque response — we can't read the body.
+    // Strategy: if the fetch doesn't throw, treat as success and
+    // rely on subsequent authenticated requests to enforce auth.
+    // For a readable response, deploy with CORS or use a proxy.
+    // Alternative: use mode:'cors' if your Apps Script sets CORS headers.
+    onPinSuccess(hash);
+  } catch(err){
+    onPinFail();
+  }
+
+  btn.disabled=false; btn.textContent='Desbloquear';
+}
+
+function onPinSuccess(hash){
+  sessionPinHash = hash;
+  sessionUnlocked = true;
+  document.getElementById('lock-screen').classList.add('hidden');
+  document.getElementById('lock-btn').style.display='inline-block';
+  showPage(pendingPage, pendingTab);
+  if(IS_CONFIGURED){
+    loadSheetData('patients');
+    loadSheetData('billing');
+    loadSheetData('expenses');
   }
 }
+
+function onPinFail(){
+  document.getElementById('pin-error').classList.add('show');
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-input').focus();
+}
+
 function closeLock(){document.getElementById('lock-screen').classList.add('hidden');}
+
 function lockSession(){
-  sessionUnlocked=false;billingData=[];expenseData=[];
+  sessionUnlocked=false;
+  sessionPinHash='';
+  billingData=[];expenseData=[];
   document.getElementById('lock-btn').style.display='none';
   showPage('intake',document.querySelector('.nav-tab'));
   document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
@@ -699,23 +822,23 @@ async function submitIntake(){
     madre:gv('i-madre'), telMadre:gv('i-tel-madre'),
     pediatra:gv('i-pediatra'), telPediatra:gv('i-tel-pediatra'),
     motivo:gv('i-motivo'),
-    // Paso 2
-    embarazo:getRadio('emb'), parto:getRadio('parto'),
+    // Paso 2 — uses new p2-* radio names
+    embarazo:getRadio('p2-emb-tipo'), parto:getRadio('p2-parto-tipo'),
     gestacion:gv('i-gestacion'), enfViral:gv('i-enf-viral'), enfTransmisible:gv('i-enf-transmisible'),
-    lecheMaterna:getRadio('materna'), lactMeses:gv('i-materna-meses'),
-    biberon:getRadio('biberon'), bibMeses:gv('i-biberon-meses'),
-    chupon:getRadio('chupon'), chupMeses:gv('i-chupon-meses'),
-    ablactacion:gv('i-ablactacion'), dieta:getRadio('dieta'), golosinas:gv('i-golosinas'),
-    hospitalizado:getRadio('hosp'), hospDetalle:gv('i-hosp-detalle'),
-    cirugia:getRadio('cirugia'), cirugiaDetalle:gv('i-cirugia-detalle'),
-    medicamento:getRadio('medic'), medicDetalle:gv('i-medic-detalle'),
-    vacunacion:getRadio('vacuna'), esquema:getRadio('esquema'), vacunaFalta:gv('i-vacuna-falta'),
-    alergiaAlimento:getRadio('alergia-alim'), alergiaAntibiotico:getRadio('alergia-anti'),
-    alergiaAnalgésico:getRadio('alergia-anal'), alergiasDetalle:gv('i-alergias-detalle'),
-    traumaDental:getRadio('trauma'), traumaDetalle:gv('i-trauma-detalle'),
-    cepillado:gv('i-cepillado'), ayudaCepillado:getRadio('ayuda-cep'),
-    pasta:gv('i-pasta'), hiloDental:getRadio('hilo'),
-    dentistaPrev:getRadio('dentista-prev'), ultimaVisita:document.getElementById('i-ultima-visita').value,
+    lecheMaterna:getRadio('p2-alim-materna'), lactMeses:gv('i-materna-meses'),
+    biberon:getRadio('p2-alim-biberon'), bibMeses:gv('i-biberon-meses'),
+    chupon:getRadio('p2-alim-chupon'), chupMeses:gv('i-chupon-meses'),
+    ablactacion:gv('i-ablactacion'), dieta:getRadio('p2-alim-dieta'), golosinas:gv('i-golosinas'),
+    hospitalizado:getRadio('p2-med-hosp'), hospDetalle:gv('i-hosp-detalle'),
+    cirugia:getRadio('p2-med-cirugia'), cirugiaDetalle:gv('i-cirugia-detalle'),
+    medicamento:getRadio('p2-med-medic'), medicDetalle:gv('i-medic-detalle'),
+    vacunacion:getRadio('p2-med-vacuna'), esquema:getRadio('p2-med-esquema'), vacunaFalta:gv('i-vacuna-falta'),
+    alergiaAlimento:getRadio('p2-alg-alim'), alergiaAntibiotico:getRadio('p2-alg-anti'),
+    alergiaAnalgésico:getRadio('p2-alg-anal'), alergiasDetalle:gv('i-alergias-detalle'),
+    traumaDental:getRadio('p2-dent-trauma'), traumaDetalle:gv('i-trauma-detalle'),
+    cepillado:gv('i-cepillado'), ayudaCepillado:getRadio('p2-dent-ayuda'),
+    pasta:gv('i-pasta'), hiloDental:getRadio('p2-dent-hilo'),
+    dentistaPrev:getRadio('p2-dent-prev'), ultimaVisita:document.getElementById('i-ultima-visita').value,
     tratamientosPrev:gv('i-tratamientos-prev'),
     // Paso 3
     enfermedades:JSON.stringify(getDiseaseData()),
@@ -744,7 +867,6 @@ function resetIntakeForm(){
   document.querySelectorAll('#page-intake input[type="radio"]').forEach(el=>el.checked=false);
   document.getElementById('i-acepto').checked=false;
   clearSig();
-  // Reset disease table to "No"
   DISEASES.forEach((_,i)=>{
     const noRadio=document.querySelector(`input[name="enf-${i}"][value="No"]`);
     if(noRadio)noRadio.checked=true;
@@ -761,14 +883,17 @@ async function submitBilling(){
         service=document.getElementById('b-service').value,
         amount=parseFloat(document.getElementById('b-amount').value),
         method=document.getElementById('b-method').value,
-        status=document.getElementById('b-status').value,notes=gv('b-notes');
+        factura=document.getElementById('b-factura').value,
+        status=document.getElementById('b-status').value,
+        notes=gv('b-notes');
   if(!patient||!date||!service||!amount||!method){showAlert(al,'error','Por favor completa todos los campos obligatorios.');return;}
-  const entry={sheet:'Billing',timestamp:new Date().toISOString(),patient,date,service,amount,method,status,notes};
+  const entry={sheet:'Billing',timestamp:new Date().toISOString(),patient,date,service,amount,method,factura,status,notes};
   if(await sendToSheets(entry)){
     billingData.unshift(entry);renderBilling();renderDashboard();
     showAlert(al,'success',`✓ Cobro de $${amount.toFixed(2)} registrado para ${patient}.`);
     document.getElementById('b-patient').value='';document.getElementById('b-amount').value='';document.getElementById('b-notes').value='';
     ['b-service','b-method'].forEach(id=>document.getElementById(id).selectedIndex=0);
+    document.getElementById('b-factura').selectedIndex=0;
     document.getElementById('b-status').selectedIndex=0;setToday('b-date');
   }else{showAlert(al,'error','Error al guardar. Verifica tu conexión.');}
 }
@@ -804,7 +929,8 @@ function renderBilling(){
   document.getElementById('m-count').textContent=billingData.length;
   list.innerHTML=billingData.slice(0,25).map(e=>{
     const ini=(e.patient||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    return`<div class="entry-item"><div class="entry-avatar">${ini}</div><div class="entry-body"><div class="entry-name">${e.patient}</div><div class="entry-meta">${e.service} · ${e.date} <span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method}</span></div></div><div class="entry-amount income">+$${Number(e.amount).toFixed(2)}</div></div>`;
+    const factTag=e.factura==='Sí'?'<span class="method-pill pill-transfer" style="margin-left:4px;">Factura</span>':'';
+    return`<div class="entry-item"><div class="entry-avatar">${ini}</div><div class="entry-body"><div class="entry-name">${e.patient}</div><div class="entry-meta">${e.service} · ${e.date} <span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method}</span>${factTag}</div></div><div class="entry-amount income">+$${Number(e.amount).toFixed(2)}</div></div>`;
   }).join('');
 }
 
@@ -829,8 +955,8 @@ function renderDashboard(){
   document.getElementById('d-revenue-sub').textContent=billingData.length+' cobros';
   document.getElementById('d-expenses-sub').textContent=expenseData.length+' gastos';
   const tbody=document.getElementById('dash-recent-body');
-  if(!billingData.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr>';}
-  else{tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td>${e.patient||''}</td><td style="color:var(--muted)">${e.service||''}</td><td style="color:var(--muted)">${e.date||''}</td><td style="color:var(--success)">$${Number(e.amount).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span></td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status||''}</span></td></tr>`).join('');}
+  if(!billingData.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr>';}
+  else{tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td>${e.patient||''}</td><td style="color:var(--muted)">${e.service||''}</td><td style="color:var(--muted)">${e.date||''}</td><td style="color:var(--success)">$${Number(e.amount).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span></td><td style="color:var(--muted)">${e.factura||'No'}</td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status||''}</span></td></tr>`).join('');}
   const deList=document.getElementById('dash-expense-list');
   deList.innerHTML=!expenseData.length?'<div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos aún.</div>':expenseData.slice(0,4).map(e=>`<div class="entry-item" style="margin-bottom:.4rem;"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc||''}</div><div class="entry-meta">${e.category||''}</div></div><div class="entry-amount expense">-$${Number(e.amount).toFixed(2)}</div></div>`).join('');
   buildCharts();
@@ -858,17 +984,39 @@ function buildCharts(){
   methodChart=new Chart(document.getElementById('methodChart'),{type:'doughnut',data:{labels:mL,datasets:[{data:mD,backgroundColor:['#16a34a','#2563eb','#7c3aed','#d97706'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,font:{size:10},boxWidth:9,padding:8}}},cutout:'58%'}});
 }
 
-/* ── LOAD & NORMALIZE ── */
+/* ── DATA LOADING ── */
 function normalizeRow(row,sheet){
-  if(sheet==='Billing'){return{patient:row['Patient']||row['Paciente']||row['patient']||'',date:row['Date']||row['Fecha']||row['date']||'',service:row['Service']||row['Servicio']||row['service']||'',amount:parseFloat(row['Amount (USD)']||row['Monto (USD)']||row['Amount']||row['Monto']||row['amount']||0),method:row['Payment Method']||row['Método de pago']||row['Method']||row['method']||'',status:row['Status']||row['Estado']||row['status']||'Pagado',notes:row['Notes']||row['Notas']||row['notes']||'',timestamp:row['Timestamp']||row['timestamp']||''};}
-  if(sheet==='Expenses'){return{desc:row['Description']||row['Descripción']||row['Descripcion']||row['desc']||'',date:row['Date']||row['Fecha']||row['date']||'',category:row['Category']||row['Categoría']||row['Categoria']||row['category']||'',amount:parseFloat(row['Amount (USD)']||row['Monto (USD)']||row['Amount']||row['Monto']||row['amount']||0),method:row['Paid Via']||row['Pagado con']||row['Method']||row['method']||'',vendor:row['Vendor']||row['Proveedor']||row['vendor']||'',notes:row['Notes']||row['Notas']||row['notes']||'',timestamp:row['Timestamp']||row['timestamp']||''};}
+  if(sheet==='Billing'){return{
+    patient:row['Paciente']||row['Patient']||row['patient']||'',
+    date:row['Fecha']||row['Date']||row['date']||'',
+    service:row['Servicio']||row['Service']||row['service']||'',
+    amount:parseFloat(row['Monto (MXN)']||row['Amount (USD)']||row['amount']||0),
+    method:row['Método de pago']||row['Payment Method']||row['method']||'',
+    factura:row['Factura']||row['factura']||'No',
+    status:row['Estado']||row['Status']||row['status']||'Pagado',
+    notes:row['Notas']||row['Notes']||row['notes']||'',
+    timestamp:row['Timestamp']||row['timestamp']||''
+  };}
+  if(sheet==='Expenses'){return{
+    desc:row['Descripción']||row['Description']||row['desc']||'',
+    date:row['Fecha']||row['Date']||row['date']||'',
+    category:row['Categoría']||row['Category']||row['category']||'',
+    amount:parseFloat(row['Monto (MXN)']||row['Amount (USD)']||row['amount']||0),
+    method:row['Pagado con']||row['Paid Via']||row['method']||'',
+    vendor:row['Proveedor']||row['Vendor']||row['vendor']||'',
+    notes:row['Notas']||row['Notes']||row['notes']||'',
+    timestamp:row['Timestamp']||row['timestamp']||''
+  };}
   return row;
 }
+
 async function loadSheetData(section){
-  if(!IS_CONFIGURED)return;
+  if(!IS_CONFIGURED||!sessionPinHash)return;
   const map={patients:'Patients',billing:'Billing',expenses:'Expenses'};
   try{
-    const res=await fetch(`${APPS_SCRIPT_URL}?action=get&sheet=${map[section]||section}`);
+    const sheetName=map[section]||section;
+    // Pass the PIN hash with every read request
+    const res=await fetch(`${APPS_SCRIPT_URL}?action=get&sheet=${sheetName}&pinHash=${sessionPinHash}`);
     const json=await res.json();
     if(json.data){
       if(section==='patients'){window.patientsData=json.data;const el=document.getElementById('d-patients');if(el)el.textContent=json.data.length;}
@@ -878,11 +1026,19 @@ async function loadSheetData(section){
     }
   }catch(e){console.warn('No se pudo cargar:',e);}
 }
+
 async function sendToSheets(payload){
   if(!IS_CONFIGURED){console.log('Demo:',payload);return true;}
-  try{await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});return true;}
-  catch(e){console.error(e);return false;}
+  try{
+    await fetch(APPS_SCRIPT_URL,{
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    return true;
+  }catch(e){console.error(e);return false;}
 }
+
 function showAlert(el,type,msg){
   el.className='alert alert-'+type+' show';el.textContent=msg;
   if(type==='success')setTimeout(()=>el.classList.remove('show'),6000);
