@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smile Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --teal:       #2dd4bf;
+    --teal-dim:   #0f766e;
+    --teal-glow:  rgba(45,212,191,0.12);
+    --ink:        #f0f4f8;
+    --ink-soft:   #cbd5e1;
+    --muted:      #64748b;
+    --border:     #1e293b;
+    --surface:    #0f172a;
+    --card:       #1e293b;
+    --card2:      #162032;
+    --danger:     #f87171;
+    --danger-bg:  rgba(248,113,113,0.1);
+    --success:    #34d399;
+    --success-bg: rgba(52,211,153,0.1);
+    --warn:       #fbbf24;
+    --warn-bg:    rgba(251,191,36,0.1);
+    --radius:     12px;
+    --radius-sm:  8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { color-scheme: dark; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; }
+
+  /* NAV */
+  nav { background: #0a1628; border-bottom: 1px solid var(--border); padding: 0 1.25rem; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
+  .nav-brand { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--teal); padding: 1rem 1rem 1rem 0; margin-right: auto; white-space: nowrap; }
+  .nav-tabs { display: flex; }
+  .nav-tab { background: none; border: none; border-bottom: 2.5px solid transparent; padding: 1rem 0.8rem; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500; color: var(--muted); cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s; }
+  .nav-tab:hover { color: var(--ink-soft); }
+  .nav-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .nav-lock { background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.32rem 0.7rem; font-size: 0.72rem; color: var(--muted); cursor: pointer; margin-left: 0.5rem; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+  .nav-lock:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* PAGES */
+  .page { display: none; padding: 1.5rem 1.25rem; max-width: 740px; margin: 0 auto; }
+  .page.active { display: block; }
+  #page-dashboard { max-width: 900px; }
+
+  /* LOCK */
+  #lock-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 200; }
+  #lock-screen.hidden { display: none; }
+  .lock-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; width: min(340px, 90vw); text-align: center; }
+  .lock-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .lock-card h2 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; margin-bottom: 0.4rem; }
+  .lock-card p { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; }
+
+  /* CARDS */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; margin-bottom: 1rem; }
+  .card-title { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 0.2rem; }
+  .card-sub { font-size: 0.77rem; color: var(--muted); margin-bottom: 1.2rem; }
+
+  /* FORMS */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .form-grid.single { grid-template-columns: 1fr; }
+  .field { display: flex; flex-direction: column; gap: 0.28rem; }
+  .field.full { grid-column: 1 / -1; }
+  label { font-size: 0.73rem; font-weight: 500; color: var(--muted); }
+  input, select, textarea { font-family: 'DM Sans', sans-serif; font-size: 0.87rem; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.58rem 0.8rem; background: #0f172a; color: var(--ink); width: 100%; transition: border-color 0.15s; -webkit-appearance: none; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-glow); }
+  select option { background: #1e293b; }
+  textarea { resize: vertical; min-height: 68px; }
+  .required::after { content: ' *'; color: var(--danger); }
+
+  /* BUTTONS */
+  .btn { font-family: 'DM Sans', sans-serif; font-size: 0.87rem; font-weight: 500; padding: 0.65rem 1.4rem; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.4rem; }
+  .btn-primary { background: var(--teal); color: #0a1628; }
+  .btn-primary:hover { background: #5eead4; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-outline { background: transparent; color: var(--teal); border: 1px solid var(--teal-dim); }
+  .btn-outline:hover { background: var(--teal-glow); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ALERTS */
+  .alert { border-radius: var(--radius-sm); padding: 0.7rem 1rem; font-size: 0.81rem; margin-bottom: 1rem; display: none; }
+  .alert.show { display: block; }
+  .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+  .alert-error { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(248,113,113,0.25); }
+
+  /* STEPS */
+  .steps { display: flex; gap: 4px; margin-bottom: 1.4rem; }
+  .step { flex: 1; height: 3px; background: var(--border); border-radius: 2px; transition: background 0.3s; }
+  .step.done { background: var(--teal); }
+
+  /* SECTION TITLE */
+  .section-title { font-size: 0.68rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 1.4rem 0 0.7rem; }
+
+  /* ENTRY LIST */
+  .entry-list { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.75rem; }
+  .entry-item { background: var(--card2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.7rem; }
+  .entry-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--teal-glow); color: var(--teal); font-size: 0.78rem; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .entry-avatar.expense { background: var(--warn-bg); color: var(--warn); }
+  .entry-body { flex: 1; min-width: 0; }
+  .entry-name { font-size: 0.87rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry-meta { font-size: 0.73rem; color: var(--muted); margin-top: 1px; }
+  .entry-amount { font-size: 0.93rem; font-weight: 500; white-space: nowrap; }
+  .entry-amount.income { color: var(--success); }
+  .entry-amount.expense { color: var(--danger); }
+
+  /* PILLS */
+  .method-pill { font-size: 0.67rem; padding: 1px 6px; border-radius: 20px; font-weight: 500; }
+  .pill-card { background: rgba(59,130,246,0.15); color: #93c5fd; }
+  .pill-cash { background: var(--success-bg); color: var(--success); }
+  .pill-transfer { background: rgba(167,139,250,0.15); color: #c4b5fd; }
+  .pill-insurance { background: var(--warn-bg); color: var(--warn); }
+  .status-pill { font-size: 0.67rem; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+  .s-paid { background: var(--success-bg); color: var(--success); }
+  .s-pending { background: var(--warn-bg); color: var(--warn); }
+  .s-overdue { background: var(--danger-bg); color: var(--danger); }
+
+  /* METRICS */
+  .metrics-row { display: grid; gap: 0.75rem; margin-bottom: 1rem; }
+  .metrics-4 { grid-template-columns: repeat(4, 1fr); }
+  .metrics-3 { grid-template-columns: repeat(3, 1fr); }
+  .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.9rem 1rem; }
+  .metric-label { font-size: 0.67rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .metric-value { font-size: 1.4rem; font-weight: 300; margin-top: 3px; line-height: 1; }
+  .metric-value.green { color: var(--success); }
+  .metric-value.red { color: var(--danger); }
+  .metric-sub { font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
+
+  /* DASHBOARD */
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .dash-grid .card { margin-bottom: 0; }
+  .chart-wrap { position: relative; width: 100%; height: 190px; margin-top: 0.75rem; }
+
+  /* RECENT TABLE */
+  .recent-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 0.75rem; table-layout: fixed; }
+  .recent-table th { text-align: left; font-size: 0.67rem; font-weight: 500; color: var(--muted); padding: 0 0.5rem 0.5rem; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; overflow: hidden; }
+  .recent-table td { padding: 0.55rem 0.5rem; color: var(--ink-soft); border-bottom: 1px solid rgba(30,41,59,0.6); vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .recent-table tr:last-child td { border-bottom: none; }
+  .recent-table td:first-child { color: var(--ink); font-weight: 500; }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: 0.84rem; }
+  .empty-icon { font-size: 1.8rem; margin-bottom: 0.5rem; opacity: 0.35; }
+
+  /* CONFIG */
+  .config-banner { background: var(--warn-bg); border: 1px solid rgba(251,191,36,0.25); border-radius: var(--radius-sm); padding: 0.7rem 1rem; font-size: 0.79rem; color: var(--warn); margin-bottom: 1rem; }
+  .config-banner code { background: rgba(0,0,0,0.2); border-radius: 3px; padding: 1px 5px; font-size: 0.76rem; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 540px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: 1; }
+    .metrics-4, .metrics-3 { grid-template-columns: 1fr 1fr; }
+    .dash-grid { grid-template-columns: 1fr; }
+    .nav-tab { padding: 1rem 0.5rem; font-size: 0.7rem; }
+    .recent-table th:nth-child(3), .recent-table td:nth-child(3),
+    .recent-table th:nth-child(5), .recent-table td:nth-child(5) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lock-screen" class="hidden">
+  <div class="lock-card">
+    <div class="lock-icon">🔒</div>
+    <h2>Acceso del Personal</h2>
+    <p>Ingresa tu PIN para continuar.</p>
+    <div class="field" style="margin-bottom:1rem;">
+      <input type="password" id="pin-input" placeholder="PIN" maxlength="6"
+        style="text-align:center;font-size:1.4rem;letter-spacing:0.35em;"
+        onkeydown="if(event.key==='Enter')checkPin()"/>
+    </div>
+    <div id="pin-error" class="alert alert-error">PIN incorrecto. Intenta de nuevo.</div>
+    <button class="btn btn-primary" style="width:100%;" onclick="checkPin()">Desbloquear</button>
+    <button class="btn" style="width:100%;margin-top:0.5rem;color:var(--muted);" onclick="closeLock()">Cancelar</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">🦷 Smile Clinic</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('intake',this)">Registro</button>
+    <button class="nav-tab"        onclick="requireAuth('dashboard',this)">Panel</button>
+    <button class="nav-tab"        onclick="requireAuth('billing',this)">Cobros</button>
+    <button class="nav-tab"        onclick="requireAuth('expenses',this)">Gastos</button>
+  </div>
+  <button class="nav-lock" id="lock-btn" onclick="lockSession()" style="display:none;">🔒</button>
+</nav>
+
+<!-- ═══════════════════════ PAGE: REGISTRO ═══════════════════════ -->
+<div id="page-intake" class="page active">
+  <div id="config-notice" class="config-banner" style="display:none;">
+    ⚙️ <strong>Configuración pendiente:</strong> Edita el archivo y agrega tu <code>APPS_SCRIPT_URL</code> y tu <code>STAFF_PIN</code>.
+  </div>
+  <div class="card">
+    <div class="card-title">Registro de Paciente</div>
+    <div class="card-sub">Por favor complete todos los campos marcados con *. Esta información nos ayuda a brindarle mejor atención.</div>
+    <div class="steps">
+      <div class="step done" id="step-1"></div>
+      <div class="step" id="step-2"></div>
+      <div class="step" id="step-3"></div>
+    </div>
+    <div id="alert-intake" class="alert"></div>
+
+    <!-- Paso 1 -->
+    <div id="intake-step-1">
+      <div class="section-title">Información Personal</div>
+      <div class="form-grid">
+        <div class="field"><label class="required">Nombre(s)</label><input type="text" id="i-first" placeholder="Ana" autocomplete="given-name"/></div>
+        <div class="field"><label class="required">Apellido(s)</label><input type="text" id="i-last" placeholder="Torres" autocomplete="family-name"/></div>
+        <div class="field"><label class="required">Fecha de nacimiento</label><input type="date" id="i-dob"/></div>
+        <div class="field"><label class="required">Teléfono</label><input type="tel" id="i-phone" placeholder="+52 833 000 0000" autocomplete="tel"/></div>
+        <div class="field full"><label>Correo electrónico</label><input type="email" id="i-email" placeholder="ana@correo.com" autocomplete="email"/></div>
+        <div class="field full"><label>Domicilio</label><input type="text" id="i-address" placeholder="Calle, Colonia, Ciudad" autocomplete="street-address"/></div>
+      </div>
+      <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="nextStep(2)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Paso 2 -->
+    <div id="intake-step-2" style="display:none;">
+      <div class="section-title">Historial Médico</div>
+      <div class="form-grid">
+        <div class="field full"><label>¿Tiene alguna alergia? (medicamentos, látex, etc.)</label><textarea id="i-allergies" placeholder="Ej. Penicilina, látex..."></textarea></div>
+        <div class="field full"><label>Medicamentos actuales</label><textarea id="i-medications" placeholder="Liste los medicamentos que toma actualmente..."></textarea></div>
+        <div class="field full"><label>Enfermedades o condiciones médicas relevantes</label><textarea id="i-conditions" placeholder="Ej. Diabetes, hipertensión, problemas cardíacos..."></textarea></div>
+        <div class="field">
+          <label>Última visita al dentista</label>
+          <select id="i-last-visit">
+            <option value="">Selecciona...</option>
+            <option>Hace menos de 6 meses</option>
+            <option>6 a 12 meses</option>
+            <option>1 a 2 años</option>
+            <option>Más de 2 años</option>
+            <option>Nunca</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>¿Fuma o consume tabaco?</label>
+          <select id="i-tobacco">
+            <option value="">Selecciona...</option>
+            <option>No</option>
+            <option>Sí — cigarrillos</option>
+            <option>Sí — otro tabaco</option>
+            <option>Ex fumador/a</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:1.2rem;display:flex;justify-content:space-between;">
+        <button class="btn btn-outline" onclick="nextStep(1)">← Atrás</button>
+        <button class="btn btn-primary" onclick="nextStep(3)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Paso 3 -->
+    <div id="intake-step-3" style="display:none;">
+      <div class="section-title">Motivo de la Consulta</div>
+      <div class="form-grid single">
+        <div class="field">
+          <label class="required">Motivo de consulta de hoy</label>
+          <select id="i-reason">
+            <option value="">Selecciona...</option>
+            <option>Revisión / limpieza de rutina</option>
+            <option>Dolor de muelas</option>
+            <option>Diente roto o fracturado</option>
+            <option>Caries / empaste</option>
+            <option>Consulta de ortodoncia</option>
+            <option>Extracción</option>
+            <option>Endodoncia (canal)</option>
+            <option>Blanqueamiento dental</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="field"><label>Notas adicionales para el dentista</label><textarea id="i-notes" placeholder="Cualquier cosa que quieras que el dentista sepa..."></textarea></div>
+        <div class="field">
+          <label>¿Cómo nos encontraste?</label>
+          <select id="i-referral">
+            <option value="">Selecciona...</option>
+            <option>Búsqueda en Google</option>
+            <option>Recomendación de familiar o amigo</option>
+            <option>Redes sociales</option>
+            <option>Pasé por aquí</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:1.2rem;display:flex;justify-content:space-between;">
+        <button class="btn btn-outline" onclick="nextStep(2)">← Atrás</button>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitIntake()">Enviar ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE: PANEL ═══════════════════════ -->
+<div id="page-dashboard" class="page">
+
+  <div class="metrics-row metrics-4">
+    <div class="metric-card">
+      <div class="metric-label">Pacientes totales</div>
+      <div class="metric-value" id="d-patients">—</div>
+      <div class="metric-sub" id="d-patients-sub">registros de formulario</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Ingresos del mes</div>
+      <div class="metric-value green" id="d-revenue">$0</div>
+      <div class="metric-sub" id="d-revenue-sub">0 cobros</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Gastos del mes</div>
+      <div class="metric-value red" id="d-expenses">$0</div>
+      <div class="metric-sub" id="d-expenses-sub">0 gastos</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Balance neto</div>
+      <div class="metric-value" id="d-net">$0</div>
+      <div class="metric-sub">ingresos − gastos</div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="card">
+      <div class="card-title" style="font-size:0.95rem;">Ingresos por mes</div>
+      <div class="chart-wrap"><canvas id="revenueChart" role="img" aria-label="Ingresos mensuales">Gráfica de barras de ingresos.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="font-size:0.95rem;">Servicios más frecuentes</div>
+      <div class="chart-wrap"><canvas id="servicesChart" role="img" aria-label="Servicios frecuentes">Gráfica de dona de servicios.</canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="font-size:0.95rem;">Cobros recientes</div>
+    <div style="overflow-x:auto;">
+      <table class="recent-table">
+        <thead><tr>
+          <th style="width:22%">Paciente</th>
+          <th style="width:20%">Servicio</th>
+          <th style="width:14%">Fecha</th>
+          <th style="width:13%">Monto</th>
+          <th style="width:18%">Método</th>
+          <th style="width:13%">Estado</th>
+        </tr></thead>
+        <tbody id="dash-recent-body">
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="card">
+      <div class="card-title" style="font-size:0.95rem;">Gastos recientes</div>
+      <div id="dash-expense-list" style="margin-top:0.6rem;">
+        <div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos registrados.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="font-size:0.95rem;">Métodos de pago</div>
+      <div class="chart-wrap" style="height:170px;"><canvas id="methodChart" role="img" aria-label="Métodos de pago">Gráfica de métodos.</canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE: COBROS ═══════════════════════ -->
+<div id="page-billing" class="page">
+  <div class="metrics-row metrics-3">
+    <div class="metric-card"><div class="metric-label">Hoy</div><div class="metric-value green" id="m-today">$0</div></div>
+    <div class="metric-card"><div class="metric-label">Este mes</div><div class="metric-value" id="m-month">$0</div></div>
+    <div class="metric-card"><div class="metric-label">Registros</div><div class="metric-value" id="m-count">0</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Registrar Cobro</div>
+    <div class="card-sub">Registra el pago de una visita de paciente.</div>
+    <div id="alert-billing" class="alert"></div>
+    <div class="form-grid">
+      <div class="field"><label class="required">Nombre del paciente</label><input type="text" id="b-patient" placeholder="Juan Pérez"/></div>
+      <div class="field"><label class="required">Fecha</label><input type="date" id="b-date"/></div>
+      <div class="field">
+        <label class="required">Servicio realizado</label>
+        <select id="b-service">
+          <option value="">Selecciona...</option>
+          <option>Limpieza</option><option>Radiografía</option><option>Empaste / caries</option>
+          <option>Extracción</option><option>Endodoncia</option><option>Corona</option>
+          <option>Ortodoncia</option><option>Blanqueamiento</option><option>Consulta</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="field"><label class="required">Monto (USD)</label><input type="number" id="b-amount" placeholder="0.00" min="0" step="0.01"/></div>
+      <div class="field">
+        <label class="required">Método de pago</label>
+        <select id="b-method">
+          <option value="">Selecciona...</option>
+          <option>Efectivo</option><option>Tarjeta de crédito</option>
+          <option>Tarjeta de débito</option><option>Transferencia</option><option>Seguro médico</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estado</label>
+        <select id="b-status">
+          <option value="Pagado">Pagado</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Parcial">Parcial</option>
+        </select>
+      </div>
+      <div class="field full"><label>Notas</label><input type="text" id="b-notes" placeholder="Ej. Seguro cubrió 50%, paciente pagó el resto"/></div>
+    </div>
+    <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;">
+      <button class="btn btn-primary" onclick="submitBilling()">Guardar Cobro ✓</button>
+    </div>
+  </div>
+  <div class="section-title">Cobros Recientes</div>
+  <div id="billing-list" class="entry-list">
+    <div class="empty"><div class="empty-icon">💳</div>Aún no hay cobros registrados.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE: GASTOS ═══════════════════════ -->
+<div id="page-expenses" class="page">
+  <div class="metrics-row metrics-3">
+    <div class="metric-card"><div class="metric-label">Este mes</div><div class="metric-value red" id="e-month">$0</div></div>
+    <div class="metric-card"><div class="metric-label">Mayor gasto</div><div class="metric-value" id="e-largest">—</div></div>
+    <div class="metric-card"><div class="metric-label">Registros</div><div class="metric-value" id="e-count">0</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Registrar Gasto</div>
+    <div class="card-sub">Lleva el control de insumos, renta, sueldos y otros costos.</div>
+    <div id="alert-expenses" class="alert"></div>
+    <div class="form-grid">
+      <div class="field"><label class="required">Descripción</label><input type="text" id="e-desc" placeholder="Caja de guantes dentales"/></div>
+      <div class="field"><label class="required">Fecha</label><input type="date" id="e-date"/></div>
+      <div class="field">
+        <label class="required">Categoría</label>
+        <select id="e-category">
+          <option value="">Selecciona...</option>
+          <option>Insumos y materiales</option><option>Equipo</option><option>Renta y servicios</option>
+          <option>Sueldos</option><option>Medicamentos</option><option>Publicidad</option>
+          <option>Seguro</option><option>Laboratorio dental</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="field"><label class="required">Monto (USD)</label><input type="number" id="e-amount" placeholder="0.00" min="0" step="0.01"/></div>
+      <div class="field">
+        <label>Pagado con</label>
+        <select id="e-method">
+          <option value="">Selecciona...</option>
+          <option>Efectivo</option><option>Tarjeta empresarial</option><option>Transferencia</option><option>Cheque</option>
+        </select>
+      </div>
+      <div class="field"><label>Proveedor</label><input type="text" id="e-vendor" placeholder="Ej. Dental Depot"/></div>
+      <div class="field full"><label>Notas</label><input type="text" id="e-notes" placeholder="Notas opcionales..."/></div>
+    </div>
+    <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;">
+      <button class="btn btn-primary" onclick="submitExpense()">Guardar Gasto ✓</button>
+    </div>
+  </div>
+  <div class="section-title">Gastos Recientes</div>
+  <div id="expense-list" class="entry-list">
+    <div class="empty"><div class="empty-icon">🧾</div>Aún no hay gastos registrados.</div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   CONFIGURACIÓN — edita estos valores
+═══════════════════════════════════════ */
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const STAFF_PIN       = '1234';
+/* ═══════════════════════════════════════ */
+
+const IS_CONFIGURED = APPS_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwcJB00jVaEbPl0wkhy0t819qYWsVkplmCpxoxMEuvdXcTh8ddU0J0LCsie37oD7cZ_Aw/exec';
+let billingData = [], expenseData = [], sessionUnlocked = false;
+let pendingPage = null, pendingTab = null;
+let revenueChart = null, servicesChart = null, methodChart = null;
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (!IS_CONFIGURED) document.getElementById('config-notice').style.display = 'block';
+  setToday('b-date'); setToday('e-date');
+});
+
+function setToday(id) { const el=document.getElementById(id); if(el) el.value=new Date().toISOString().split('T')[0]; }
+
+// NAV
+function showPage(pageId, tabEl) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
+  if (pageId==='dashboard') setTimeout(renderDashboard, 50);
+}
+function requireAuth(pageId, tabEl) {
+  if (sessionUnlocked) { showPage(pageId, tabEl); return; }
+  pendingPage=pageId; pendingTab=tabEl;
+  document.getElementById('lock-screen').classList.remove('hidden');
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-error').classList.remove('show');
+  setTimeout(()=>document.getElementById('pin-input').focus(), 100);
+}
+function checkPin() {
+  if (document.getElementById('pin-input').value===STAFF_PIN) {
+    sessionUnlocked=true;
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.getElementById('lock-btn').style.display='inline-block';
+    showPage(pendingPage, pendingTab);
+    if (IS_CONFIGURED) { loadSheetData('billing'); loadSheetData('expenses'); }
+  } else {
+    document.getElementById('pin-error').classList.add('show');
+    document.getElementById('pin-input').value='';
+    document.getElementById('pin-input').focus();
+  }
+}
+function closeLock() { document.getElementById('lock-screen').classList.add('hidden'); }
+function lockSession() {
+  sessionUnlocked=false; billingData=[]; expenseData=[];
+  document.getElementById('lock-btn').style.display='none';
+  showPage('intake', document.querySelector('.nav-tab'));
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+}
+
+// INTAKE STEPS
+let currentStep=1;
+function nextStep(n) {
+  if (n>currentStep && !validateStep(currentStep)) return;
+  document.getElementById('intake-step-'+currentStep).style.display='none';
+  document.getElementById('intake-step-'+n).style.display='block';
+  currentStep=n;
+  for(let i=1;i<=3;i++) document.getElementById('step-'+i).classList.toggle('done',i<=currentStep);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+const gv = id => document.getElementById(id).value.trim();
+function validateStep(step) {
+  const al=document.getElementById('alert-intake');
+  if (step===1 && (!gv('i-first')||!gv('i-last')||!gv('i-dob')||!gv('i-phone'))) {
+    showAlert(al,'error','Por favor completa todos los campos obligatorios.'); return false;
+  }
+  if (step===3 && !document.getElementById('i-reason').value) {
+    showAlert(al,'error','Por favor selecciona el motivo de la consulta.'); return false;
+  }
+  al.classList.remove('show'); return true;
+}
+
+// SUBMIT INTAKE
+async function submitIntake() {
+  if (!validateStep(3)) return;
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true; btn.textContent='Enviando...';
+  const al=document.getElementById('alert-intake');
+  const payload = {
+    sheet:'Patients', timestamp:new Date().toISOString(),
+    firstName:gv('i-first'), lastName:gv('i-last'), dob:gv('i-dob'),
+    phone:gv('i-phone'), email:gv('i-email'), address:gv('i-address'),
+    allergies:gv('i-allergies'), medications:gv('i-medications'), conditions:gv('i-conditions'),
+    lastVisit:document.getElementById('i-last-visit').value,
+    tobacco:document.getElementById('i-tobacco').value,
+    reason:document.getElementById('i-reason').value,
+    notes:gv('i-notes'), referral:document.getElementById('i-referral').value,
+  };
+  const ok=await sendToSheets(payload);
+  if (ok) {
+    showAlert(al,'success','✓ ¡Gracias! Tu información fue enviada. Por favor toma asiento, te atenderemos en breve.');
+    ['i-first','i-last','i-dob','i-phone','i-email','i-address','i-allergies','i-medications','i-conditions','i-notes'].forEach(id=>document.getElementById(id).value='');
+    ['i-last-visit','i-tobacco','i-reason','i-referral'].forEach(id=>document.getElementById(id).selectedIndex=0);
+    nextStep(1); currentStep=1;
+  } else { showAlert(al,'error','Error al enviar. Por favor pide ayuda al personal.'); }
+  btn.disabled=false; btn.textContent='Enviar ✓';
+}
+
+// SUBMIT BILLING
+async function submitBilling() {
+  const al=document.getElementById('alert-billing');
+  const patient=gv('b-patient'), date=document.getElementById('b-date').value,
+        service=document.getElementById('b-service').value,
+        amount=parseFloat(document.getElementById('b-amount').value),
+        method=document.getElementById('b-method').value,
+        status=document.getElementById('b-status').value, notes=gv('b-notes');
+  if (!patient||!date||!service||!amount||!method) { showAlert(al,'error','Por favor completa todos los campos obligatorios.'); return; }
+  const entry={sheet:'Billing',timestamp:new Date().toISOString(),patient,date,service,amount,method,status,notes};
+  if (await sendToSheets(entry)) {
+    billingData.unshift(entry); renderBilling(); renderDashboard();
+    showAlert(al,'success',`✓ Cobro de $${amount.toFixed(2)} registrado para ${patient}.`);
+    document.getElementById('b-patient').value=''; document.getElementById('b-amount').value=''; document.getElementById('b-notes').value='';
+    ['b-service','b-method'].forEach(id=>document.getElementById(id).selectedIndex=0);
+    document.getElementById('b-status').selectedIndex=0; setToday('b-date');
+  } else { showAlert(al,'error','Error al guardar. Verifica tu conexión.'); }
+}
+
+// SUBMIT EXPENSE
+async function submitExpense() {
+  const al=document.getElementById('alert-expenses');
+  const desc=gv('e-desc'), date=document.getElementById('e-date').value,
+        category=document.getElementById('e-category').value,
+        amount=parseFloat(document.getElementById('e-amount').value),
+        method=document.getElementById('e-method').value, vendor=gv('e-vendor'), notes=gv('e-notes');
+  if (!desc||!date||!category||!amount) { showAlert(al,'error','Por favor completa todos los campos obligatorios.'); return; }
+  const entry={sheet:'Expenses',timestamp:new Date().toISOString(),desc,date,category,amount,method,vendor,notes};
+  if (await sendToSheets(entry)) {
+    expenseData.unshift(entry); renderExpenses(); renderDashboard();
+    showAlert(al,'success',`✓ Gasto de $${amount.toFixed(2)} guardado.`);
+    document.getElementById('e-desc').value=''; document.getElementById('e-amount').value='';
+    document.getElementById('e-vendor').value=''; document.getElementById('e-notes').value='';
+    ['e-category','e-method'].forEach(id=>document.getElementById(id).selectedIndex=0); setToday('e-date');
+  } else { showAlert(al,'error','Error al guardar. Verifica tu conexión.'); }
+}
+
+// RENDER BILLING
+const methodClass={'Efectivo':'pill-cash','Tarjeta de crédito':'pill-card','Tarjeta de débito':'pill-card','Transferencia':'pill-transfer','Seguro médico':'pill-insurance'};
+const statusClass={'Pagado':'s-paid','Pendiente':'s-pending','Parcial':'s-pending'};
+
+function renderBilling() {
+  const list=document.getElementById('billing-list');
+  if (!billingData.length) { list.innerHTML='<div class="empty"><div class="empty-icon">💳</div>Aún no hay cobros registrados.</div>'; document.getElementById('m-today').textContent='$0'; document.getElementById('m-month').textContent='$0'; document.getElementById('m-count').textContent='0'; return; }
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('m-today').textContent='$'+billingData.filter(e=>e.date===today).reduce((s,e)=>s+Number(e.amount),0).toFixed(0);
+  document.getElementById('m-month').textContent='$'+billingData.reduce((s,e)=>s+Number(e.amount),0).toFixed(0);
+  document.getElementById('m-count').textContent=billingData.length;
+  list.innerHTML=billingData.slice(0,25).map(e=>{
+    const ini=e.patient.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    return `<div class="entry-item"><div class="entry-avatar">${ini}</div><div class="entry-body"><div class="entry-name">${e.patient}</div><div class="entry-meta">${e.service} · ${e.date} <span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method}</span></div></div><div class="entry-amount income">+$${Number(e.amount).toFixed(2)}</div></div>`;
+  }).join('');
+}
+
+// RENDER EXPENSES
+function renderExpenses() {
+  const list=document.getElementById('expense-list');
+  if (!expenseData.length) { list.innerHTML='<div class="empty"><div class="empty-icon">🧾</div>Aún no hay gastos registrados.</div>'; document.getElementById('e-month').textContent='$0'; document.getElementById('e-largest').textContent='—'; document.getElementById('e-count').textContent='0'; return; }
+  document.getElementById('e-month').textContent='$'+expenseData.reduce((s,e)=>s+Number(e.amount),0).toFixed(0);
+  document.getElementById('e-largest').textContent='$'+Math.max(...expenseData.map(e=>Number(e.amount))).toFixed(0);
+  document.getElementById('e-count').textContent=expenseData.length;
+  list.innerHTML=expenseData.slice(0,25).map(e=>`<div class="entry-item"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc}</div><div class="entry-meta">${e.category} · ${e.date}${e.vendor?' · '+e.vendor:''}</div></div><div class="entry-amount expense">-$${Number(e.amount).toFixed(2)}</div></div>`).join('');
+}
+
+// RENDER DASHBOARD
+function renderDashboard() {
+  const totalRev=billingData.reduce((s,e)=>s+Number(e.amount),0);
+  const totalExp=expenseData.reduce((s,e)=>s+Number(e.amount),0);
+  const net=totalRev-totalExp;
+  document.getElementById('d-revenue').textContent='$'+totalRev.toFixed(0);
+  document.getElementById('d-expenses').textContent='$'+totalExp.toFixed(0);
+  const netEl=document.getElementById('d-net');
+  netEl.textContent=(net>=0?'$':'-$')+Math.abs(net).toFixed(0);
+  netEl.className='metric-value '+(net>=0?'green':'red');
+  document.getElementById('d-revenue-sub').textContent=billingData.length+' cobros';
+  document.getElementById('d-expenses-sub').textContent=expenseData.length+' gastos';
+  document.getElementById('d-patients').textContent=billingData.length||'—';
+
+  // Recent table
+  const tbody=document.getElementById('dash-recent-body');
+  if (!billingData.length) {
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr>';
+  } else {
+    tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td>${e.patient}</td><td style="color:var(--muted)">${e.service}</td><td style="color:var(--muted)">${e.date}</td><td style="color:var(--success)">$${Number(e.amount).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method}</span></td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status}</span></td></tr>`).join('');
+  }
+
+  // Expense mini-list
+  const deList=document.getElementById('dash-expense-list');
+  deList.innerHTML=!expenseData.length?'<div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos aún.</div>':expenseData.slice(0,4).map(e=>`<div class="entry-item" style="margin-bottom:0.4rem;"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc}</div><div class="entry-meta">${e.category}</div></div><div class="entry-amount expense">-$${Number(e.amount).toFixed(2)}</div></div>`).join('');
+
+  buildCharts();
+}
+
+// CHARTS
+function buildCharts() {
+  const gc='rgba(100,116,139,0.15)', tc='#64748b';
+  const months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const mRev=Array(12).fill(0);
+  billingData.forEach(e=>{const d=new Date(e.date||e.timestamp);if(!isNaN(d))mRev[d.getMonth()]+=Number(e.amount);});
+  const cur=new Date().getMonth();
+  const rLabels=billingData.length?months.slice(0,cur+1):['Ene','Feb','Mar','Abr'];
+  const rValues=billingData.length?mRev.slice(0,cur+1):[14200,15800,17050,18420];
+
+  if (revenueChart) revenueChart.destroy();
+  revenueChart=new Chart(document.getElementById('revenueChart'),{
+    type:'bar',
+    data:{labels:rLabels,datasets:[{label:'Ingresos',data:rValues,backgroundColor:'#0f766e',hoverBackgroundColor:'#2dd4bf',borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>'$'+Math.round(v/1000)+'k'},grid:{color:gc}}}}
+  });
+
+  const sCounts={};
+  billingData.forEach(e=>{sCounts[e.service]=(sCounts[e.service]||0)+1;});
+  const sL=Object.keys(sCounts).length?Object.keys(sCounts):['Limpieza','Empaste','Ortodoncia','Extracción'];
+  const sD=Object.values(sCounts).length?Object.values(sCounts):[40,25,20,15];
+  if (servicesChart) servicesChart.destroy();
+  servicesChart=new Chart(document.getElementById('servicesChart'),{
+    type:'doughnut',
+    data:{labels:sL,datasets:[{data:sD,backgroundColor:['#0f766e','#1d4ed8','#7c3aed','#b45309','#dc2626','#0891b2'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:tc,font:{size:10},boxWidth:9,padding:8}}},cutout:'62%'}
+  });
+
+  const mCounts={};
+  billingData.forEach(e=>{mCounts[e.method]=(mCounts[e.method]||0)+Number(e.amount);});
+  const mL=Object.keys(mCounts).length?Object.keys(mCounts):['Efectivo','T. Crédito','Transferencia'];
+  const mD=Object.values(mCounts).length?Object.values(mCounts):[40,45,15];
+  if (methodChart) methodChart.destroy();
+  methodChart=new Chart(document.getElementById('methodChart'),{
+    type:'doughnut',
+    data:{labels:mL,datasets:[{data:mD,backgroundColor:['#16a34a','#2563eb','#7c3aed','#d97706'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,font:{size:10},boxWidth:9,padding:8}}},cutout:'58%'}
+  });
+}
+
+// LOAD FROM SHEETS
+async function loadSheetData(section) {
+  if (!IS_CONFIGURED) return;
+  try {
+    const res=await fetch(APPS_SCRIPT_URL+'?action=get&sheet='+(section==='billing'?'Billing':'Expenses'));
+    const json=await res.json();
+    if (section==='billing'){billingData=json.data||[];renderBilling();}
+    else{expenseData=json.data||[];renderExpenses();}
+  } catch(e){console.warn('No se pudo cargar datos:',e);}
+}
+
+// SHEETS BRIDGE
+async function sendToSheets(payload) {
+  if (!IS_CONFIGURED){console.log('Modo demo:',payload);return true;}
+  try {
+    await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    return true;
+  } catch(e){console.error(e);return false;}
+}
+
+// ALERT HELPER
+function showAlert(el,type,msg){
+  el.className='alert alert-'+type+' show';
+  el.textContent=msg;
+  if(type==='success') setTimeout(()=>el.classList.remove('show'),5000);
+}
+</script>
+</body>
+</html>
