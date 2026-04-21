@@ -182,6 +182,24 @@
   .config-banner{background:var(--warn-bg);border:1px solid rgba(251,191,36,.25);border-radius:var(--radius-sm);padding:.7rem 1rem;font-size:.79rem;color:var(--warn);margin-bottom:1rem;}
   .config-banner code{background:rgba(0,0,0,.2);border-radius:3px;padding:1px 5px;font-size:.76rem;}
 
+  /* PATIENT AUTOCOMPLETE */
+  .autocomplete-wrap{position:relative;}
+  .autocomplete-list{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--card);border:1px solid var(--teal-dim);border-radius:var(--radius-sm);z-index:50;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+  .autocomplete-item{padding:.6rem .85rem;font-size:.84rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:.5rem;}
+  .autocomplete-item:hover{background:var(--teal-glow);}
+  .autocomplete-item .ac-name{color:var(--ink);font-weight:500;}
+  .autocomplete-item .ac-id{font-size:.68rem;color:var(--teal);font-family:monospace;}
+  .autocomplete-item .ac-dob{font-size:.7rem;color:var(--muted);}
+  .patient-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--teal-glow);border:1px solid var(--teal-dim);border-radius:20px;padding:.25rem .7rem;font-size:.75rem;color:var(--teal);margin-top:.3rem;}
+  .patient-badge .badge-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:0;line-height:1;}
+  .patient-badge .badge-clear:hover{color:var(--danger);}
+
+  /* ID PILL */
+  .id-pill{font-size:.65rem;font-family:monospace;padding:1px 6px;border-radius:4px;background:rgba(45,212,191,.08);color:var(--teal);border:1px solid rgba(45,212,191,.2);}
+
+  /* FK LINK */
+  .fk-link{font-size:.7rem;color:var(--teal-dim);font-family:monospace;}
+
   ::-webkit-scrollbar{width:6px;}
   ::-webkit-scrollbar-track{background:var(--surface);}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
@@ -222,6 +240,7 @@
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('intake',this)">Registro</button>
     <button class="nav-tab"        onclick="requireAuth('dashboard',this)">Panel</button>
+    <button class="nav-tab"        onclick="requireAuth('visits',this)">Visitas</button>
     <button class="nav-tab"        onclick="requireAuth('billing',this)">Cobros</button>
     <button class="nav-tab"        onclick="requireAuth('expenses',this)">Gastos</button>
   </div>
@@ -537,6 +556,51 @@
   </div>
 </div>
 
+<!-- ═══════════ VISITAS ═══════════ -->
+<div id="page-visits" class="page">
+  <div class="metrics-row metrics-3">
+    <div class="metric-card"><div class="metric-label">Total visitas</div><div class="metric-value" id="v-total">0</div></div>
+    <div class="metric-card"><div class="metric-label">Este mes</div><div class="metric-value" id="v-month">0</div></div>
+    <div class="metric-card"><div class="metric-label">Próximas citas</div><div class="metric-value" id="v-upcoming">0</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Registrar Visita Clínica</div>
+    <div class="card-sub">Vincula la visita a un paciente registrado. Se generará un <code style="font-size:.75rem;background:rgba(0,0,0,.2);padding:1px 5px;border-radius:3px;">visit_id</code> que puedes usar al registrar el cobro.</div>
+    <div id="alert-visits" class="alert"></div>
+    <div class="form-grid">
+      <!-- Patient autocomplete -->
+      <div class="field full">
+        <label class="required">Paciente</label>
+        <div class="autocomplete-wrap">
+          <input type="text" id="v-patient-search" placeholder="Escribe el nombre del paciente…" autocomplete="off"
+            oninput="searchPatients(this.value,'v-ac-list','v')" onfocus="searchPatients(this.value,'v-ac-list','v')"/>
+          <div class="autocomplete-list" id="v-ac-list" style="display:none;"></div>
+        </div>
+        <div id="v-patient-badge" style="display:none;">
+          <span class="patient-badge">
+            <span id="v-badge-name">—</span>
+            <span class="id-pill" id="v-badge-id">—</span>
+            <button class="badge-clear" onclick="clearPatientSelection('v')">✕</button>
+          </span>
+        </div>
+        <input type="hidden" id="v-patient-id"/>
+        <input type="hidden" id="v-patient-name"/>
+      </div>
+      <div class="field"><label class="required">Fecha de visita</label><input type="date" id="v-date"/></div>
+      <div class="field"><label>Próxima cita</label><input type="date" id="v-next-date"/></div>
+      <div class="field full"><label class="required">Motivo / Diagnóstico</label><textarea id="v-motivo" placeholder="Dolor molar superior derecho, caries grado II…"></textarea></div>
+      <div class="field full"><label>Tratamiento realizado</label><textarea id="v-tratamiento" placeholder="Obturación con resina compuesta pieza 16…"></textarea></div>
+      <div class="field full"><label>Notas clínicas</label><textarea id="v-notas" placeholder="Paciente cooperador, se aplicó anestesia local sin incidentes…"></textarea></div>
+    </div>
+    <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;gap:.6rem;">
+      <button class="btn btn-outline" id="v-bill-btn" onclick="visitThenBill()" style="display:none;">Guardar y Cobrar →</button>
+      <button class="btn btn-primary" onclick="submitVisit()">Guardar Visita ✓</button>
+    </div>
+  </div>
+  <div class="section-title">Visitas Recientes</div>
+  <div id="visits-list" class="entry-list"><div class="empty"><div class="empty-icon">🗓️</div>Aún no hay visitas registradas.</div></div>
+</div>
+
 <!-- ═══════════ COBROS ═══════════ -->
 <div id="page-billing" class="page">
   <div class="metrics-row metrics-3">
@@ -546,10 +610,33 @@
   </div>
   <div class="card">
     <div class="card-title">Registrar Cobro</div>
-    <div class="card-sub">Registra el pago de una visita de paciente.</div>
+    <div class="card-sub">Vincula el cobro a un paciente. Opcionalmente, asocia a una visita clínica para trazabilidad completa.</div>
     <div id="alert-billing" class="alert"></div>
     <div class="form-grid">
-      <div class="field"><label class="required">Nombre del paciente</label><input type="text" id="b-patient" placeholder="Juan Pérez"/></div>
+      <!-- Patient autocomplete -->
+      <div class="field full">
+        <label class="required">Paciente</label>
+        <div class="autocomplete-wrap">
+          <input type="text" id="b-patient-search" placeholder="Escribe el nombre del paciente…" autocomplete="off"
+            oninput="searchPatients(this.value,'b-ac-list','b')" onfocus="searchPatients(this.value,'b-ac-list','b')"/>
+          <div class="autocomplete-list" id="b-ac-list" style="display:none;"></div>
+        </div>
+        <div id="b-patient-badge" style="display:none;">
+          <span class="patient-badge">
+            <span id="b-badge-name">—</span>
+            <span class="id-pill" id="b-badge-id">—</span>
+            <button class="badge-clear" onclick="clearPatientSelection('b')">✕</button>
+          </span>
+        </div>
+        <input type="hidden" id="b-patient-id"/>
+        <input type="hidden" id="b-patient-name"/>
+      </div>
+      <!-- Optional visit link -->
+      <div class="field full">
+        <label>Visita asociada <span style="color:var(--muted);font-weight:400;">(opcional — para trazabilidad)</span></label>
+        <select id="b-visit-id"><option value="">Sin visita asociada</option></select>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:.2rem;">Selecciona un paciente primero para ver sus visitas.</div>
+      </div>
       <div class="field"><label class="required">Fecha</label><input type="date" id="b-date"/></div>
       <div class="field"><label class="required">Servicio realizado</label>
         <select id="b-service"><option value="">Selecciona...</option><option>Limpieza</option><option>Radiografía</option><option>Empaste / caries</option><option>Extracción</option><option>Endodoncia</option><option>Corona</option><option>Ortodoncia</option><option>Blanqueamiento</option><option>Consulta</option><option>Otro</option></select>
@@ -613,11 +700,12 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1CVHqZ8GY_GVD
 /* ════════════════════════════ */
 
 const IS_CONFIGURED = APPS_SCRIPT_URL.includes('macros/s/');
-let billingData=[], expenseData=[], sessionUnlocked=false;
+let billingData=[], expenseData=[], visitsData=[], patientsData=[], sessionUnlocked=false;
 let pendingPage=null, pendingTab=null;
 let revenueChart=null, servicesChart=null, methodChart=null;
-// Stores the PIN hash for the current session so authenticated GET requests work
 let sessionPinHash = '';
+// When user clicks "Guardar y Cobrar" on Visits page, we store the new visit context here
+let pendingBillFromVisit = null;
 
 const DISEASES = [
   'Anemia','Discracia sanguínea','Enfermedades respiratorias','Enfermedades hepáticas',
@@ -628,9 +716,15 @@ const DISEASES = [
 
 window.addEventListener('DOMContentLoaded', () => {
   if (!IS_CONFIGURED) document.getElementById('config-notice').style.display='block';
-  setToday('b-date'); setToday('e-date'); setToday('i-consent-date');
+  setToday('b-date'); setToday('e-date'); setToday('i-consent-date'); setToday('v-date');
   buildDiseaseTable();
   initSignaturePad();
+  // Close autocomplete dropdowns on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.autocomplete-wrap')) {
+      document.querySelectorAll('.autocomplete-list').forEach(l => l.style.display='none');
+    }
+  });
 });
 
 function setToday(id){const el=document.getElementById(id);if(el)el.value=new Date().toISOString().split('T')[0];}
@@ -786,6 +880,7 @@ function onPinSuccess(hash){
   showPage(pendingPage, pendingTab);
   if(IS_CONFIGURED){
     loadSheetData('patients');
+    loadSheetData('visits');
     loadSheetData('billing');
     loadSheetData('expenses');
   }
@@ -802,7 +897,7 @@ function closeLock(){document.getElementById('lock-screen').classList.add('hidde
 function lockSession(){
   sessionUnlocked=false;
   sessionPinHash='';
-  billingData=[];expenseData=[];
+  billingData=[];expenseData=[];visitsData=[];patientsData=[];
   document.getElementById('lock-btn').style.display='none';
   showPage('intake',document.querySelector('.nav-tab'));
   document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
