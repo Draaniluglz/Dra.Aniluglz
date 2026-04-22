@@ -7,14 +7,14 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  :root {
-    --teal:#2dd4bf; --teal-dim:#0f766e; --teal-glow:rgba(45,212,191,0.12);
-    --ink:#f0f4f8; --ink-soft:#cbd5e1; --muted:#64748b;
-    --border:#1e293b; --surface:#0f172a; --card:#1e293b; --card2:#162032;
-    --danger:#f87171; --danger-bg:rgba(248,113,113,0.1);
-    --success:#34d399; --success-bg:rgba(52,211,153,0.1);
-    --warn:#fbbf24; --warn-bg:rgba(251,191,36,0.1);
-    --radius:12px; --radius-sm:8px;
+  :root{
+    --teal:#2dd4bf;--teal-dim:#0f766e;--teal-glow:rgba(45,212,191,0.12);
+    --ink:#f0f4f8;--ink-soft:#cbd5e1;--muted:#64748b;
+    --border:#1e293b;--surface:#0f172a;--card:#1e293b;--card2:#162032;
+    --danger:#f87171;--danger-bg:rgba(248,113,113,0.1);
+    --success:#34d399;--success-bg:rgba(52,211,153,0.1);
+    --warn:#fbbf24;--warn-bg:rgba(251,191,36,0.1);
+    --radius:12px;--radius-sm:8px;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{color-scheme:dark;}
@@ -22,18 +22,17 @@
 
   /* NAV */
   nav{background:#0a1628;border-bottom:1px solid var(--border);padding:0 1.25rem;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
-  .nav-brand{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--teal);padding:1rem 1rem 1rem 0;margin-right:auto;white-space:nowrap;}
+  .nav-brand{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--teal);padding:1rem 1rem 1rem 0;margin-right:auto;white-space:nowrap;}
   .nav-tabs{display:flex;}
-  .nav-tab{background:none;border:none;border-bottom:2.5px solid transparent;padding:1rem 0.75rem;font-family:'DM Sans',sans-serif;font-size:0.76rem;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s;}
+  .nav-tab{background:none;border:none;border-bottom:2.5px solid transparent;padding:1rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.73rem;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s;}
   .nav-tab:hover{color:var(--ink-soft);}
   .nav-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
   .nav-lock{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.3rem .65rem;font-size:.7rem;color:var(--muted);cursor:pointer;margin-left:.5rem;font-family:'DM Sans',sans-serif;transition:all .15s;}
   .nav-lock:hover{border-color:var(--teal);color:var(--teal);}
 
-  /* PAGES */
   .page{display:none;padding:1.5rem 1.25rem;max-width:760px;margin:0 auto;}
   .page.active{display:block;}
-  #page-dashboard{max-width:900px;}
+  #page-dashboard{max-width:920px;}
 
   /* LOCK */
   #lock-screen{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:200;}
@@ -43,10 +42,9 @@
   .lock-card h2{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:.4rem;}
   .lock-card p{font-size:.82rem;color:var(--muted);margin-bottom:1.25rem;}
 
-  /* CARDS */
   .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;margin-bottom:1rem;}
-  .card-title{font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:.2rem;}
-  .card-sub{font-size:.77rem;color:var(--muted);margin-bottom:1.2rem;}
+  .card-title{font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:.2rem;}
+  .card-sub{font-size:.76rem;color:var(--muted);margin-bottom:1.2rem;}
 
   /* FORMS */
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
@@ -55,7 +53,6 @@
   .form-grid.single{grid-template-columns:1fr;}
   .field{display:flex;flex-direction:column;gap:.25rem;}
   .field.full{grid-column:1/-1;}
-  .field.span2{grid-column:span 2;}
   label{font-size:.72rem;font-weight:500;color:var(--muted);}
   input,select,textarea{font-family:'DM Sans',sans-serif;font-size:.86rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .8rem;background:#0f172a;color:var(--ink);width:100%;transition:border-color .15s;-webkit-appearance:none;}
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-glow);}
@@ -63,17 +60,10 @@
   textarea{resize:vertical;min-height:60px;}
   .required::after{content:' *';color:var(--danger);}
   input[type="checkbox"]{width:auto;accent-color:var(--teal);margin-right:.3rem;}
-  /* Hide native radios — we use custom toggle buttons instead */
   input[type="radio"]{display:none;}
 
-  /* CUSTOM TOGGLE BUTTON GROUP
-     Usage: <div class="radio-group">
-              <button class="rtoggle" data-group="UNIQUE_KEY" data-value="Sí">Sí</button>
-              <button class="rtoggle" data-group="UNIQUE_KEY" data-value="No">No</button>
-            </div>
-     JS reads value via: radioVal('UNIQUE_KEY')
-  */
-  .radio-group{display:flex;gap:.45rem;align-items:center;padding:.45rem 0;}
+  /* RADIO TOGGLES */
+  .radio-group{display:flex;gap:.45rem;align-items:center;padding:.45rem 0;flex-wrap:wrap;}
   .rtoggle{
     font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;
     padding:.32rem .85rem;border-radius:20px;cursor:pointer;
@@ -81,12 +71,10 @@
     transition:all .15s;line-height:1.4;
   }
   .rtoggle:hover{border-color:var(--teal-dim);color:var(--ink-soft);}
-  .rtoggle.selected{
-    background:var(--teal-glow);border-color:var(--teal);color:var(--teal);font-weight:600;
-  }
+  .rtoggle.on{background:var(--teal-glow);border-color:var(--teal);color:var(--teal);font-weight:600;}
 
-  /* SECTION HEADINGS inside form */
   .form-section{font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin:1.4rem 0 .75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+  .section-title{font-size:.68rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:1.4rem 0 .7rem;}
 
   /* DISEASE TABLE */
   .disease-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-bottom:.5rem;}
@@ -96,13 +84,13 @@
   .disease-table td:first-child{color:var(--ink-soft);}
   .disease-table .trat-input{font-size:.8rem;padding:.3rem .5rem;min-width:0;}
 
-  /* CONSENT BOX */
+  /* CONSENT */
   .consent-text{background:#0a1628;border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.1rem;font-size:.78rem;line-height:1.7;color:var(--ink-soft);margin-bottom:1rem;max-height:220px;overflow-y:auto;}
   .consent-text p{margin-bottom:.6rem;}
   .consent-check{display:flex;align-items:flex-start;gap:.6rem;font-size:.83rem;color:var(--ink-soft);line-height:1.5;margin-bottom:1rem;cursor:pointer;}
   .consent-check input{margin-top:.18rem;flex-shrink:0;}
 
-  /* SIGNATURE CANVAS */
+  /* SIGNATURE */
   .sig-wrap{border:1px solid var(--border);border-radius:var(--radius-sm);background:#0f172a;position:relative;margin-bottom:.5rem;}
   .sig-wrap canvas{display:block;width:100%;touch-action:none;cursor:crosshair;}
   .sig-label{font-size:.7rem;color:var(--muted);text-align:center;padding-bottom:.4rem;}
@@ -124,7 +112,7 @@
   .alert-success{background:var(--success-bg);color:var(--success);border:1px solid rgba(52,211,153,.25);}
   .alert-error{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(248,113,113,.25);}
 
-  /* PROGRESS STEPS */
+  /* STEPS */
   .steps{display:flex;gap:4px;margin-bottom:1.4rem;}
   .step{flex:1;height:3px;background:var(--border);border-radius:2px;transition:background .3s;}
   .step.done{background:var(--teal);}
@@ -132,19 +120,19 @@
   .step-label{flex:1;font-size:.62rem;color:var(--muted);text-align:center;line-height:1.3;}
   .step-label.active{color:var(--teal);font-weight:500;}
 
-  .section-title{font-size:.68rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:1.4rem 0 .7rem;}
-
   /* ENTRY LIST */
   .entry-list{display:flex;flex-direction:column;gap:.55rem;margin-top:.75rem;}
   .entry-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.8rem 1rem;display:flex;align-items:center;gap:.7rem;}
   .entry-avatar{width:34px;height:34px;border-radius:50%;background:var(--teal-glow);color:var(--teal);font-size:.78rem;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .entry-avatar.expense{background:var(--warn-bg);color:var(--warn);}
+  .entry-avatar.visit{background:rgba(167,139,250,.15);color:#c4b5fd;}
   .entry-body{flex:1;min-width:0;}
   .entry-name{font-size:.87rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .entry-meta{font-size:.73rem;color:var(--muted);margin-top:1px;}
   .entry-amount{font-size:.93rem;font-weight:500;white-space:nowrap;}
   .entry-amount.income{color:var(--success);}
   .entry-amount.expense{color:var(--danger);}
+  .entry-id{font-size:.65rem;font-family:monospace;color:var(--muted);white-space:nowrap;}
 
   /* PILLS */
   .method-pill{font-size:.67rem;padding:1px 6px;border-radius:20px;font-weight:500;}
@@ -171,51 +159,51 @@
   .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
   .dash-grid .card{margin-bottom:0;}
   .chart-wrap{position:relative;width:100%;height:190px;margin-top:.75rem;}
-  .recent-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:.75rem;table-layout:fixed;}
-  .recent-table th{text-align:left;font-size:.67rem;font-weight:500;color:var(--muted);padding:0 .5rem .5rem;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;overflow:hidden;}
-  .recent-table td{padding:.55rem .5rem;color:var(--ink-soft);border-bottom:1px solid rgba(30,41,59,.6);vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .recent-table tr:last-child td{border-bottom:none;}
-  .recent-table td:first-child{color:var(--ink);font-weight:500;}
+  .data-table{width:100%;border-collapse:collapse;font-size:.79rem;margin-top:.75rem;table-layout:fixed;}
+  .data-table th{text-align:left;font-size:.66rem;font-weight:500;color:var(--muted);padding:0 .5rem .5rem;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;overflow:hidden;}
+  .data-table td{padding:.52rem .5rem;color:var(--ink-soft);border-bottom:1px solid rgba(30,41,59,.6);vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .data-table td:first-child{color:var(--ink);font-weight:500;}
+
+  /* AUTOCOMPLETE */
+  .autocomplete-wrap{position:relative;}
+  .autocomplete-list{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--card);border:1px solid var(--teal-dim);border-radius:var(--radius-sm);z-index:50;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;}
+  .autocomplete-list.show{display:block;}
+  .autocomplete-item{padding:.6rem .85rem;font-size:.84rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:.5rem;color:var(--ink-soft);}
+  .autocomplete-item:hover{background:var(--teal-glow);color:var(--ink);}
+  .autocomplete-item .ac-id{font-size:.68rem;color:var(--teal);font-family:monospace;}
+  .patient-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--teal-glow);border:1px solid var(--teal-dim);border-radius:20px;padding:.25rem .75rem;font-size:.75rem;color:var(--teal);margin-top:.3rem;}
+  .badge-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:0;line-height:1;}
+  .badge-clear:hover{color:var(--danger);}
+
+  /* CLINICAL ALERT BOX */
+  .clinical-box{background:#162032;border:1px solid rgba(251,191,36,.25);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:.78rem;color:var(--ink-soft);margin-top:.5rem;display:none;}
+  .clinical-box.show{display:block;}
+  .clinical-box strong{color:var(--warn);}
+
+  /* DUPLICATE WARNING */
+  .dup-warning{background:var(--warn-bg);border:1px solid rgba(251,191,36,.3);border-radius:var(--radius-sm);padding:.65rem .9rem;font-size:.8rem;color:var(--warn);margin-top:.5rem;display:none;}
+  .dup-warning.show{display:block;}
+
+  /* CALENDAR MINI */
+  .cal-hint{font-size:.7rem;color:var(--teal);margin-top:.25rem;display:flex;align-items:center;gap:.3rem;}
 
   .empty{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.84rem;}
   .empty-icon{font-size:1.8rem;margin-bottom:.5rem;opacity:.35;}
   .config-banner{background:var(--warn-bg);border:1px solid rgba(251,191,36,.25);border-radius:var(--radius-sm);padding:.7rem 1rem;font-size:.79rem;color:var(--warn);margin-bottom:1rem;}
   .config-banner code{background:rgba(0,0,0,.2);border-radius:3px;padding:1px 5px;font-size:.76rem;}
 
-  /* PATIENT AUTOCOMPLETE */
-  .autocomplete-wrap{position:relative;}
-  .autocomplete-list{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--card);border:1px solid var(--teal-dim);border-radius:var(--radius-sm);z-index:50;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.4);}
-  .autocomplete-item{padding:.6rem .85rem;font-size:.84rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:.5rem;}
-  .autocomplete-item:hover{background:var(--teal-glow);}
-  .autocomplete-item .ac-name{color:var(--ink);font-weight:500;}
-  .autocomplete-item .ac-id{font-size:.68rem;color:var(--teal);font-family:monospace;}
-  .autocomplete-item .ac-dob{font-size:.7rem;color:var(--muted);}
-  .patient-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--teal-glow);border:1px solid var(--teal-dim);border-radius:20px;padding:.25rem .7rem;font-size:.75rem;color:var(--teal);margin-top:.3rem;}
-  .patient-badge .badge-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:0;line-height:1;}
-  .patient-badge .badge-clear:hover{color:var(--danger);}
-
-  /* ID PILL */
-  .id-pill{font-size:.65rem;font-family:monospace;padding:1px 6px;border-radius:4px;background:rgba(45,212,191,.08);color:var(--teal);border:1px solid rgba(45,212,191,.2);}
-
-  /* FK LINK */
-  .fk-link{font-size:.7rem;color:var(--teal-dim);font-family:monospace;}
-
-
-  /* DUPLICATE WARNING */
-  .dup-warning{background:var(--warn-bg);border:1px solid rgba(251,191,36,.3);border-radius:var(--radius-sm);padding:.65rem .9rem;font-size:.8rem;color:var(--warn);margin-top:.5rem;display:none;}
-  .dup-warning.show{display:block;}
   ::-webkit-scrollbar{width:6px;}
   ::-webkit-scrollbar-track{background:var(--surface);}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-  @media(max-width:540px){
+  @media(max-width:580px){
     .form-grid,.form-grid.g3,.form-grid.g4{grid-template-columns:1fr;}
-    .field.full,.field.span2{grid-column:1;}
+    .field.full{grid-column:1;}
     .metrics-4,.metrics-3{grid-template-columns:1fr 1fr;}
     .dash-grid{grid-template-columns:1fr;}
-    .nav-tab{padding:1rem .45rem;font-size:.68rem;}
-    .recent-table th:nth-child(3),.recent-table td:nth-child(3),
-    .recent-table th:nth-child(5),.recent-table td:nth-child(5){display:none;}
+    .nav-tab{padding:1rem .4rem;font-size:.65rem;}
+    .data-table th:nth-child(n+4),.data-table td:nth-child(n+4){display:none;}
   }
 </style>
 </head>
@@ -251,7 +239,7 @@
   <button class="nav-lock" id="lock-btn" onclick="lockSession()" style="display:none;">🔒</button>
 </nav>
 
-<!-- ═══════════ REGISTRO ═══════════ -->
+<!-- ════════════ REGISTRO ════════════ -->
 <div id="page-intake" class="page active">
   <div id="config-notice" class="config-banner" style="display:none;">
     ⚙️ <strong>Configuración pendiente:</strong> Agrega tu <code>APPS_SCRIPT_URL</code> en el script.
@@ -259,7 +247,6 @@
   <div class="card">
     <div class="card-title">Historia Clínica — Registro de Paciente</div>
     <div class="card-sub">Por favor completa todos los campos marcados con *. Dra. Ana Lucía González Medina — Odontopediatría</div>
-
     <div class="steps">
       <div class="step done" id="step-1"></div>
       <div class="step" id="step-2"></div>
@@ -272,44 +259,42 @@
       <div class="step-label" id="slabel-3">Enfermedades</div>
       <div class="step-label" id="slabel-4">Consentimiento</div>
     </div>
-
     <div id="alert-intake" class="alert"></div>
 
-    <!-- ── PASO 1: DATOS PERSONALES ── -->
+    <!-- PASO 1 -->
     <div id="intake-step-1">
       <div class="form-section">Datos Personales</div>
       <div class="form-grid">
-        <div class="field"><label class="required">Nombre del paciente</label><input type="text" id="i-nombre" placeholder="Nombre completo" oninput="checkDuplicate()"/></div>
-        <div class="field"><label>Nombre de cariño</label><input type="text" id="i-apodo" placeholder="Apodo o nombre preferido"/></div>
-        <div class="field"><label class="required">Fecha de nacimiento</label><input type="date" id="i-dob" onchange="checkDuplicate()"/></div>
+        <div class="field"><label class="required">Nombre del paciente</label><input type="text" id="i-nombre" placeholder="Nombre completo" oninput="scheduleDupCheck()"/></div>
+        <div class="field"><label>Nombre de cariño</label><input type="text" id="i-apodo" placeholder="Apodo"/></div>
+        <div class="field"><label class="required">Fecha de nacimiento</label><input type="date" id="i-dob" onchange="calcAge();scheduleDupCheck()"/></div>
         <div class="field"><label class="required">Sexo</label>
           <select id="i-sexo"><option value="">Selecciona...</option><option>Masculino</option><option>Femenino</option></select>
         </div>
-        <div class="field"><label>Edad (años)</label><input type="number" id="i-edad" placeholder="Años" min="0" max="18"/></div>
-        <div class="field"><label>Meses</label><input type="number" id="i-meses" placeholder="Meses" min="0" max="11"/></div>
-        <div class="field"><label>Peso (kg)</label><input type="number" id="i-peso" placeholder="kg" min="0"/></div>
-        <div class="field"><label>Estatura (cm)</label><input type="number" id="i-estatura" placeholder="cm" min="0"/></div>
+        <div class="field"><label>Edad (años)</label><input type="number" id="i-edad" min="0" max="18" placeholder="Auto"/></div>
+        <div class="field"><label>Meses</label><input type="number" id="i-meses" min="0" max="11" placeholder="Auto"/></div>
+        <div class="field"><label>Peso (kg)</label><input type="number" id="i-peso" min="0"/></div>
+        <div class="field"><label>Estatura (cm)</label><input type="number" id="i-estatura" min="0"/></div>
         <div class="field full"><label class="required">Domicilio</label><input type="text" id="i-domicilio" placeholder="Calle, Colonia, Ciudad"/></div>
-        <div class="field full"><label>Lugar y fecha de nacimiento</label><input type="text" id="i-lugar-nac" placeholder="Ciudad, Estado — Fecha"/></div>
+        <div class="field full"><label>Lugar y fecha de nacimiento</label><input type="text" id="i-lugar-nac" placeholder="Ciudad, Estado"/></div>
         <div class="field"><label class="required">Nombre del padre</label><input type="text" id="i-padre"/></div>
         <div class="field"><label class="required">Tel/Cel del padre</label><input type="tel" id="i-tel-padre" placeholder="+52 833 000 0000"/></div>
         <div class="field"><label class="required">Nombre de la madre</label><input type="text" id="i-madre"/></div>
-        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="+52 833 000 0000"/></div>
+        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="+52 833 000 0000" oninput="scheduleDupCheck()"/></div>
         <div class="field"><label>Nombre del pediatra</label><input type="text" id="i-pediatra"/></div>
         <div class="field"><label>Tel/Cel del pediatra</label><input type="tel" id="i-tel-pediatra"/></div>
         <div class="field full"><label class="required">Motivo de consulta</label><textarea id="i-motivo" placeholder="¿Por qué trae al paciente hoy?"></textarea></div>
       </div>
-      <div class="dup-warning" id="dup-warning">⚠️ <strong>Posible duplicado:</strong> Ya existe un paciente con el mismo nombre, fecha de nacimiento y teléfono de la madre. Verifica antes de continuar.</div>
+      <div class="dup-warning" id="dup-warning">
+        ⚠️ <strong>Posible duplicado:</strong> Ya existe un paciente con este nombre, fecha de nacimiento y teléfono de la madre. Verifica antes de continuar.
+      </div>
       <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;">
         <button class="btn btn-primary" onclick="nextStep(2)">Continuar →</button>
       </div>
     </div>
 
-    <!-- ── PASO 2: ANTECEDENTES ── -->
-    <!-- All yes/no questions use custom .rtoggle buttons with data-group keys.
-         No <input type="radio"> → zero browser grouping conflicts. -->
+    <!-- PASO 2 -->
     <div id="intake-step-2" style="display:none;">
-
       <div class="form-section">Antecedentes Médicos del Embarazo</div>
       <div class="form-grid g4">
         <div class="field"><label>Embarazo</label>
@@ -324,9 +309,9 @@
             <button type="button" class="rtoggle" data-group="parto-tipo" data-value="Cesárea">Cesárea</button>
           </div>
         </div>
-        <div class="field"><label>Meses de gestación</label><input type="number" id="i-gestacion" min="1" max="10" placeholder="meses"/></div>
-        <div class="field"><label>Enfermedades virales en embarazo</label><input type="text" id="i-enf-viral" placeholder="Especifique si aplica"/></div>
-        <div class="field full"><label>Enfermedades transmisibles — especifique</label><input type="text" id="i-enf-transmisible"/></div>
+        <div class="field"><label>Meses de gestación</label><input type="number" id="i-gestacion" min="1" max="10"/></div>
+        <div class="field"><label>Enf. virales en embarazo</label><input type="text" id="i-enf-viral"/></div>
+        <div class="field full"><label>Enfermedades transmisibles</label><input type="text" id="i-enf-transmisible"/></div>
       </div>
 
       <div class="form-section">Alimentación</div>
@@ -337,7 +322,7 @@
             <button type="button" class="rtoggle" data-group="alim-materna" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-materna-meses" min="0" placeholder="meses"/></div>
+        <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-materna-meses" min="0"/></div>
         <div class="field"></div>
         <div class="field"><label>Biberón</label>
           <div class="radio-group">
@@ -345,7 +330,7 @@
             <button type="button" class="rtoggle" data-group="alim-biberon" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-biberon-meses" min="0" placeholder="meses"/></div>
+        <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-biberon-meses" min="0"/></div>
         <div class="field"></div>
         <div class="field"><label>Chupón</label>
           <div class="radio-group">
@@ -353,8 +338,8 @@
             <button type="button" class="rtoggle" data-group="alim-chupon" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-chupon-meses" min="0" placeholder="meses"/></div>
-        <div class="field"><label>Inicio de ablactación</label><input type="text" id="i-ablactacion" placeholder="Edad en meses"/></div>
+        <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-chupon-meses" min="0"/></div>
+        <div class="field"><label>Inicio de ablactación</label><input type="text" id="i-ablactacion"/></div>
       </div>
       <div class="form-grid">
         <div class="field"><label>¿Dieta balanceada?</label>
@@ -363,7 +348,7 @@
             <button type="button" class="rtoggle" data-group="alim-dieta" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Consume golosinas entre comidas? ¿Cuáles?</label><input type="text" id="i-golosinas" placeholder="Especifique"/></div>
+        <div class="field"><label>¿Consume golosinas? ¿Cuáles?</label><input type="text" id="i-golosinas"/></div>
       </div>
 
       <div class="form-section">Historial Médico General</div>
@@ -374,21 +359,21 @@
             <button type="button" class="rtoggle" data-group="med-hosp" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>Fecha y motivo de hospitalización</label><input type="text" id="i-hosp-detalle" placeholder="Fecha — Motivo"/></div>
-        <div class="field"><label>¿Ha sido sometido a cirugía?</label>
+        <div class="field"><label>Fecha y motivo</label><input type="text" id="i-hosp-detalle"/></div>
+        <div class="field"><label>¿Cirugía previa?</label>
           <div class="radio-group">
             <button type="button" class="rtoggle" data-group="med-cirugia" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="med-cirugia" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>Especifique cirugía</label><input type="text" id="i-cirugia-detalle"/></div>
-        <div class="field"><label>¿Está bajo algún medicamento?</label>
+        <div class="field"><label>Especifique</label><input type="text" id="i-cirugia-detalle"/></div>
+        <div class="field"><label>¿Medicamento actual?</label>
           <div class="radio-group">
             <button type="button" class="rtoggle" data-group="med-medic" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="med-medic" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>Especifique medicamento</label><input type="text" id="i-medic-detalle"/></div>
+        <div class="field"><label>Especifique</label><input type="text" id="i-medic-detalle"/></div>
         <div class="field"><label>¿Cartilla de vacunación?</label>
           <div class="radio-group">
             <button type="button" class="rtoggle" data-group="med-vacuna" data-value="Sí">Sí</button>
@@ -401,7 +386,7 @@
             <button type="button" class="rtoggle" data-group="med-esquema" data-value="No">No</button>
           </div>
         </div>
-        <div class="field full"><label>Especifique vacuna faltante</label><input type="text" id="i-vacuna-falta"/></div>
+        <div class="field full"><label>Vacuna faltante</label><input type="text" id="i-vacuna-falta"/></div>
       </div>
 
       <div class="form-section">Antecedentes Alérgicos</div>
@@ -424,59 +409,58 @@
             <button type="button" class="rtoggle" data-group="alg-anal" data-value="No">No</button>
           </div>
         </div>
-        <div class="field full"><label>Especifique alergias y reacción alérgica</label><textarea id="i-alergias-detalle" placeholder="Especifique la reacción para cada alergia mencionada..."></textarea></div>
+        <div class="field full"><label>Especifique alergias y reacción</label><textarea id="i-alergias-detalle"></textarea></div>
       </div>
 
       <div class="form-section">Antecedentes Dentales</div>
       <div class="form-grid">
-        <div class="field"><label>¿Ha sufrido algún traumatismo dental?</label>
+        <div class="field"><label>¿Trauma dental previo?</label>
           <div class="radio-group">
             <button type="button" class="rtoggle" data-group="dent-trauma" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="dent-trauma" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>Especifique traumatismo</label><input type="text" id="i-trauma-detalle"/></div>
-        <div class="field"><label>¿Cuántas veces al día se cepilla?</label><input type="number" id="i-cepillado" min="0" max="10" placeholder="veces"/></div>
-        <div class="field"><label>¿Recibe ayuda de padres/cuidadores?</label>
+        <div class="field"><label>Especifique</label><input type="text" id="i-trauma-detalle"/></div>
+        <div class="field"><label>Cepillados al día</label><input type="number" id="i-cepillado" min="0" max="10"/></div>
+        <div class="field"><label>¿Ayuda al cepillarse?</label>
           <div class="radio-group">
             <button type="button" class="rtoggle" data-group="dent-ayuda" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="dent-ayuda" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Qué pasta dental utiliza?</label><input type="text" id="i-pasta"/></div>
-        <div class="field"><label>¿Utiliza hilo dental?</label>
+        <div class="field"><label>Pasta dental</label><input type="text" id="i-pasta"/></div>
+        <div class="field"><label>¿Hilo dental?</label>
           <div class="radio-group">
             <button type="button" class="rtoggle" data-group="dent-hilo" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="dent-hilo" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Ha ido anteriormente al dentista?</label>
+        <div class="field"><label>¿Ha ido al dentista antes?</label>
           <div class="radio-group">
             <button type="button" class="rtoggle" data-group="dent-prev" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="dent-prev" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Cuál fue su última visita?</label>
+        <div class="field"><label>Última visita</label>
           <select id="i-ultima-visita">
             <option value="">Selecciona...</option>
             <option>Hace menos de 6 meses</option><option>6 a 12 meses</option>
             <option>1 a 2 años</option><option>Más de 2 años</option><option>Primera vez</option>
           </select>
         </div>
-        <div class="field full"><label>¿Qué tratamientos le han realizado anteriormente?</label><textarea id="i-tratamientos-prev" placeholder="Describe tratamientos previos si los hay..."></textarea></div>
+        <div class="field full"><label>Tratamientos previos</label><textarea id="i-tratamientos-prev"></textarea></div>
       </div>
-
       <div style="margin-top:1.2rem;display:flex;justify-content:space-between;">
         <button class="btn btn-outline" onclick="nextStep(1)">← Atrás</button>
         <button class="btn btn-primary" onclick="nextStep(3)">Continuar →</button>
       </div>
     </div>
 
-    <!-- ── PASO 3: ENFERMEDADES ── -->
+    <!-- PASO 3: ENFERMEDADES -->
     <div id="intake-step-3" style="display:none;">
       <div class="form-section">¿Ha padecido o padece alguna de las siguientes enfermedades?</div>
       <table class="disease-table">
-        <thead><tr><th style="width:40%">Enfermedad</th><th style="width:10%">Sí</th><th style="width:10%">No</th><th>Tratamiento</th></tr></thead>
+        <thead><tr><th style="width:42%">Enfermedad</th><th style="width:9%">Sí</th><th style="width:9%">No</th><th>Tratamiento</th></tr></thead>
         <tbody id="disease-tbody"></tbody>
       </table>
       <div style="margin-top:1.2rem;display:flex;justify-content:space-between;">
@@ -485,48 +469,36 @@
       </div>
     </div>
 
-    <!-- ── PASO 4: CONSENTIMIENTO INFORMADO ── -->
+    <!-- PASO 4: CONSENTIMIENTO -->
     <div id="intake-step-4" style="display:none;">
       <div class="form-section">Consentimiento Informado</div>
-
       <div class="consent-text">
         <p>Por la presente se hace saber a Usted que tiene derecho a conocer el procedimiento al que va a ser sometido el menor de edad y las complicaciones más frecuentes que ocurren. Este documento explica todas estas cuestiones, léalo atentamente y consulte todas las dudas que se le planteen. Le recordamos que por imperativo legal, tendrá que firmar el representante legal, el consentimiento informado para que pueda realizarse dicho procedimiento.</p>
         <p>Declaro haber sido informado/a por la M.C.D. Ana Lucía González Medina los procedimientos propios clínicos en odontopediatría, que constan en el plan de tratamiento otorgando mi consentimiento para realizar las prácticas necesarias al caso clínico. Estoy de acuerdo a que el niño sea sometido a anestesia local en caso que fuera necesario, sabiendo los riesgos que ello implica, delegando al odontólogo la elección del tipo de anestesia.</p>
-        <p>Se me ha explicado el diagnóstico, la naturaleza de la enfermedad que padece mi representado y su evolución natural, objetivos del tratamiento propuesto, así como las alternativas del tratamiento que pueden ser practicadas y descripción de las consecuencias derivadas del tratamiento o intervención, beneficios y complicaciones comunes.</p>
-        <p><strong>Riesgos y complicaciones esperados:</strong> Dolor · Inflamación · Infección · Fractura del elemento dentario por deterioro · Hematomas y hemorragias (sangrado - moretones) · Alergias. Comprendo que si no se realiza el tratamiento odontológico, podría sufrir: enfermedad ósea, inflamación de las encías, infección, sensibilidad, movilidad de los dientes seguida por la necesidad de realizar la extracción.</p>
-        <p>Comprendo que la Odontopediatría es el área de la odontología que se encarga de restablecer la salud bucal integral de niños y adolescentes. Comprendo que la odontología no es una ciencia exacta y por lo que los resultados están sujetos a múltiples factores. He tenido información clara y suficiente, la oportunidad de preguntar y he obtenido respuestas satisfactorias.</p>
-        <p>Por lo antes expuesto doy el consentimiento a la M.C.D. Ana Lucía González Medina a realizar el tratamiento correspondiente al menor de edad.</p>
+        <p>Se me ha explicado el diagnóstico, la naturaleza de la enfermedad que padece mi representado y su evolución natural, objetivos del tratamiento propuesto, así como las alternativas del tratamiento.</p>
+        <p><strong>Riesgos esperados:</strong> Dolor · Inflamación · Infección · Fractura del elemento dentario · Hematomas y hemorragias · Alergias. Sin tratamiento: enfermedad ósea, inflamación de encías, infección, sensibilidad, movilidad dental y posible extracción.</p>
+        <p>Comprendo que la Odontopediatría es el área que se encarga de restablecer la salud bucal integral de niños y adolescentes y que los resultados están sujetos a múltiples factores. Por lo antes expuesto doy el consentimiento a la M.C.D. Ana Lucía González Medina a realizar el tratamiento al menor de edad.</p>
       </div>
-
       <div class="form-grid">
-        <div class="field"><label class="required">Nombre completo del tutor/representante legal</label><input type="text" id="i-tutor-nombre" placeholder="Nombre y apellidos"/></div>
+        <div class="field"><label class="required">Nombre del tutor / representante legal</label><input type="text" id="i-tutor-nombre" placeholder="Nombre y apellidos"/></div>
         <div class="field"><label class="required">Relación con el paciente</label>
-          <select id="i-tutor-rel">
-            <option value="">Selecciona...</option>
-            <option>Padre</option><option>Madre</option><option>Tutor legal</option><option>Abuelo/a</option><option>Otro familiar</option>
-          </select>
+          <select id="i-tutor-rel"><option value="">Selecciona...</option><option>Padre</option><option>Madre</option><option>Tutor legal</option><option>Abuelo/a</option><option>Otro familiar</option></select>
         </div>
         <div class="field"><label class="required">Fecha</label><input type="date" id="i-consent-date"/></div>
         <div class="field"></div>
       </div>
-
       <label class="consent-check">
         <input type="checkbox" id="i-acepto"/>
         He leído y comprendido el presente consentimiento informado. Acepto el tratamiento para el menor de edad bajo mi representación legal y doy mi conformidad voluntaria.
       </label>
-
       <div class="form-grid single" style="margin-top:.75rem;">
         <div class="field">
           <label>Firma del tutor / representante legal</label>
-          <div class="sig-wrap">
-            <canvas id="sig-canvas" height="130"></canvas>
-            <button class="sig-clear" onclick="clearSig()">Borrar</button>
-          </div>
+          <div class="sig-wrap"><canvas id="sig-canvas" height="130"></canvas><button class="sig-clear" onclick="clearSig()">Borrar</button></div>
           <div class="sig-label">Firme con el dedo o el mouse dentro del recuadro</div>
         </div>
       </div>
-
-      <div style="margin-top:1.2rem;display:flex;justify-content:space-between;align-items:center;">
+      <div style="margin-top:1.2rem;display:flex;justify-content:space-between;">
         <button class="btn btn-outline" onclick="nextStep(3)">← Atrás</button>
         <button class="btn btn-primary" id="submit-btn" onclick="submitIntake()">Enviar y Finalizar ✓</button>
       </div>
@@ -534,34 +506,34 @@
   </div>
 </div>
 
-<!-- ═══════════ PANEL ═══════════ -->
+<!-- ════════════ PANEL ════════════ -->
 <div id="page-dashboard" class="page">
   <div class="metrics-row metrics-4">
-    <div class="metric-card"><div class="metric-label">Pacientes totales</div><div class="metric-value" id="d-patients">—</div><div class="metric-sub" id="d-patients-sub">registros</div></div>
+    <div class="metric-card"><div class="metric-label">Pacientes registrados</div><div class="metric-value" id="d-patients">—</div><div class="metric-sub" id="d-patients-sub">total</div></div>
     <div class="metric-card"><div class="metric-label">Ingresos del mes</div><div class="metric-value green" id="d-revenue">$0</div><div class="metric-sub" id="d-revenue-sub">0 cobros</div></div>
     <div class="metric-card"><div class="metric-label">Gastos del mes</div><div class="metric-value red" id="d-expenses">$0</div><div class="metric-sub" id="d-expenses-sub">0 gastos</div></div>
     <div class="metric-card"><div class="metric-label">Balance neto</div><div class="metric-value" id="d-net">$0</div><div class="metric-sub">ingresos − gastos</div></div>
   </div>
   <div class="dash-grid">
-    <div class="card"><div class="card-title" style="font-size:.95rem;">Ingresos por mes</div><div class="chart-wrap"><canvas id="revenueChart" role="img" aria-label="Ingresos mensuales">Gráfica.</canvas></div></div>
-    <div class="card"><div class="card-title" style="font-size:.95rem;">Servicios más frecuentes</div><div class="chart-wrap"><canvas id="servicesChart" role="img" aria-label="Servicios">Gráfica.</canvas></div></div>
+    <div class="card"><div class="card-title" style="font-size:.95rem;">Ingresos por mes</div><div class="chart-wrap"><canvas id="revenueChart" role="img" aria-label="Ingresos mensuales">Gráfica de ingresos.</canvas></div></div>
+    <div class="card"><div class="card-title" style="font-size:.95rem;">Servicios más frecuentes</div><div class="chart-wrap"><canvas id="servicesChart" role="img" aria-label="Servicios">Gráfica de servicios.</canvas></div></div>
   </div>
   <div class="card">
     <div class="card-title" style="font-size:.95rem;">Cobros recientes</div>
     <div style="overflow-x:auto;">
-      <table class="recent-table">
-        <thead><tr><th style="width:20%">Paciente</th><th style="width:18%">Servicio</th><th style="width:12%">Fecha</th><th style="width:12%">Monto</th><th style="width:15%">Método</th><th style="width:11%">Factura</th><th style="width:12%">Estado</th></tr></thead>
-        <tbody id="dash-recent-body"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos — agrega cobros primero.</td></tr></tbody>
+      <table class="data-table">
+        <thead><tr><th style="width:9%">ID</th><th style="width:20%">Paciente</th><th style="width:17%">Servicio</th><th style="width:11%">Fecha</th><th style="width:11%">Monto</th><th style="width:15%">Método</th><th style="width:8%">Fact.</th><th style="width:9%">Estado</th></tr></thead>
+        <tbody id="dash-recent-body"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos aún.</td></tr></tbody>
       </table>
     </div>
   </div>
   <div class="dash-grid">
     <div class="card"><div class="card-title" style="font-size:.95rem;">Gastos recientes</div><div id="dash-expense-list" style="margin-top:.6rem;"><div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos.</div></div></div>
-    <div class="card"><div class="card-title" style="font-size:.95rem;">Métodos de pago</div><div class="chart-wrap" style="height:170px;"><canvas id="methodChart" role="img" aria-label="Métodos">Gráfica.</canvas></div></div>
+    <div class="card"><div class="card-title" style="font-size:.95rem;">Métodos de pago</div><div class="chart-wrap" style="height:170px;"><canvas id="methodChart" role="img" aria-label="Métodos de pago">Gráfica de métodos.</canvas></div></div>
   </div>
 </div>
 
-<!-- ═══════════ VISITAS ═══════════ -->
+<!-- ════════════ VISITAS ════════════ -->
 <div id="page-visits" class="page">
   <div class="metrics-row metrics-3">
     <div class="metric-card"><div class="metric-label">Total visitas</div><div class="metric-value" id="v-total">0</div></div>
@@ -570,37 +542,47 @@
   </div>
   <div class="card">
     <div class="card-title">Registrar Visita Clínica</div>
-    <div class="card-sub">Vincula la visita a un paciente registrado. Se generará un <code style="font-size:.75rem;background:rgba(0,0,0,.2);padding:1px 5px;border-radius:3px;">visit_id</code> que puedes usar al registrar el cobro.</div>
+    <div class="card-sub">Se crea un evento en Google Calendar y se envía recordatorio WhatsApp 1h antes de la cita.</div>
     <div id="alert-visits" class="alert"></div>
     <div class="form-grid">
-            <!-- Patient autocomplete -->
+      <!-- Patient autocomplete -->
       <div class="field full">
         <label class="required">Paciente</label>
         <div class="autocomplete-wrap">
-          <input type="text" id="v-patient-name" placeholder="Escribe el nombre..."
-            autocomplete="off" oninput="patientSearch(this.value,'v')" onfocus="patientSearch(this.value,'v')"/>
+          <input type="text" id="v-patient-name" placeholder="Escribe el nombre…" autocomplete="off"
+            oninput="patientSearch(this.value,'v')" onfocus="patientSearch(this.value,'v')"/>
           <div class="autocomplete-list" id="v-ac-list"></div>
         </div>
-        <span class="pid-badge" id="v-pid-badge"></span>
+        <div id="v-patient-badge" style="display:none;">
+          <span class="patient-badge">
+            <span id="v-badge-name">—</span>
+            <span style="font-size:.68rem;font-family:monospace;opacity:.7;" id="v-badge-id"></span>
+            <button class="badge-clear" onclick="clearPatient('v')">✕</button>
+          </span>
+        </div>
         <input type="hidden" id="v-patient-id"/>
-        <input type="hidden" id="v-patient-alergias"/>
-        <input type="hidden" id="v-patient-medic"/>
-        <input type="hidden" id="v-patient-dob"/>
+        <div class="clinical-box" id="v-clinical-box">
+          <strong>⚠️ Información clínica del paciente</strong><br/>
+          <span id="v-clinical-content"></span>
+        </div>
       </div>
-      <div class="field"><label class="required">Fecha de visita</label><input type="date" id="v-fecha"/></div>
-      <div class="field"><label class="required">Hora de inicio</label><input type="time" id="v-hora"/></div>
+      <!-- Date, time, duration -->
+      <div class="field"><label class="required">Fecha</label><input type="date" id="v-fecha"/>
+        <div class="cal-hint" id="v-cal-hint" style="display:none;">📅 Se creará evento en Google Calendar</div>
+      </div>
+      <div class="field"><label class="required">Hora de inicio</label><input type="time" id="v-hora" onchange="showCalHint()"/></div>
       <div class="field"><label class="required">Duración (min)</label>
         <select id="v-duracion">
-          <option value="30">30 min</option><option value="45">45 min</option>
-          <option value="60" selected>60 min</option><option value="90">90 min</option>
-          <option value="120">120 min</option>
+          <option value="15">15 min</option><option value="30">30 min</option>
+          <option value="45">45 min</option><option value="60" selected>60 min</option>
+          <option value="90">90 min</option><option value="120">120 min</option>
         </select>
       </div>
-      <div class="field full"><label class="required">Motivo / Diagnóstico</label><textarea id="v-motivo" placeholder="Describe el motivo y diagnóstico..."></textarea></div>
-      <div class="field full"><label class="required">Tratamiento realizado</label><textarea id="v-tratamiento" placeholder="Procedimientos realizados en esta visita..."></textarea></div>
+      <div class="field full"><label class="required">Motivo / Diagnóstico</label><textarea id="v-motivo" placeholder="Motivo de la consulta y diagnóstico…"></textarea></div>
+      <div class="field full"><label class="required">Tratamiento realizado</label><textarea id="v-tratamiento" placeholder="Procedimientos realizados en esta visita…"></textarea></div>
       <div class="field"><label>Próxima cita</label><input type="date" id="v-proxima-cita"/></div>
       <div class="field"><label>Odontólogo</label><input type="text" id="v-odontologo" value="Dra. Ana Lucía González"/></div>
-      <div class="field full"><label>Notas clínicas internas</label><textarea id="v-notas" placeholder="Notas adicionales para uso interno..."></textarea></div>
+      <div class="field full"><label>Notas clínicas internas</label><textarea id="v-notas" placeholder="Notas adicionales para uso interno…"></textarea></div>
     </div>
     <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;">
       <button class="btn btn-primary" onclick="submitVisit()">Guardar Visita ✓</button>
@@ -610,7 +592,7 @@
   <div id="visits-list" class="entry-list"><div class="empty"><div class="empty-icon">🗓️</div>Aún no hay visitas registradas.</div></div>
 </div>
 
-<!-- ═══════════ COBROS ═══════════ -->
+<!-- ════════════ COBROS ════════════ -->
 <div id="page-billing" class="page">
   <div class="metrics-row metrics-3">
     <div class="metric-card"><div class="metric-label">Hoy</div><div class="metric-value green" id="m-today">$0</div></div>
@@ -619,32 +601,30 @@
   </div>
   <div class="card">
     <div class="card-title">Registrar Cobro</div>
-    <div class="card-sub">Vincula el cobro a un paciente. Opcionalmente, asocia a una visita clínica para trazabilidad completa.</div>
+    <div class="card-sub">Selecciona el paciente para vincular el cobro con su ID. Opcionalmente, asocia a una visita.</div>
     <div id="alert-billing" class="alert"></div>
     <div class="form-grid">
-      <!-- Patient autocomplete -->
       <div class="field full">
         <label class="required">Paciente</label>
         <div class="autocomplete-wrap">
           <input type="text" id="b-patient-search" placeholder="Escribe el nombre del paciente…" autocomplete="off"
             oninput="searchPatients(this.value,'b-ac-list','b')" onfocus="searchPatients(this.value,'b-ac-list','b')"/>
-          <div class="autocomplete-list" id="b-ac-list" style="display:none;"></div>
+          <div class="autocomplete-list" id="b-ac-list"></div>
         </div>
         <div id="b-patient-badge" style="display:none;">
           <span class="patient-badge">
             <span id="b-badge-name">—</span>
-            <span class="id-pill" id="b-badge-id">—</span>
-            <button class="badge-clear" onclick="clearPatientSelection('b')">✕</button>
+            <span style="font-size:.68rem;font-family:monospace;opacity:.7;" id="b-badge-id"></span>
+            <button class="badge-clear" onclick="clearPatient('b')">✕</button>
           </span>
         </div>
         <input type="hidden" id="b-patient-id"/>
         <input type="hidden" id="b-patient-name"/>
       </div>
-      <!-- Optional visit link -->
       <div class="field full">
-        <label>Visita asociada <span style="color:var(--muted);font-weight:400;">(opcional — para trazabilidad)</span></label>
+        <label>Visita asociada <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
         <select id="b-visit-id"><option value="">Sin visita asociada</option></select>
-        <div style="font-size:.68rem;color:var(--muted);margin-top:.2rem;">Selecciona un paciente primero para ver sus visitas.</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:.2rem;">Selecciona un paciente para ver sus visitas.</div>
       </div>
       <div class="field"><label class="required">Fecha</label><input type="date" id="b-date"/></div>
       <div class="field"><label class="required">Servicio realizado</label>
@@ -654,7 +634,7 @@
       <div class="field"><label class="required">Método de pago</label>
         <select id="b-method"><option value="">Selecciona...</option><option>Efectivo</option><option>Tarjeta de crédito</option><option>Tarjeta de débito</option><option>Transferencia</option><option>Seguro médico</option></select>
       </div>
-      <div class="field"><label class="required">Factura</label>
+      <div class="field"><label>Factura</label>
         <select id="b-factura"><option value="No">No</option><option value="Sí">Sí</option></select>
       </div>
       <div class="field"><label>Estado</label>
@@ -668,7 +648,7 @@
   <div id="billing-list" class="entry-list"><div class="empty"><div class="empty-icon">💳</div>Aún no hay cobros registrados.</div></div>
 </div>
 
-<!-- ═══════════ GASTOS ═══════════ -->
+<!-- ════════════ GASTOS ════════════ -->
 <div id="page-expenses" class="page">
   <div class="metrics-row metrics-3">
     <div class="metric-card"><div class="metric-label">Este mes</div><div class="metric-value red" id="e-month">$0</div></div>
@@ -677,7 +657,7 @@
   </div>
   <div class="card">
     <div class="card-title">Registrar Gasto</div>
-    <div class="card-sub">Lleva el control de insumos, renta, sueldos y otros costos.</div>
+    <div class="card-sub">Gastos generales de la clínica — no vinculados a pacientes.</div>
     <div id="alert-expenses" class="alert"></div>
     <div class="form-grid">
       <div class="field"><label class="required">Descripción</label><input type="text" id="e-desc" placeholder="Caja de guantes dentales"/></div>
@@ -690,7 +670,7 @@
         <select id="e-method"><option value="">Selecciona...</option><option>Efectivo</option><option>Tarjeta empresarial</option><option>Transferencia</option><option>Cheque</option></select>
       </div>
       <div class="field"><label>Proveedor</label><input type="text" id="e-vendor" placeholder="Ej. Dental Depot"/></div>
-      <div class="field full"><label>Notas</label><input type="text" id="e-notes" placeholder="Notas opcionales..."/></div>
+      <div class="field full"><label>Notas</label><input type="text" id="e-notes"/></div>
     </div>
     <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;"><button class="btn btn-primary" onclick="submitExpense()">Guardar Gasto ✓</button></div>
   </div>
@@ -699,11 +679,11 @@
 </div>
 
 <script>
-/* ══════════════════════════════════════
+/* ════════════════════════════════════
    CONFIGURACIÓN
-══════════════════════════════════════ */
+════════════════════════════════════ */
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1CVHqZ8GY_GVDgR44pQFyG2GWx9m2AWN6koA9lX7D_N5vzl82g2MxWkfBPByUS-M/exec';
-/* ══════════════════════════════════════ */
+/* ════════════════════════════════════ */
 
 const IS_CONFIGURED = APPS_SCRIPT_URL.includes('macros/s/');
 let billingData=[], expenseData=[], visitsData=[], patientsData=[];
@@ -712,26 +692,31 @@ let pendingPage=null, pendingTab=null;
 let revenueChart=null, servicesChart=null, methodChart=null;
 let acDebounce=null, dupDebounce=null;
 
-const DISEASES=['Anemia','Discracia sanguínea','Enfermedades respiratorias','Enfermedades hepáticas',
+const DISEASES=[
+  'Anemia','Discracia sanguínea','Enfermedades respiratorias','Enfermedades hepáticas',
   'Cardiopatías','Hepatitis','Alteraciones glandulares','Epilepsia','Tuberculosis',
   'Alteraciones hormonales','Lesiones cerebrales','Diabetes','Infecciones de riñón',
-  'Fiebre reumática','Otitis','Dificultad del lenguaje','Otras enfermedades'];
+  'Fiebre reumática','Otitis','Dificultad del lenguaje','Otras enfermedades'
+];
 
+// ── INIT ──
 window.addEventListener('DOMContentLoaded',()=>{
   if(!IS_CONFIGURED) document.getElementById('config-notice').style.display='block';
   setToday('b-date'); setToday('e-date'); setToday('i-consent-date'); setToday('v-fecha');
   buildDiseaseTable();
   initSignaturePad();
-  /* Single delegated handler for ALL .rtoggle buttons.
-     Each button carries data-group (unique per question) and data-value.
-     Clicking one deselects all others in the same group — zero browser interference. */
+
+  // Single delegated click handler for ALL .rtoggle buttons
   document.addEventListener('click', e => {
     const btn = e.target.closest('.rtoggle');
     if (!btn) return;
     const group = btn.dataset.group;
+    // Deselect all in group, select clicked
     document.querySelectorAll(`.rtoggle[data-group="${group}"]`).forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
   });
+
+  // Close autocomplete on outside click
   document.addEventListener('click', e => {
     if(!e.target.closest('.autocomplete-wrap'))
       document.querySelectorAll('.autocomplete-list').forEach(l => l.classList.remove('show'));
@@ -740,14 +725,30 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 function setToday(id){const el=document.getElementById(id);if(el)el.value=new Date().toISOString().split('T')[0];}
 
-/* ── TOGGLE HELPERS ── */
+// ── DOB → AGE AUTO-CALC ──
+function calcAge(){
+  const dob = document.getElementById('i-dob').value;
+  if(!dob) return;
+  const now  = new Date();
+  const born = new Date(dob);
+  let years  = now.getFullYear() - born.getFullYear();
+  let months = now.getMonth() - born.getMonth();
+  if(months < 0){ years--; months += 12; }
+  if(now.getDate() < born.getDate()) months--;
+  document.getElementById('i-edad').value = years >= 0 ? years : 0;
+  document.getElementById('i-meses').value = months >= 0 ? months : 0;
+}
+
+// ── RADIO TOGGLE HELPERS ──
 function radioVal(group){
-  const sel=document.querySelector(`.rtoggle[data-group="${group}"].on`);
+  const sel = document.querySelector(`.rtoggle[data-group="${group}"].on`);
   return sel ? sel.dataset.value : '';
 }
-function resetToggles(){document.querySelectorAll('.rtoggle').forEach(b=>b.classList.remove('on'));}
+function resetToggles(){
+  document.querySelectorAll('.rtoggle').forEach(b => b.classList.remove('on'));
+}
 
-/* ── DISEASE TABLE — each row = unique data-group="enf-N" ── */
+// ── DISEASE TABLE ──
 function buildDiseaseTable(){
   document.getElementById('disease-tbody').innerHTML = DISEASES.map((d,i) => `
     <tr>
@@ -765,39 +766,46 @@ function getDiseaseData(){
   }));
 }
 
-/* ── DUPLICATE DETECTION ──────────────────────────────────────
-   Key = normalize(nombre) + "|" + dob + "|" + normalize(telMadre)
-   Fires 400ms after input on nombre, dob, tel-madre.
-   Checks in-memory patientsData loaded after staff login.
-────────────────────────────────────────────────────────────── */
-function normKey(s){return String(s||'').toLowerCase().replace(/[\s\-\+\(\)]/g,'');}
-function buildDupKey(nombre,dob,tel){return normKey(nombre)+'|'+(dob||'')+'|'+normKey(tel);}
+// ── DUPLICATE CHECK ──
+function normKey(s){return String(s||'').toLowerCase().replace(/[\s\-\+\(\)\.]/g,'');}
 
-function checkDuplicate(){
+function scheduleDupCheck(){
   clearTimeout(dupDebounce);
-  dupDebounce=setTimeout(()=>{
-    const nombre=document.getElementById('i-nombre').value.trim();
-    const dob=document.getElementById('i-dob').value;
-    const tel=document.getElementById('i-tel-madre').value.trim();
-    const warn=document.getElementById('dup-warning');
-    if(!nombre||!dob||!tel){warn.classList.remove('show');return;}
-    const key=buildDupKey(nombre,dob,tel);
-    const found=patientsData.some(p=>buildDupKey(
-      p['Nombre']||p.nombre||'',
-      p['Fecha Nacimiento']||p.dob||'',
-      p['Tel Madre']||p.telMadre||''
-    )===key);
-    warn.classList.toggle('show',found);
-  },400);
+  dupDebounce = setTimeout(async () => {
+    const nombre = gv('i-nombre');
+    const dob    = document.getElementById('i-dob').value;
+    const tel    = gv('i-tel-madre');
+    const warn   = document.getElementById('dup-warning');
+    if(!nombre || !dob){ warn.classList.remove('show'); return; }
+
+    // First check in-memory (fast)
+    const found = patientsData.some(p =>
+      normKey(p['Nombre']||p.nombre||'') === normKey(nombre) &&
+      String(p['Fecha Nacimiento']||p.dob||'').trim() === dob.trim() &&
+      normKey(p['Tel Madre']||p.telMadre||'') === normKey(tel)
+    );
+    if(found){ warn.classList.add('show'); return; }
+
+    // If staff is logged in and we have a name+dob, also check server
+    if(IS_CONFIGURED && sessionPinHash && nombre && dob && tel){
+      try{
+        const res  = await fetch(`${APPS_SCRIPT_URL}?action=checkDuplicate&nombre=${encodeURIComponent(nombre)}&dob=${encodeURIComponent(dob)}&tel=${encodeURIComponent(tel)}&pinHash=${sessionPinHash}`);
+        const json = await res.json();
+        warn.classList.toggle('show', !!json.isDuplicate);
+      }catch(e){ warn.classList.remove('show'); }
+    } else {
+      warn.classList.remove('show');
+    }
+  }, 500);
 }
 
-/* ── SHA-256 ── */
+// ── SHA-256 ──
 async function sha256hex(str){
   const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
   return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 
-/* ── SIGNATURE ── */
+// ── SIGNATURE ──
 let sigDrawing=false,sigCtx=null,sigCanvas=null,sigHasData=false;
 function initSignaturePad(){
   sigCanvas=document.getElementById('sig-canvas');if(!sigCanvas)return;
@@ -815,60 +823,148 @@ function initSignaturePad(){
 }
 function clearSig(){if(sigCtx&&sigCanvas){sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);sigHasData=false;}}
 
-/* ── PATIENT AUTOCOMPLETE ── */
-function patientSearch(query,prefix){
+// ── PATIENT AUTOCOMPLETE ──
+function patientSearch(query, prefix){
   clearTimeout(acDebounce);
-  const list=document.getElementById(prefix+'-ac-list');
-  if(!query||query.length<1){list.classList.remove('show');return;}
-  acDebounce=setTimeout(async()=>{
-    const q=query.toLowerCase();
-    const matches=patientsData.filter(p=>(p['Nombre']||p.nombre||'').toLowerCase().includes(q)).slice(0,8);
-    if(matches.length){
-      renderAcList(list,matches.map(p=>({
-        patient_id:p['patient_id']||'',
-        nombre:p['Nombre']||p.nombre||'',
-        dob:p['Fecha Nacimiento']||p.dob||'',
-        alergias:p['Alergias (detalle)']||p.alergiasDetalle||'Ninguna',
-        medic:p['Medicamento (detalle)']||p.medicDetalle||'Ninguno'
-      })),prefix);return;
+  const list = document.getElementById(prefix+'-ac-list');
+  if(!query || query.length < 1){ list.classList.remove('show'); return; }
+  acDebounce = setTimeout(async () => {
+    const q = query.toLowerCase();
+    // Search in-memory first
+    let matches = patientsData
+      .filter(p => (p['Nombre']||p.nombre||'').toLowerCase().includes(q))
+      .slice(0,8)
+      .map(p => ({
+        patient_id: p['patient_id']||'',
+        nombre:     p['Nombre']||p.nombre||'',
+        dob:        p['Fecha Nacimiento']||p.dob||'',
+        alergias:   p['Alergias (detalle)']||'Ninguna',
+        medic:      p['Medicamento (detalle)']||'Ninguno'
+      }));
+
+    if(!matches.length && IS_CONFIGURED && sessionPinHash){
+      try{
+        const res  = await fetch(`${APPS_SCRIPT_URL}?action=findPatient&q=${encodeURIComponent(query)}&pinHash=${sessionPinHash}`);
+        const json = await res.json();
+        matches = json.patients || [];
+      }catch(e){}
     }
-    if(!IS_CONFIGURED)return;
-    try{
-      const res=await fetch(`${APPS_SCRIPT_URL}?action=findPatient&q=${encodeURIComponent(query)}&pinHash=${sessionPinHash}`);
-      const json=await res.json();
-      renderAcList(list,json.patients||[],prefix);
-    }catch(e){list.classList.remove('show');}
-  },280);
+    renderAcList(list, matches, prefix);
+  }, 280);
 }
 
-function renderAcList(list,patients,prefix){
-  if(!patients.length){list.classList.remove('show');return;}
-  list.innerHTML=patients.map(p=>`
-    <div class="autocomplete-item" onclick="selectPatient('${p.patient_id}','${esc(p.nombre)}','${esc(p.dob||'')}','${esc(p.alergias||'')}','${esc(p.medic||'')}','${prefix}')">
-      ${esc(p.nombre)}<span class="ac-id">${p.patient_id}</span>
+// Billing page uses slightly different element IDs — unified handler
+function searchPatients(query, listId, prefix){
+  patientSearch(query, prefix === 'b' ? 'b-patient' : prefix);
+  // For billing, the input id is b-patient-search not b-patient-name
+  // but we still need to wire the list
+  const list = document.getElementById(listId);
+  if(!query){ list.style.display='none'; return; }
+}
+
+function renderAcList(list, patients, prefix){
+  if(!patients.length){ list.classList.remove('show'); return; }
+  list.innerHTML = patients.map(p => `
+    <div class="autocomplete-item" onclick="selectPatient('${esc(p.patient_id)}','${esc(p.nombre)}','${esc(p.dob||'')}','${esc(p.alergias||'')}','${esc(p.medic||'')}','${prefix}')">
+      <span>${esc(p.nombre)}</span>
+      <span class="ac-id">${p.patient_id}</span>
     </div>`).join('');
   list.classList.add('show');
+  // For billing, also show the list (different display mechanism)
+  list.style.display = 'block';
 }
 
-function selectPatient(pid,nombre,dob,alergias,medic,prefix){
-  const nameEl=document.getElementById(prefix+'-patient-name');
-  const idEl=document.getElementById(prefix+'-patient-id');
-  const badge=document.getElementById(prefix+'-pid-badge');
-  if(nameEl) nameEl.value=nombre;
-  if(idEl) idEl.value=pid;
-  if(badge){badge.textContent=pid;badge.classList.add('show');}
-  document.getElementById(prefix+'-ac-list').classList.remove('show');
-  // Store clinical extras for WA summary (visits page only)
-  const dobEl=document.getElementById(prefix+'-patient-dob');
-  const alrgEl=document.getElementById(prefix+'-patient-alergias');
-  const medicEl=document.getElementById(prefix+'-patient-medic');
-  if(dobEl) dobEl.value=dob;
-  if(alrgEl) alrgEl.value=alergias;
-  if(medicEl) medicEl.value=medic;
-}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function selectPatient(pid, nombre, dob, alergias, medic, prefix){
+  // For visits page (prefix = 'v')
+  const nameEl  = document.getElementById(prefix+'-patient-name');
+  const idEl    = document.getElementById(prefix+'-patient-id');
+  const badgeEl = document.getElementById(prefix+'-patient-badge');
+  const nameSpan= document.getElementById(prefix+'-badge-name');
+  const idSpan  = document.getElementById(prefix+'-badge-id');
+  const listEl  = document.getElementById(prefix+'-ac-list');
 
-/* ── NAV ── */
+  if(nameEl)   nameEl.value = nombre;
+  if(idEl)     idEl.value   = pid;
+  if(badgeEl){ badgeEl.style.display='block'; }
+  if(nameSpan) nameSpan.textContent = nombre;
+  if(idSpan)   idSpan.textContent   = pid;
+  if(listEl){  listEl.classList.remove('show'); listEl.style.display='none'; }
+
+  // For billing: also set the hidden name field
+  const bNameEl = document.getElementById('b-patient-name');
+  if(prefix==='b' && bNameEl) bNameEl.value = nombre;
+
+  // Show clinical box for visits page
+  if(prefix === 'v'){
+    const box = document.getElementById('v-clinical-box');
+    const content = document.getElementById('v-clinical-content');
+    if(box && content){
+      const age = calcAgeFromDob(dob);
+      content.innerHTML = `Nombre: <strong>${nombre}</strong>${age ? ' · Edad: <strong>'+age+'</strong>' : ''}<br>Alergias: <strong>${alergias||'Ninguna'}</strong><br>Medicamentos: <strong>${medic||'Ninguno'}</strong>`;
+      box.classList.add('show');
+    }
+    // Load this patient's visits for the billing dropdown
+    loadPatientVisits(pid);
+  }
+
+  if(prefix === 'b'){
+    // Also update the search input display
+    const searchEl = document.getElementById('b-patient-search');
+    if(searchEl) searchEl.value = nombre;
+    loadPatientVisits(pid, true);
+  }
+}
+
+function clearPatient(prefix){
+  const nameEl  = document.getElementById(prefix+'-patient-name');
+  const idEl    = document.getElementById(prefix+'-patient-id');
+  const badgeEl = document.getElementById(prefix+'-patient-badge');
+  if(nameEl)   nameEl.value='';
+  if(idEl)     idEl.value='';
+  if(badgeEl)  badgeEl.style.display='none';
+  if(prefix==='v'){
+    const box=document.getElementById('v-clinical-box');
+    if(box)box.classList.remove('show');
+    const searchEl=document.getElementById('b-patient-search');
+    if(searchEl) searchEl.value='';
+  }
+}
+
+function calcAgeFromDob(dob){
+  if(!dob) return '';
+  const born = new Date(dob);
+  const now  = new Date();
+  const years = now.getFullYear() - born.getFullYear();
+  const months = now.getMonth() - born.getMonth() + (years * 12);
+  if(years >= 2) return years + ' años';
+  return months + ' meses';
+}
+
+function showCalHint(){
+  const hint = document.getElementById('v-cal-hint');
+  if(hint) hint.style.display='flex';
+}
+
+async function loadPatientVisits(pid, forBilling){
+  const sel = document.getElementById('b-visit-id');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">Sin visita asociada</option>';
+  if(!pid || !IS_CONFIGURED || !sessionPinHash) return;
+  try{
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getVisits&patient_id=${encodeURIComponent(pid)}&pinHash=${sessionPinHash}`);
+    const json = await res.json();
+    (json.visits || []).forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v.visit_id;
+      opt.textContent = `${v.visit_id} — ${v.fecha} — ${v.motivo}`;
+      sel.appendChild(opt);
+    });
+  }catch(e){}
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+// ── NAV ──
 function showPage(pageId,tabEl){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
@@ -890,7 +986,7 @@ async function checkPin(){
   try{
     const hash=await sha256hex(pinVal);
     const devHash='03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
-    if(!IS_CONFIGURED){hash===devHash?onPinSuccess(hash):onPinFail();}
+    if(!IS_CONFIGURED){ hash===devHash?onPinSuccess(hash):onPinFail(); }
     else{
       await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'verifyPin',pinHash:hash})});
       onPinSuccess(hash);
@@ -915,7 +1011,7 @@ function lockSession(){
   document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
 }
 
-/* ── INTAKE STEPS ── */
+// ── INTAKE STEPS ──
 let currentStep=1;
 const TOTAL_STEPS=4;
 function nextStep(n){
@@ -942,7 +1038,7 @@ function validateStep(step){
   al.classList.remove('show');return true;
 }
 
-/* ── SUBMIT INTAKE ── */
+// ── SUBMIT INTAKE ──
 async function submitIntake(){
   if(!validateStep(4))return;
   const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='Enviando...';
@@ -993,68 +1089,76 @@ function resetIntakeForm(){
     const nb=document.querySelector(`.rtoggle[data-group="enf-${i}"][data-value="No"]`);if(nb)nb.classList.add('on');
     const t=document.getElementById(`enf-trat-${i}`);if(t)t.value='';
   });
-  const dw=document.getElementById('dup-warning');if(dw)dw.classList.remove('show');
+  document.getElementById('dup-warning').classList.remove('show');
   setToday('i-consent-date');
 }
 
-/* ── SUBMIT VISIT ── */
+// ── SUBMIT VISIT ──
 async function submitVisit(){
   const al=document.getElementById('alert-visits');
-  const nombre=gv('v-patient-name'),fecha=document.getElementById('v-fecha').value,
+  const nombre=gv('v-patient-name'),
+        fecha=document.getElementById('v-fecha').value,
         hora=document.getElementById('v-hora').value,
         duracion=document.getElementById('v-duracion').value,
-        motivo=gv('v-motivo'),tratamiento=gv('v-tratamiento');
+        motivo=gv('v-motivo'),
+        tratamiento=gv('v-tratamiento');
   if(!nombre||!fecha||!hora||!motivo||!tratamiento){
-    showAlert(al,'error','Completa los campos obligatorios: paciente, fecha, hora, motivo y tratamiento.');return;
+    showAlert(al,'error','Completa: paciente, fecha, hora, motivo y tratamiento.');return;
   }
   const pid=document.getElementById('v-patient-id').value;
-  const alergias=(document.getElementById('v-patient-alergias')||{value:'Ninguna'}).value||'Ninguna';
-  const medic=(document.getElementById('v-patient-medic')||{value:'Ninguno'}).value||'Ninguno';
-  const dob=(document.getElementById('v-patient-dob')||{value:''}).value||'';
+  const clinical=document.getElementById('v-clinical-content');
+  const alergias=(clinical&&clinical.textContent.match(/Alergias: (.+?)(?:\n|Medic)/)?.[1])||'Ninguna';
+  const medic=(clinical&&clinical.textContent.match(/Medicamentos: (.+)/)?.[1])||'Ninguno';
   const entry={
     sheet:'Visits',pinHash:sessionPinHash,timestamp:new Date().toISOString(),
     patient_id:pid,paciente:nombre,fecha,hora,duracion,motivo,tratamiento,
     proximaCita:gv('v-proxima-cita'),notas:gv('v-notas'),
     odontologo:gv('v-odontologo')||'Dra. Ana Lucía González',
-    alergias,medicamentos:medic,dob
+    alergias,medicamentos:medic
   };
   if(await sendToSheets(entry)){
     visitsData.unshift(entry);renderVisits();
-    showAlert(al,'success',`✓ Visita de ${nombre} registrada. Recordatorio WhatsApp se enviará 1h antes (${hora}).`);
-    ['v-patient-name','v-patient-id','v-motivo','v-tratamiento','v-proxima-cita','v-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    ['v-patient-alergias','v-patient-medic','v-patient-dob'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    showAlert(al,'success',`✓ Visita de ${nombre} guardada. Evento creado en Google Calendar y recordatorio WhatsApp programado para 1h antes (${hora}).`);
+    const ids=['v-patient-name','v-patient-id','v-motivo','v-tratamiento','v-proxima-cita','v-notas'];
+    ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('v-odontologo').value='Dra. Ana Lucía González';
-    const badge=document.getElementById('v-pid-badge');if(badge)badge.classList.remove('show');
     document.getElementById('v-duracion').value='60';
+    document.getElementById('v-cal-hint').style.display='none';
+    const badge=document.getElementById('v-patient-badge');if(badge)badge.style.display='none';
+    const box=document.getElementById('v-clinical-box');if(box)box.classList.remove('show');
     setToday('v-fecha');
   }else{showAlert(al,'error','Error al guardar. Verifica tu conexión.');}
 }
 
-/* ── SUBMIT BILLING ── */
+// ── SUBMIT BILLING ──
 async function submitBilling(){
   const al=document.getElementById('alert-billing');
-  const nombre=gv('b-patient-name'),date=document.getElementById('b-date').value,
+  const nombre=gv('b-patient-name')||document.getElementById('b-patient-search').value.trim(),
+        date=document.getElementById('b-date').value,
         service=document.getElementById('b-service').value,
         amount=parseFloat(document.getElementById('b-amount').value),
         method=document.getElementById('b-method').value,
         factura=document.getElementById('b-factura').value,
-        status=document.getElementById('b-status').value,notes=gv('b-notes');
+        status=document.getElementById('b-status').value,
+        notes=gv('b-notes');
   if(!nombre||!date||!service||!amount||!method){showAlert(al,'error','Completa todos los campos obligatorios.');return;}
   const pid=document.getElementById('b-patient-id').value;
-  const vid=gv('b-visit-id');
+  const vid=document.getElementById('b-visit-id').value;
   const entry={sheet:'Billing',pinHash:sessionPinHash,timestamp:new Date().toISOString(),
     patient_id:pid,visit_id:vid,patient:nombre,date,service,amount,method,factura,status,notes};
   if(await sendToSheets(entry)){
     billingData.unshift(entry);renderBilling();renderDashboard();
     showAlert(al,'success',`✓ Cobro de $${amount.toFixed(2)} registrado para ${nombre}.`);
-    ['b-patient-name','b-patient-id','b-amount','b-notes','b-visit-id'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    const badge=document.getElementById('b-pid-badge');if(badge)badge.classList.remove('show');
+    ['b-patient-name','b-patient-id','b-amount','b-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    const bs=document.getElementById('b-patient-search');if(bs)bs.value='';
+    const bb=document.getElementById('b-patient-badge');if(bb)bb.style.display='none';
     ['b-service','b-method'].forEach(id=>document.getElementById(id).selectedIndex=0);
     document.getElementById('b-factura').selectedIndex=0;document.getElementById('b-status').selectedIndex=0;setToday('b-date');
+    document.getElementById('b-visit-id').innerHTML='<option value="">Sin visita asociada</option>';
   }else{showAlert(al,'error','Error al guardar. Verifica tu conexión.');}
 }
 
-/* ── SUBMIT EXPENSE ── */
+// ── SUBMIT EXPENSE ──
 async function submitExpense(){
   const al=document.getElementById('alert-expenses');
   const desc=gv('e-desc'),date=document.getElementById('e-date').value,
@@ -1071,25 +1175,33 @@ async function submitExpense(){
   }else{showAlert(al,'error','Error al guardar. Verifica tu conexión.');}
 }
 
-/* ── RENDER ── */
+// ── RENDER ──
 const methodClass={'Efectivo':'pill-cash','Tarjeta de crédito':'pill-card','Tarjeta de débito':'pill-card','Transferencia':'pill-transfer','Seguro médico':'pill-insurance'};
 const statusClass={'Pagado':'s-paid','Pendiente':'s-pending','Parcial':'s-pending'};
 
 function renderVisits(){
   const list=document.getElementById('visits-list');
-  if(!visitsData.length){list.innerHTML='<div class="empty"><div class="empty-icon">📋</div>Aún no hay visitas registradas.</div>';return;}
+  const today=new Date().toISOString().split('T')[0];
+  const thisMonth=today.slice(0,7);
+  document.getElementById('v-total').textContent=visitsData.length;
+  document.getElementById('v-month').textContent=visitsData.filter(v=>(v.fecha||'').startsWith(thisMonth)).length;
+  document.getElementById('v-upcoming').textContent=visitsData.filter(v=>v.proximaCita&&v.proximaCita>=today).length;
+  if(!visitsData.length){list.innerHTML='<div class="empty"><div class="empty-icon">🗓️</div>Aún no hay visitas registradas.</div>';return;}
   list.innerHTML=visitsData.slice(0,25).map(e=>{
     const ini=(e.paciente||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const vid=e.visit_id||'';
+    const alg=e.alergias&&e.alergias!=='Ninguna'?`<br><span style="color:var(--warn);font-size:.7rem;">⚠️ ${e.alergias}</span>`:'';
     return`<div class="entry-item">
       <div class="entry-avatar visit">${ini}</div>
       <div class="entry-body">
         <div class="entry-name">${e.paciente||''}</div>
-        <div class="entry-meta">${e.fecha||''}${e.hora?' · '+e.hora:''} · ${(e.motivo||'').substring(0,45)}${(e.motivo||'').length>45?'...':''}</div>
+        <div class="entry-meta">${e.fecha||''}${e.hora?' · '+e.hora:''} · ${(e.motivo||'').substring(0,40)}${(e.motivo||'').length>40?'...':''}${alg}</div>
       </div>
-      ${e.visit_id?`<div class="entry-id">${e.visit_id}</div>`:''}
+      ${vid?`<div class="entry-id">${vid}</div>`:''}
     </div>`;
   }).join('');
 }
+
 function renderBilling(){
   const list=document.getElementById('billing-list');
   if(!billingData.length){list.innerHTML='<div class="empty"><div class="empty-icon">💳</div>Aún no hay cobros registrados.</div>';['m-today','m-month'].forEach(id=>document.getElementById(id).textContent='$0');document.getElementById('m-count').textContent='0';return;}
@@ -1103,6 +1215,7 @@ function renderBilling(){
     return`<div class="entry-item"><div class="entry-avatar">${ini}</div><div class="entry-body"><div class="entry-name">${e.patient||''}</div><div class="entry-meta">${e.service||''} · ${e.date||''} <span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span>${factTag}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;"><div class="entry-amount income">+$${Number(e.amount||0).toFixed(2)}</div>${e.billing_id?`<div class="entry-id">${e.billing_id}</div>`:''}</div></div>`;
   }).join('');
 }
+
 function renderExpenses(){
   const list=document.getElementById('expense-list');
   if(!expenseData.length){list.innerHTML='<div class="empty"><div class="empty-icon">🧾</div>Aún no hay gastos registrados.</div>';document.getElementById('e-month').textContent='$0';document.getElementById('e-largest').textContent='—';document.getElementById('e-count').textContent='0';return;}
@@ -1111,9 +1224,10 @@ function renderExpenses(){
   document.getElementById('e-count').textContent=expenseData.length;
   list.innerHTML=expenseData.slice(0,25).map(e=>`<div class="entry-item"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc||''}</div><div class="entry-meta">${e.category||''} · ${e.date||''}${e.vendor?' · '+e.vendor:''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;"><div class="entry-amount expense">-$${Number(e.amount||0).toFixed(2)}</div>${e.expense_id?`<div class="entry-id">${e.expense_id}</div>`:''}</div></div>`).join('');
 }
+
 function renderDashboard(){
-  const totalRev=billingData.reduce((s,e)=>s+Number(e.amount||e['Monto (MXN)']||0),0);
-  const totalExp=expenseData.reduce((s,e)=>s+Number(e.amount||e['Monto (MXN)']||0),0);
+  const totalRev=billingData.reduce((s,e)=>s+Number(e.amount||0),0);
+  const totalExp=expenseData.reduce((s,e)=>s+Number(e.amount||0),0);
   const net=totalRev-totalExp;
   document.getElementById('d-revenue').textContent='$'+totalRev.toFixed(0);
   document.getElementById('d-expenses').textContent='$'+totalExp.toFixed(0);
@@ -1126,11 +1240,12 @@ function renderDashboard(){
   document.getElementById('d-patients-sub').textContent=patientsData.length===1?'paciente':'pacientes';
   const tbody=document.getElementById('dash-recent-body');
   if(!billingData.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos aún.</td></tr>';}
-  else{tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td class="mono">${e.billing_id||''}</td><td>${e.patient||''}</td><td style="color:var(--muted)">${e.service||''}</td><td style="color:var(--muted)">${e.date||''}</td><td style="color:var(--success)">$${Number(e.amount||0).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span></td><td style="color:var(--muted)">${e.factura||'No'}</td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status||''}</span></td></tr>`).join('');}
+  else{tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td style="font-family:monospace;font-size:.68rem;color:var(--muted)">${e.billing_id||''}</td><td>${e.patient||''}</td><td style="color:var(--muted)">${e.service||''}</td><td style="color:var(--muted)">${e.date||''}</td><td style="color:var(--success)">$${Number(e.amount||0).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span></td><td style="color:var(--muted)">${e.factura||'No'}</td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status||''}</span></td></tr>`).join('');}
   const deList=document.getElementById('dash-expense-list');
   deList.innerHTML=!expenseData.length?'<div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos aún.</div>':expenseData.slice(0,4).map(e=>`<div class="entry-item" style="margin-bottom:.4rem;"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc||''}</div><div class="entry-meta">${e.category||''}</div></div><div class="entry-amount expense">-$${Number(e.amount||0).toFixed(2)}</div></div>`).join('');
   buildCharts();
 }
+
 function buildCharts(){
   const gc='rgba(100,116,139,0.15)',tc='#64748b';
   const months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -1152,10 +1267,12 @@ function buildCharts(){
   if(methodChart)methodChart.destroy();
   methodChart=new Chart(document.getElementById('methodChart'),{type:'doughnut',data:{labels:mL,datasets:[{data:mD,backgroundColor:['#16a34a','#2563eb','#7c3aed','#d97706'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,font:{size:10},boxWidth:9,padding:8}}},cutout:'58%'}});
 }
+
+// ── DATA LOADING ──
 function normalizeRow(row,sheet){
   if(sheet==='Billing'){return{billing_id:row['billing_id']||'',patient_id:row['patient_id']||'',visit_id:row['visit_id']||'',patient:row['Paciente']||row['patient']||'',amount:parseFloat(row['Monto (MXN)']||row['amount']||0),date:row['Fecha']||row['date']||'',service:row['Servicio']||row['service']||'',method:row['Método de Pago']||row['method']||'',factura:row['Factura']||'No',status:row['Estado']||row['status']||'Pagado',notes:row['Notas']||row['notes']||'',timestamp:row['Timestamp']||''};}
   if(sheet==='Expenses'){return{expense_id:row['expense_id']||'',amount:parseFloat(row['Monto (MXN)']||row['amount']||0),desc:row['Descripción']||row['desc']||'',date:row['Fecha']||row['date']||'',category:row['Categoría']||row['category']||'',method:row['Pagado con']||row['method']||'',vendor:row['Proveedor']||row['vendor']||'',notes:row['Notas']||row['notes']||'',timestamp:row['Timestamp']||''};}
-  if(sheet==='Visits'){return{visit_id:row['visit_id']||'',patient_id:row['patient_id']||'',paciente:row['Paciente']||row['paciente']||'',fecha:row['Fecha']||row['fecha']||'',hora:row['Hora']||row['hora']||'',duracion:row['Duración']||row['duracion']||'',motivo:row['Motivo / Diagnóstico']||row['motivo']||'',tratamiento:row['Tratamiento Realizado']||row['tratamiento']||'',proximaCita:row['Próxima Cita']||'',notas:row['Notas Clínicas']||row['notas']||'',odontologo:row['Odontólogo']||'',alergias:row['Alergias']||row['alergias']||'',medicamentos:row['Medicamentos']||row['medicamentos']||'',timestamp:row['Timestamp']||''};}
+  if(sheet==='Visits'){return{visit_id:row['visit_id']||'',patient_id:row['patient_id']||'',paciente:row['Paciente']||row['paciente']||'',fecha:row['Fecha']||row['fecha']||'',hora:row['Hora']||row['hora']||'',duracion:row['Duración (min)']||row['duracion']||'',motivo:row['Motivo / Diagnóstico']||row['motivo']||'',tratamiento:row['Tratamiento Realizado']||row['tratamiento']||'',proximaCita:row['Próxima Cita']||'',notas:row['Notas Clínicas']||row['notas']||'',odontologo:row['Odontólogo']||'',alergias:row['Alergias']||row['alergias']||'',medicamentos:row['Medicamentos']||row['medicamentos']||'',timestamp:row['Timestamp']||''};}
   return row;
 }
 async function loadSheetData(section){
