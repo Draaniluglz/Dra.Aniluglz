@@ -612,30 +612,6 @@ async function sha256hex(str){
   return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 
-// Añade esto al final de tu etiqueta <script>
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('rtoggle')) {
-    const group = e.target.getAttribute('data-group');
-    const value = e.target.getAttribute('data-value');
-    
-    // 1. Deseleccionar todos los botones del mismo grupo
-    document.querySelectorAll(`.rtoggle[data-group="${group}"]`).forEach(btn => {
-      btn.classList.remove('selected');
-    });
-    
-    // 2. Seleccionar el botón clickeado
-    e.target.classList.add('selected');
-    
-    console.log(`Grupo ${group} cambiado a: ${value}`);
-  }
-});
-
-// Función auxiliar para obtener el valor seleccionado al guardar
-function radioVal(groupName) {
-  const selected = document.querySelector(`.rtoggle[data-group="${groupName}"].selected`);
-  return selected ? selected.getAttribute('data-value') : '';
-}
-  
 /* ── SIGNATURE ── */
 let sigDrawing=false,sigCtx=null,sigCanvas=null,sigHasData=false;
 function initSignaturePad(){
