@@ -729,8 +729,8 @@ window.addEventListener('DOMContentLoaded',()=>{
     const btn = e.target.closest('.rtoggle');
     if (!btn) return;
     const group = btn.dataset.group;
-    document.querySelectorAll(`.rtoggle[data-group="${group}"]`).forEach(b => b.classList.remove('on'));
-    btn.classList.add('on');
+    document.querySelectorAll(`.rtoggle[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
   });
   document.addEventListener('click', e => {
     if(!e.target.closest('.autocomplete-wrap'))
@@ -742,10 +742,10 @@ function setToday(id){const el=document.getElementById(id);if(el)el.value=new Da
 
 /* ── TOGGLE HELPERS ── */
 function radioVal(group){
-  const sel=document.querySelector(`.rtoggle[data-group="${group}"].on`);
+  const sel=document.querySelector(`.rtoggle[data-group="${group}"].selected`);
   return sel ? sel.dataset.value : '';
 }
-function resetToggles(){document.querySelectorAll('.rtoggle').forEach(b=>b.classList.remove('on'));}
+function resetToggles(){document.querySelectorAll('.rtoggle').forEach(b=>b.classList.remove('selected'));}
 
 /* ── DISEASE TABLE — each row = unique data-group="enf-N" ── */
 function buildDiseaseTable(){
@@ -753,7 +753,7 @@ function buildDiseaseTable(){
     <tr>
       <td>${d}</td>
       <td><button type="button" class="rtoggle" data-group="enf-${i}" data-value="Sí" style="padding:.18rem .6rem;font-size:.74rem;">Sí</button></td>
-      <td><button type="button" class="rtoggle on" data-group="enf-${i}" data-value="No" style="padding:.18rem .6rem;font-size:.74rem;">No</button></td>
+      <td><button type="button" class="rtoggle selected" data-group="enf-${i}" data-value="No" style="padding:.18rem .6rem;font-size:.74rem;">No</button></td>6rem;font-size:.74rem;">No</button></td>
       <td><input class="trat-input" type="text" id="enf-trat-${i}" placeholder="Tratamiento..." style="width:100%;"></td>
     </tr>`).join('');
 }
@@ -990,7 +990,7 @@ function resetIntakeForm(){
   document.getElementById('i-acepto').checked=false;clearSig();
   resetToggles();
   DISEASES.forEach((_,i)=>{
-    const nb=document.querySelector(`.rtoggle[data-group="enf-${i}"][data-value="No"]`);if(nb)nb.classList.add('on');
+    const nb=document.querySelector(`.rtoggle[data-group="enf-${i}"][data-value="No"]`);if(nb)nb.classList.add('selected');
     const t=document.getElementById(`enf-trat-${i}`);if(t)t.value='';
   });
   const dw=document.getElementById('dup-warning');if(dw)dw.classList.remove('show');
