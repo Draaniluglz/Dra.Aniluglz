@@ -254,7 +254,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">🦷 Dra. González </div>
+  <div class="nav-brand">🦷 Dra. Anilu González</div>
 
   <!-- Desktop: individual tab buttons -->
   <div class="nav-tabs">
@@ -996,19 +996,60 @@ function requireAuth(pageId,tabEl){
   setTimeout(()=>document.getElementById('pin-input').focus(),100);
 }
 
+/* ── BRUTE FORCE PROTECTION ── */
+let pinFailCount = 0;
+let pinLockUntil = 0;
+
 async function checkPin(){
-  const pinVal=document.getElementById('pin-input').value;if(!pinVal)return;
-  const btn=document.getElementById('pin-btn');btn.disabled=true;btn.textContent='Verificando...';
-  try{
-    const hash=await sha256hex(pinVal);
-    const devHash='03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
-    if(!IS_CONFIGURED){hash===devHash?onPinSuccess(hash):onPinFail();}
-    else{
-      await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'verifyPin',pinHash:hash})});
-      onPinSuccess(hash);
+  // Lockout check
+  const now = Date.now();
+  if (now < pinLockUntil) {
+    const secsLeft = Math.ceil((pinLockUntil - now) / 1000);
+    document.getElementById('pin-error').textContent = `Demasiados intentos. Espera ${secsLeft}s.`;
+    document.getElementById('pin-error').classList.add('show');
+    return;
+  }
+
+  const pinVal = document.getElementById('pin-input').value;
+  if (!pinVal) return;
+  const btn = document.getElementById('pin-btn');
+  btn.disabled = true; btn.textContent = 'Verificando...';
+
+  try {
+    const hash = await sha256hex(pinVal);
+    const devHash = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
+
+    if (!IS_CONFIGURED) {
+      // Dev mode: compare locally
+      if (hash === devHash) { pinFailCount = 0; onPinSuccess(hash); }
+      else { handlePinFail(); }
+    } else {
+      // Production: fetch with readable response (no 'no-cors')
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'verifyPin', pinHash: hash })
+      });
+      const json = await res.json();
+      if (json.ok === true) {
+        pinFailCount = 0;
+        onPinSuccess(hash);
+      } else {
+        handlePinFail();
+      }
     }
-  }catch(e){onPinFail();}
-  btn.disabled=false;btn.textContent='Desbloquear';
+  } catch(e) { handlePinFail(); }
+
+  btn.disabled = false; btn.textContent = 'Desbloquear';
+}
+
+function handlePinFail() {
+  pinFailCount++;
+  // Progressive lockout: 3 fails = 30s, 5 fails = 120s, 7+ fails = 300s
+  if      (pinFailCount >= 7) pinLockUntil = Date.now() + 300000;
+  else if (pinFailCount >= 5) pinLockUntil = Date.now() + 120000;
+  else if (pinFailCount >= 3) pinLockUntil = Date.now() + 30000;
+  onPinFail();
 }
 function onPinSuccess(hash){
   sessionPinHash=hash;sessionUnlocked=true;
@@ -1017,7 +1058,21 @@ function onPinSuccess(hash){
   showPage(pendingPage,pendingTab);
   if(IS_CONFIGURED){loadSheetData('patients');loadSheetData('billing');loadSheetData('expenses');loadSheetData('visits');}
 }
-function onPinFail(){document.getElementById('pin-error').classList.add('show');document.getElementById('pin-input').value='';document.getElementById('pin-input').focus();}
+function onPinFail(){
+  const errEl = document.getElementById('pin-error');
+  const remaining = Math.max(0, 5 - pinFailCount);
+  if (pinLockUntil > Date.now()) {
+    const secsLeft = Math.ceil((pinLockUntil - Date.now()) / 1000);
+    errEl.textContent = 'Demasiados intentos. Espera ' + secsLeft + 's.';
+  } else if (remaining > 0) {
+    errEl.textContent = 'PIN incorrecto. ' + remaining + ' intento(s) antes del bloqueo.';
+  } else {
+    errEl.textContent = 'PIN incorrecto. Cuenta bloqueada temporalmente.';
+  }
+  errEl.classList.add('show');
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-input').focus();
+}
 function closeLock(){document.getElementById('lock-screen').classList.add('hidden');}
 function lockSession(){
   sessionUnlocked=false;sessionPinHash='';
