@@ -254,7 +254,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">🦷 Dra. Anilu González</div>
+  <div class="nav-brand">🦷 Dra. González — Odontopediatría</div>
 
   <!-- Desktop: individual tab buttons -->
   <div class="nav-tabs">
@@ -305,9 +305,11 @@
 
     <!-- ── PASO 1: DATOS PERSONALES ── -->
     <div id="intake-step-1">
-      <div class="form-section">Datos Personales</div>
-      <div class="form-grid">
-        <div class="field"><label class="required">Nombre del paciente</label><input type="text" id="i-nombre" placeholder="Nombre completo" oninput="checkDuplicate()"/></div>
+      <div class="form-section">Datos Personales del Paciente</div>
+      <div class="form-grid g3">
+        <div class="field"><label class="required">Nombre(s) del paciente</label><input type="text" id="i-nombre" placeholder="Nombre(s)" oninput="updateNombreCompleto();checkDuplicate()"/></div>
+        <div class="field"><label class="required">Apellido paterno</label><input type="text" id="i-ap-paterno" placeholder="Apellido paterno" oninput="updateNombreCompleto();checkDuplicate()"/></div>
+        <div class="field"><label class="required">Apellido materno</label><input type="text" id="i-ap-materno" placeholder="Apellido materno" oninput="updateNombreCompleto()"/></div>
         <div class="field"><label>Nombre de cariño</label><input type="text" id="i-apodo" placeholder="Apodo o nombre preferido"/></div>
         <div class="field"><label class="required">Fecha de nacimiento</label><input type="date" id="i-dob" onchange="checkDuplicate()"/></div>
         <div class="field"><label class="required">Sexo</label>
@@ -317,16 +319,32 @@
         <div class="field"><label>Meses</label><input type="number" id="i-meses" placeholder="Meses" min="0" max="11"/></div>
         <div class="field"><label>Peso (kg)</label><input type="number" id="i-peso" placeholder="kg" min="0"/></div>
         <div class="field"><label>Estatura (cm)</label><input type="number" id="i-estatura" placeholder="cm" min="0"/></div>
+      </div>
+      <!-- patient_key preview badge -->
+      <div id="pkey-preview" style="display:none;margin:.5rem 0 .75rem;font-size:.72rem;color:var(--muted);">
+        🔑 ID del paciente: <span id="pkey-val" style="font-family:monospace;color:var(--teal);background:rgba(45,212,191,.08);padding:1px 7px;border-radius:4px;border:1px solid rgba(45,212,191,.2);"></span>
+        <span style="margin-left:.4rem;color:var(--muted);">(Nombre + Tel. madre)</span>
+      </div>
+      <div class="form-grid">
         <div class="field full"><label class="required">Domicilio</label><input type="text" id="i-domicilio" placeholder="Calle, Colonia, Ciudad"/></div>
         <div class="field full"><label>Lugar y fecha de nacimiento</label><input type="text" id="i-lugar-nac" placeholder="Ciudad, Estado — Fecha"/></div>
-        <div class="field"><label class="required">Nombre del padre</label><input type="text" id="i-padre"/></div>
+        <div class="field"><label class="required">Nombre(s) del padre</label><input type="text" id="i-padre-nombre" placeholder="Nombre(s)"/></div>
+        <div class="field"><label class="required">Apellidos del padre</label><input type="text" id="i-padre-apellidos" placeholder="Apellido paterno y materno"/></div>
         <div class="field"><label class="required">Tel/Cel del padre</label><input type="tel" id="i-tel-padre" placeholder="+52 833 000 0000"/></div>
-        <div class="field"><label class="required">Nombre de la madre</label><input type="text" id="i-madre"/></div>
-        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="+52 833 000 0000" oninput="checkDuplicate()"/></div>
+        <div class="field"></div>
+        <div class="field"><label class="required">Nombre(s) de la madre</label><input type="text" id="i-madre-nombre" placeholder="Nombre(s)" oninput="updateNombreCompleto();checkDuplicate()"/></div>
+        <div class="field"><label class="required">Apellidos de la madre</label><input type="text" id="i-madre-apellidos" placeholder="Apellido paterno y materno"/></div>
+        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="+52 833 000 0000" oninput="updateNombreCompleto();checkDuplicate()"/></div>
+        <div class="field"></div>
         <div class="field"><label>Nombre del pediatra</label><input type="text" id="i-pediatra"/></div>
         <div class="field"><label>Tel/Cel del pediatra</label><input type="tel" id="i-tel-pediatra"/></div>
         <div class="field full"><label class="required">Motivo de consulta</label><textarea id="i-motivo" placeholder="¿Por qué trae al paciente hoy?"></textarea></div>
       </div>
+      <!-- hidden composed fields used by JS -->
+      <input type="hidden" id="i-nombre-completo"/>
+      <input type="hidden" id="i-padre"/>
+      <input type="hidden" id="i-madre"/>
+      <input type="hidden" id="i-patient-key"/>
       <div class="dup-warning" id="dup-warning">⚠️ <strong>Posible duplicado:</strong> Ya existe un paciente con el mismo nombre, fecha de nacimiento y teléfono de la madre. Verifica antes de continuar.</div>
       <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;">
         <button class="btn btn-primary" onclick="nextStep(2)">Continuar →</button>
@@ -627,9 +645,14 @@
         </div>
         <span class="pid-badge" id="v-pid-badge"></span>
         <input type="hidden" id="v-patient-id"/>
+        <input type="hidden" id="v-patient-key"/>
+        <input type="hidden" id="v-patient-madre-nombre"/>
+        <input type="hidden" id="v-patient-tel-madre"/>
         <input type="hidden" id="v-patient-alergias"/>
         <input type="hidden" id="v-patient-medic"/>
         <input type="hidden" id="v-patient-dob"/>
+        <input type="hidden" id="v-patient-ap-paterno"/>
+        <input type="hidden" id="v-patient-ap-materno"/>
       </div>
       <div class="field"><label class="required">Fecha de visita</label><input type="date" id="v-fecha"/></div>
       <div class="field"><label class="required">Hora de inicio</label><input type="time" id="v-hora"/></div>
@@ -682,6 +705,10 @@
         </div>
         <input type="hidden" id="b-patient-id"/>
         <input type="hidden" id="b-patient-name"/>
+        <input type="hidden" id="b-patient-key"/>
+        <input type="hidden" id="b-patient-tel-madre"/>
+        <input type="hidden" id="b-patient-ap-paterno"/>
+        <input type="hidden" id="b-patient-ap-materno"/>
       </div>
       <div class="field full">
         <label>Visita asociada <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
@@ -840,6 +867,46 @@ function getDiseaseData(){
 
 /* ── DUPLICATE DETECTION ── */
 function normKey(s){return String(s||'').toLowerCase().replace(/[\s\-\+\(\)]/g,'');}
+
+/* Build the human-readable patient_key: normKey(nombreCompleto)_normKey(telMadre)
+   e.g. "Juan Pérez García" + "833-324-4431" → "juanperezgarcia_8333244431"
+   Mirrors the makePatientKey() function in Apps Script */
+function makePatientKey(nombreCompleto, telMadre){
+  const n = normKey(nombreCompleto||'');
+  const t = normKey(telMadre||'');
+  if(!n&&!t) return '';
+  return n + (t?'_'+t:'');
+}
+
+/* Called whenever nombre, apellidos, madre nombre, or tel madre changes */
+function updateNombreCompleto(){
+  const nombre  = (document.getElementById('i-nombre')||{value:''}).value.trim();
+  const apPat   = (document.getElementById('i-ap-paterno')||{value:''}).value.trim();
+  const apMat   = (document.getElementById('i-ap-materno')||{value:''}).value.trim();
+  const madreNom= (document.getElementById('i-madre-nombre')||{value:''}).value.trim();
+  const madreAp = (document.getElementById('i-madre-apellidos')||{value:''}).value.trim();
+  const tel     = (document.getElementById('i-tel-madre')||{value:''}).value.trim();
+
+  const nombreCompleto = [nombre, apPat, apMat].filter(Boolean).join(' ');
+  const madreCompleta  = [madreNom, madreAp].filter(Boolean).join(' ');
+
+  const nc = document.getElementById('i-nombre-completo');
+  if(nc) nc.value = nombreCompleto;
+  const mc = document.getElementById('i-madre');
+  if(mc) mc.value = madreCompleta;
+
+  const pkey = makePatientKey(nombreCompleto, tel);
+  const pkEl = document.getElementById('i-patient-key');
+  if(pkEl) pkEl.value = pkey;
+
+  // Show preview badge
+  const preview = document.getElementById('pkey-preview');
+  const pkVal   = document.getElementById('pkey-val');
+  if(preview && pkVal){
+    if(pkey){ preview.style.display='block'; pkVal.textContent=pkey; }
+    else { preview.style.display='none'; }
+  }
+}
 function buildDupKey(nombre,dob,tel){return normKey(nombre)+'|'+(dob||'')+'|'+normKey(tel);}
 
 function checkDuplicate(){
@@ -901,10 +968,14 @@ function patientSearch(query,prefix){
     if(matches.length){
       renderAcList(list,matches.map(p=>({
         patient_id:p['patient_id']||'',
+        patient_key:p['patient_key']||p['Llave Paciente']||'',
         nombre:p['Nombre']||p.nombre||'',
         dob:p['Fecha Nacimiento']||p.dob||'',
         alergias:p['Alergias (detalle)']||p.alergiasDetalle||'Ninguna',
-        medic:p['Medicamento (detalle)']||p.medicDetalle||'Ninguno'
+        medic:p['Medicamento (detalle)']||p.medicDetalle||'Ninguno',
+        telMadre:p['Tel Madre']||p.telMadre||'',
+        apPaterno:p['Apellido Paterno']||'',
+        apMaterno:p['Apellido Materno']||''
       })),prefix);return;
     }
     if(!IS_CONFIGURED)return;
@@ -924,20 +995,23 @@ function searchPatients(query, listId, prefix){
 function renderAcList(list,patients,prefix){
   if(!patients.length){list.classList.remove('show');return;}
   list.innerHTML=patients.map(p=>`
-    <div class="autocomplete-item" onclick="selectPatient('${p.patient_id}','${esc(p.nombre)}','${esc(p.dob||'')}','${esc(p.alergias||'')}','${esc(p.medic||'')}','${prefix}')">
-      <span class="ac-name">${esc(p.nombre)}</span><span class="ac-id">${p.patient_id}</span>
+    <div class="autocomplete-item" onclick="selectPatient('${p.patient_id}','${esc(p.nombre)}','${esc(p.dob||'')}','${esc(p.alergias||'')}','${esc(p.medic||'')}','${prefix}','${esc(p.patient_key||'')}','${esc(p.telMadre||'')}','${esc(p.apPaterno||'')}','${esc(p.apMaterno||'')}')">
+      <span class="ac-name">${esc(p.nombre)}</span>
+      <span class="ac-id">${p.patient_id}</span>
+      ${p.patient_key?`<span style="font-size:.63rem;color:var(--teal-dim);font-family:monospace;margin-left:3px;">${esc(p.patient_key)}</span>`:''}
     </div>`).join('');
   list.classList.add('show');
   list.style.display='block';
 }
 
-function selectPatient(pid,nombre,dob,alergias,medic,prefix){
+function selectPatient(pid,nombre,dob,alergias,medic,prefix,pkey,telMadre,apPaterno,apMaterno){
+  pkey=pkey||''; telMadre=telMadre||''; apPaterno=apPaterno||''; apMaterno=apMaterno||'';
   const nameEl=document.getElementById(prefix+'-patient-name')||document.getElementById(prefix+'-patient-search');
   const idEl=document.getElementById(prefix+'-patient-id');
   const badge=document.getElementById(prefix+'-pid-badge');
   if(nameEl) nameEl.value=nombre;
   if(idEl) idEl.value=pid;
-  if(badge){badge.textContent=pid;badge.classList.add('show');}
+  if(badge){badge.textContent=pkey||pid;badge.classList.add('show');}
 
   // For billing prefix, show the patient badge
   if(prefix==='b'){
@@ -947,19 +1021,22 @@ function selectPatient(pid,nombre,dob,alergias,medic,prefix){
     const bname=document.getElementById('b-patient-name');
     if(bb){bb.style.display='block';}
     if(bn) bn.textContent=nombre;
-    if(bi) bi.textContent=pid;
+    if(bi) bi.textContent=pkey||pid;
     if(bname) bname.value=nombre;
   }
 
   const listEl=document.getElementById(prefix+'-ac-list');
   if(listEl){listEl.classList.remove('show');listEl.style.display='none';}
 
-  const dobEl=document.getElementById(prefix+'-patient-dob');
-  const alrgEl=document.getElementById(prefix+'-patient-alergias');
-  const medicEl=document.getElementById(prefix+'-patient-medic');
-  if(dobEl) dobEl.value=dob;
-  if(alrgEl) alrgEl.value=alergias;
-  if(medicEl) medicEl.value=medic;
+  // Store all extra fields
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
+  set(prefix+'-patient-dob', dob);
+  set(prefix+'-patient-alergias', alergias);
+  set(prefix+'-patient-medic', medic);
+  set(prefix+'-patient-key', pkey);
+  set(prefix+'-patient-tel-madre', telMadre);
+  set(prefix+'-patient-ap-paterno', apPaterno);
+  set(prefix+'-patient-ap-materno', apMaterno);
 }
 
 function clearPatientSelection(prefix){
@@ -1091,7 +1168,9 @@ const gv=id=>document.getElementById(id)?document.getElementById(id).value.trim(
 function validateStep(step){
   const al=document.getElementById('alert-intake');
   if(step===1){
-    if(!gv('i-nombre')||!gv('i-dob')||!gv('i-domicilio')||!gv('i-padre')||!gv('i-tel-padre')||!gv('i-madre')||!gv('i-tel-madre')||!gv('i-motivo')){
+    if(!gv('i-nombre')||!gv('i-ap-paterno')||!gv('i-ap-materno')||!gv('i-dob')||
+       !gv('i-domicilio')||!gv('i-padre-nombre')||!gv('i-padre-apellidos')||!gv('i-tel-padre')||
+       !gv('i-madre-nombre')||!gv('i-madre-apellidos')||!gv('i-tel-madre')||!gv('i-motivo')){
       showAlert(al,'error','Por favor completa todos los campos obligatorios (*).'); return false;
     }
   }
@@ -1130,11 +1209,19 @@ async function submitIntake(){
   const al=document.getElementById('alert-intake');
   const payload={
     sheet:'Patients',timestamp:new Date().toISOString(),
-    nombre:gv('i-nombre'),apodo:gv('i-apodo'),dob:gv('i-dob'),
+    nombre:gv('i-nombre-completo'),
+    nombrePaciente:gv('i-nombre'),
+    apPaterno:gv('i-ap-paterno'),
+    apMaterno:gv('i-ap-materno'),
+    apodo:gv('i-apodo'),dob:gv('i-dob'),
     sexo:document.getElementById('i-sexo').value,
     edad:gv('i-edad'),meses:gv('i-meses'),peso:gv('i-peso'),estatura:gv('i-estatura'),
     domicilio:gv('i-domicilio'),lugarNac:gv('i-lugar-nac'),
-    padre:gv('i-padre'),telPadre:gv('i-tel-padre'),madre:gv('i-madre'),telMadre:gv('i-tel-madre'),
+    padre:gv('i-padre-nombre')+' '+gv('i-padre-apellidos'),
+    telPadre:gv('i-tel-padre'),
+    madre:gv('i-madre-nombre')+' '+gv('i-madre-apellidos'),
+    telMadre:gv('i-tel-madre'),
+    patientKey:gv('i-patient-key'),
     pediatra:gv('i-pediatra'),telPediatra:gv('i-tel-pediatra'),motivo:gv('i-motivo'),
     embarazo:radioVal('emb-tipo'),parto:radioVal('parto-tipo'),
     gestacion:gv('i-gestacion'),enfViral:gv('i-enf-viral'),enfTransmisible:gv('i-enf-transmisible'),
@@ -1177,6 +1264,8 @@ function resetIntakeForm(){
   });
   const dw=document.getElementById('dup-warning');if(dw)dw.classList.remove('show');
   const lbl=document.getElementById('consent-check-label');if(lbl)lbl.classList.remove('error');
+  const pkp=document.getElementById('pkey-preview');if(pkp)pkp.style.display='none';
+  const pkv=document.getElementById('pkey-val');if(pkv)pkv.textContent='';
   setToday('i-consent-date');
 }
 
@@ -1194,12 +1283,21 @@ async function submitVisit(){
   const alergias=(document.getElementById('v-patient-alergias')||{value:'Ninguna'}).value||'Ninguna';
   const medic=(document.getElementById('v-patient-medic')||{value:'Ninguno'}).value||'Ninguno';
   const dob=(document.getElementById('v-patient-dob')||{value:''}).value||'';
+  const pkey=(document.getElementById('v-patient-key')||{value:''}).value||'';
+  const telMadre=(document.getElementById('v-patient-tel-madre')||{value:''}).value||'';
+  const apPaterno=(document.getElementById('v-patient-ap-paterno')||{value:''}).value||'';
+  const apMaterno=(document.getElementById('v-patient-ap-materno')||{value:''}).value||'';
+  // Load previous visits for this patient to include in calendar/WA
+  const prevVisits=visitsData.filter(v=>v.patient_id===pid||v.patient_key===pkey).slice(0,3);
   const entry={
     sheet:'Visits',pinHash:sessionPinHash,timestamp:new Date().toISOString(),
-    patient_id:pid,paciente:nombre,fecha,hora,duracion,motivo,tratamiento,
+    patient_id:pid,patient_key:pkey,paciente:nombre,
+    telMadre,apPaterno,apMaterno,
+    fecha,hora,duracion,motivo,tratamiento,
     proximaCita:gv('v-proxima-cita'),notas:gv('v-notas'),
     odontologo:gv('v-odontologo')||'Dra. Ana Lucía González',
-    alergias,medicamentos:medic,dob
+    alergias,medicamentos:medic,dob,
+    visitasAnteriores:JSON.stringify(prevVisits.map(v=>({fecha:v.fecha,motivo:(v.motivo||'').substring(0,60),tratamiento:(v.tratamiento||'').substring(0,60)})))
   };
   if(await sendToSheets(entry)){
     visitsData.unshift(entry);renderVisits();
@@ -1225,8 +1323,14 @@ async function submitBilling(){
   if(!nombre||!date||!service||!amount||!method){showAlert(al,'error','Completa todos los campos obligatorios.');return;}
   const pid=document.getElementById('b-patient-id').value;
   const vid=gv('b-visit-id');
+  const bpkey=(document.getElementById('b-patient-key')||{value:''}).value||'';
+  const btelMadre=(document.getElementById('b-patient-tel-madre')||{value:''}).value||'';
+  const bapPaterno=(document.getElementById('b-patient-ap-paterno')||{value:''}).value||'';
+  const bapMaterno=(document.getElementById('b-patient-ap-materno')||{value:''}).value||'';
   const entry={sheet:'Billing',pinHash:sessionPinHash,timestamp:new Date().toISOString(),
-    patient_id:pid,visit_id:vid,patient:nombre,date,service,amount,method,factura,status,notes};
+    patient_id:pid,patient_key:bpkey,visit_id:vid,patient:nombre,
+    telMadre:btelMadre,apPaterno:bapPaterno,apMaterno:bapMaterno,
+    date,service,amount,method,factura,status,notes};
   if(await sendToSheets(entry)){
     billingData.unshift(entry);renderBilling();renderDashboard();
     showAlert(al,'success',`✓ Cobro de $${amount.toFixed(2)} registrado para ${nombre}.`);
@@ -1266,7 +1370,7 @@ function renderVisits(){
     return`<div class="entry-item">
       <div class="entry-avatar">${ini}</div>
       <div class="entry-body">
-        <div class="entry-name">${e.paciente||''}</div>
+        <div class="entry-name">${e.paciente||''}${e.patient_key?` <span style="font-size:.62rem;font-family:monospace;color:var(--teal-dim);margin-left:4px;">${e.patient_key}</span>`:''}</div>
         <div class="entry-meta">${e.fecha||''}${e.hora?' · '+e.hora:''} · ${(e.motivo||'').substring(0,45)}${(e.motivo||'').length>45?'...':''}</div>
       </div>
     </div>`;
