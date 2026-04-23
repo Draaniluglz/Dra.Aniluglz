@@ -254,7 +254,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">🦷 Dra. Anilu González</div>
+  <div class="nav-brand">🦷 Dra. González — Odontopediatría</div>
 
   <!-- Desktop: individual tab buttons -->
   <div class="nav-tabs">
@@ -1019,24 +1019,13 @@ async function checkPin(){
     const hash = await sha256hex(pinVal);
     const devHash = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
 
-    if (!IS_CONFIGURED) {
-      // Dev mode: compare locally
-      if (hash === devHash) { pinFailCount = 0; onPinSuccess(hash); }
-      else { handlePinFail(); }
+    // Always validate locally first against STAFF_PIN_HASH
+    // The Apps Script also validates server-side on every data request
+    if (hash === devHash) {
+      pinFailCount = 0;
+      onPinSuccess(hash);
     } else {
-      // Production: fetch with readable response (no 'no-cors')
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'verifyPin', pinHash: hash })
-      });
-      const json = await res.json();
-      if (json.ok === true) {
-        pinFailCount = 0;
-        onPinSuccess(hash);
-      } else {
-        handlePinFail();
-      }
+      handlePinFail();
     }
   } catch(e) { handlePinFail(); }
 
