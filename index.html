@@ -21,13 +21,25 @@
   body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;}
 
   /* NAV */
-  nav{background:#0a1628;border-bottom:1px solid var(--border);padding:0 1.25rem;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
-  .nav-brand{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--teal);padding:1rem 1rem 1rem 0;margin-right:auto;white-space:nowrap;}
-  .nav-tabs{display:flex;}
-  .nav-tab{background:none;border:none;border-bottom:2.5px solid transparent;padding:1rem 0.75rem;font-family:'DM Sans',sans-serif;font-size:0.76rem;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s;}
-  .nav-tab:hover{color:var(--ink-soft);}
-  .nav-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
-  .nav-lock{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.3rem .65rem;font-size:.7rem;color:var(--muted);cursor:pointer;margin-left:.5rem;font-family:'DM Sans',sans-serif;transition:all .15s;}
+  nav{background:#0a1628;border-bottom:1px solid var(--border);padding:0 1.25rem;display:flex;align-items:center;gap:.75rem;position:sticky;top:0;z-index:100;}
+  .nav-brand{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--teal);padding:1rem 0;margin-right:auto;white-space:nowrap;}
+  /* Always-visible nav dropdown — replaces tab row */
+  .nav-tabs{display:none;}  /* hidden — we use the select instead */
+  .nav-tab{display:none;}
+  .nav-select-wrap{display:flex;align-items:center;}
+  .nav-select{
+    font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;
+    background:#0f172a;color:var(--teal);
+    border:1px solid var(--teal-dim);border-radius:var(--radius-sm);
+    padding:.4rem .75rem .4rem .65rem;
+    cursor:pointer;
+    /* Override global select rule */
+    width:auto !important;
+    -webkit-appearance:auto;
+    appearance:auto;
+  }
+  .nav-select option{background:#1e293b;color:var(--ink);}
+  .nav-lock{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.3rem .65rem;font-size:.7rem;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
   .nav-lock:hover{border-color:var(--teal);color:var(--teal);}
 
   /* PAGES */
@@ -63,17 +75,11 @@
   textarea{resize:vertical;min-height:60px;}
   .required::after{content:' *';color:var(--danger);}
   input[type="checkbox"]{width:auto;accent-color:var(--teal);margin-right:.3rem;}
-  /* Hide native radios — we use custom toggle buttons instead */
   input[type="radio"]{display:none;}
 
-  /* CUSTOM TOGGLE BUTTON GROUP
-     Usage: <div class="radio-group">
-              <button class="rtoggle" data-group="UNIQUE_KEY" data-value="Sí">Sí</button>
-              <button class="rtoggle" data-group="UNIQUE_KEY" data-value="No">No</button>
-            </div>
-     JS reads value via: radioVal('UNIQUE_KEY')
-  */
+  /* RADIO TOGGLE BUTTONS */
   .radio-group{display:flex;gap:.45rem;align-items:center;padding:.45rem 0;}
+  .radio-group.required-group{position:relative;}
   .rtoggle{
     font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;
     padding:.32rem .85rem;border-radius:20px;cursor:pointer;
@@ -83,6 +89,10 @@
   .rtoggle:hover{border-color:var(--teal-dim);color:var(--ink-soft);}
   .rtoggle.selected{
     background:var(--teal-glow);border-color:var(--teal);color:var(--teal);font-weight:600;
+  }
+  /* Highlight unfilled required radio groups */
+  .radio-group.required-group.missing .rtoggle:not(.selected){
+    border-color:var(--danger);
   }
 
   /* SECTION HEADINGS inside form */
@@ -200,22 +210,26 @@
   /* FK LINK */
   .fk-link{font-size:.7rem;color:var(--teal-dim);font-family:monospace;}
 
-
   /* DUPLICATE WARNING */
   .dup-warning{background:var(--warn-bg);border:1px solid rgba(251,191,36,.3);border-radius:var(--radius-sm);padding:.65rem .9rem;font-size:.8rem;color:var(--warn);margin-top:.5rem;display:none;}
   .dup-warning.show{display:block;}
+
+  /* CONSENT CHECKBOX ERROR STATE */
+  .consent-check.error{color:var(--danger);}
+  .consent-check.error input{outline:2px solid var(--danger);border-radius:2px;}
+
   ::-webkit-scrollbar{width:6px;}
   ::-webkit-scrollbar-track{background:var(--surface);}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-  @media(max-width:540px){
+  @media(max-width:600px){
     .form-grid,.form-grid.g3,.form-grid.g4{grid-template-columns:1fr;}
     .field.full,.field.span2{grid-column:1;}
     .metrics-4,.metrics-3{grid-template-columns:1fr 1fr;}
     .dash-grid{grid-template-columns:1fr;}
-    .nav-tab{padding:1rem .45rem;font-size:.68rem;}
     .recent-table th:nth-child(3),.recent-table td:nth-child(3),
     .recent-table th:nth-child(5),.recent-table td:nth-child(5){display:none;}
+    /* Nav dropdown already always visible */
   }
 </style>
 </head>
@@ -241,6 +255,8 @@
 <!-- NAV -->
 <nav>
   <div class="nav-brand">🦷 Dra. González — Odontopediatría</div>
+
+  <!-- Desktop: individual tab buttons -->
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('intake',this)">Registro</button>
     <button class="nav-tab"        onclick="requireAuth('dashboard',this)">Panel</button>
@@ -248,6 +264,18 @@
     <button class="nav-tab"        onclick="requireAuth('billing',this)">Cobros</button>
     <button class="nav-tab"        onclick="requireAuth('expenses',this)">Gastos</button>
   </div>
+
+  <!-- Mobile: dropdown select -->
+  <div class="nav-select-wrap">
+    <select class="nav-select" id="nav-mobile-select" onchange="handleMobileNav(this.value)">
+      <option value="intake">📋 Registro</option>
+      <option value="dashboard">📊 Panel</option>
+      <option value="visits">🗓️ Visitas</option>
+      <option value="billing">💳 Cobros</option>
+      <option value="expenses">🧾 Gastos</option>
+    </select>
+  </div>
+
   <button class="nav-lock" id="lock-btn" onclick="lockSession()" style="display:none;">🔒</button>
 </nav>
 
@@ -294,7 +322,7 @@
         <div class="field"><label class="required">Nombre del padre</label><input type="text" id="i-padre"/></div>
         <div class="field"><label class="required">Tel/Cel del padre</label><input type="tel" id="i-tel-padre" placeholder="+52 833 000 0000"/></div>
         <div class="field"><label class="required">Nombre de la madre</label><input type="text" id="i-madre"/></div>
-        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="+52 833 000 0000"/></div>
+        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="+52 833 000 0000" oninput="checkDuplicate()"/></div>
         <div class="field"><label>Nombre del pediatra</label><input type="text" id="i-pediatra"/></div>
         <div class="field"><label>Tel/Cel del pediatra</label><input type="tel" id="i-tel-pediatra"/></div>
         <div class="field full"><label class="required">Motivo de consulta</label><textarea id="i-motivo" placeholder="¿Por qué trae al paciente hoy?"></textarea></div>
@@ -306,20 +334,20 @@
     </div>
 
     <!-- ── PASO 2: ANTECEDENTES ── -->
-    <!-- All yes/no questions use custom .rtoggle buttons with data-group keys.
-         No <input type="radio"> → zero browser grouping conflicts. -->
     <div id="intake-step-2" style="display:none;">
 
       <div class="form-section">Antecedentes Médicos del Embarazo</div>
       <div class="form-grid g4">
-        <div class="field"><label>Embarazo</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">Embarazo</label>
+          <div class="radio-group required-group" data-required-group="emb-tipo">
             <button type="button" class="rtoggle" data-group="emb-tipo" data-value="Normal">Normal</button>
             <button type="button" class="rtoggle" data-group="emb-tipo" data-value="Alto riesgo">Alto riesgo</button>
           </div>
         </div>
-        <div class="field"><label>Tipo de parto</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">Tipo de parto</label>
+          <div class="radio-group required-group" data-required-group="parto-tipo">
             <button type="button" class="rtoggle" data-group="parto-tipo" data-value="Normal">Normal</button>
             <button type="button" class="rtoggle" data-group="parto-tipo" data-value="Cesárea">Cesárea</button>
           </div>
@@ -331,24 +359,27 @@
 
       <div class="form-section">Alimentación</div>
       <div class="form-grid g3">
-        <div class="field"><label>Leche materna</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">Leche materna</label>
+          <div class="radio-group required-group" data-required-group="alim-materna">
             <button type="button" class="rtoggle" data-group="alim-materna" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="alim-materna" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-materna-meses" min="0" placeholder="meses"/></div>
         <div class="field"></div>
-        <div class="field"><label>Biberón</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">Biberón</label>
+          <div class="radio-group required-group" data-required-group="alim-biberon">
             <button type="button" class="rtoggle" data-group="alim-biberon" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="alim-biberon" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Cuántos meses?</label><input type="number" id="i-biberon-meses" min="0" placeholder="meses"/></div>
         <div class="field"></div>
-        <div class="field"><label>Chupón</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">Chupón</label>
+          <div class="radio-group required-group" data-required-group="alim-chupon">
             <button type="button" class="rtoggle" data-group="alim-chupon" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="alim-chupon" data-value="No">No</button>
           </div>
@@ -357,8 +388,9 @@
         <div class="field"><label>Inicio de ablactación</label><input type="text" id="i-ablactacion" placeholder="Edad en meses"/></div>
       </div>
       <div class="form-grid">
-        <div class="field"><label>¿Dieta balanceada?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Dieta balanceada?</label>
+          <div class="radio-group required-group" data-required-group="alim-dieta">
             <button type="button" class="rtoggle" data-group="alim-dieta" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="alim-dieta" data-value="No">No</button>
           </div>
@@ -368,35 +400,40 @@
 
       <div class="form-section">Historial Médico General</div>
       <div class="form-grid">
-        <div class="field"><label>¿Ha sido hospitalizado?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Ha sido hospitalizado?</label>
+          <div class="radio-group required-group" data-required-group="med-hosp">
             <button type="button" class="rtoggle" data-group="med-hosp" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="med-hosp" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>Fecha y motivo de hospitalización</label><input type="text" id="i-hosp-detalle" placeholder="Fecha — Motivo"/></div>
-        <div class="field"><label>¿Ha sido sometido a cirugía?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Ha sido sometido a cirugía?</label>
+          <div class="radio-group required-group" data-required-group="med-cirugia">
             <button type="button" class="rtoggle" data-group="med-cirugia" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="med-cirugia" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>Especifique cirugía</label><input type="text" id="i-cirugia-detalle"/></div>
-        <div class="field"><label>¿Está bajo algún medicamento?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Está bajo algún medicamento?</label>
+          <div class="radio-group required-group" data-required-group="med-medic">
             <button type="button" class="rtoggle" data-group="med-medic" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="med-medic" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>Especifique medicamento</label><input type="text" id="i-medic-detalle"/></div>
-        <div class="field"><label>¿Cartilla de vacunación?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Cartilla de vacunación?</label>
+          <div class="radio-group required-group" data-required-group="med-vacuna">
             <button type="button" class="rtoggle" data-group="med-vacuna" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="med-vacuna" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Esquema completo?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Esquema completo?</label>
+          <div class="radio-group required-group" data-required-group="med-esquema">
             <button type="button" class="rtoggle" data-group="med-esquema" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="med-esquema" data-value="No">No</button>
           </div>
@@ -406,20 +443,23 @@
 
       <div class="form-section">Antecedentes Alérgicos</div>
       <div class="form-grid g3">
-        <div class="field"><label>¿Alergia a algún alimento?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Alergia a algún alimento?</label>
+          <div class="radio-group required-group" data-required-group="alg-alim">
             <button type="button" class="rtoggle" data-group="alg-alim" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="alg-alim" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Alergia a antibióticos?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Alergia a antibióticos?</label>
+          <div class="radio-group required-group" data-required-group="alg-anti">
             <button type="button" class="rtoggle" data-group="alg-anti" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="alg-anti" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Alergia a analgésicos?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Alergia a analgésicos?</label>
+          <div class="radio-group required-group" data-required-group="alg-anal">
             <button type="button" class="rtoggle" data-group="alg-anal" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="alg-anal" data-value="No">No</button>
           </div>
@@ -429,34 +469,38 @@
 
       <div class="form-section">Antecedentes Dentales</div>
       <div class="form-grid">
-        <div class="field"><label>¿Ha sufrido algún traumatismo dental?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Ha sufrido algún traumatismo dental?</label>
+          <div class="radio-group required-group" data-required-group="dent-trauma">
             <button type="button" class="rtoggle" data-group="dent-trauma" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="dent-trauma" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>Especifique traumatismo</label><input type="text" id="i-trauma-detalle"/></div>
         <div class="field"><label>¿Cuántas veces al día se cepilla?</label><input type="number" id="i-cepillado" min="0" max="10" placeholder="veces"/></div>
-        <div class="field"><label>¿Recibe ayuda de padres/cuidadores?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Recibe ayuda de padres/cuidadores?</label>
+          <div class="radio-group required-group" data-required-group="dent-ayuda">
             <button type="button" class="rtoggle" data-group="dent-ayuda" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="dent-ayuda" data-value="No">No</button>
           </div>
         </div>
         <div class="field"><label>¿Qué pasta dental utiliza?</label><input type="text" id="i-pasta"/></div>
-        <div class="field"><label>¿Utiliza hilo dental?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Utiliza hilo dental?</label>
+          <div class="radio-group required-group" data-required-group="dent-hilo">
             <button type="button" class="rtoggle" data-group="dent-hilo" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="dent-hilo" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Ha ido anteriormente al dentista?</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="required">¿Ha ido anteriormente al dentista?</label>
+          <div class="radio-group required-group" data-required-group="dent-prev">
             <button type="button" class="rtoggle" data-group="dent-prev" data-value="Sí">Sí</button>
             <button type="button" class="rtoggle" data-group="dent-prev" data-value="No">No</button>
           </div>
         </div>
-        <div class="field"><label>¿Cuál fue su última visita?</label>
+        <div class="field"><label class="required">¿Cuál fue su última visita?</label>
           <select id="i-ultima-visita">
             <option value="">Selecciona...</option>
             <option>Hace menos de 6 meses</option><option>6 a 12 meses</option>
@@ -510,8 +554,9 @@
         <div class="field"></div>
       </div>
 
-      <label class="consent-check">
-        <input type="checkbox" id="i-acepto"/>
+      <!-- FIX: Consent checkbox with explicit id and proper label -->
+      <label class="consent-check" id="consent-check-label" for="i-acepto">
+        <input type="checkbox" id="i-acepto" onchange="clearConsentError()"/>
         He leído y comprendido el presente consentimiento informado. Acepto el tratamiento para el menor de edad bajo mi representación legal y doy mi conformidad voluntaria.
       </label>
 
@@ -543,8 +588,8 @@
     <div class="metric-card"><div class="metric-label">Balance neto</div><div class="metric-value" id="d-net">$0</div><div class="metric-sub">ingresos − gastos</div></div>
   </div>
   <div class="dash-grid">
-    <div class="card"><div class="card-title" style="font-size:.95rem;">Ingresos por mes</div><div class="chart-wrap"><canvas id="revenueChart" role="img" aria-label="Ingresos mensuales">Gráfica.</canvas></div></div>
-    <div class="card"><div class="card-title" style="font-size:.95rem;">Servicios más frecuentes</div><div class="chart-wrap"><canvas id="servicesChart" role="img" aria-label="Servicios">Gráfica.</canvas></div></div>
+    <div class="card"><div class="card-title" style="font-size:.95rem;">Ingresos por mes</div><div class="chart-wrap"><canvas id="revenueChart"></canvas></div></div>
+    <div class="card"><div class="card-title" style="font-size:.95rem;">Servicios más frecuentes</div><div class="chart-wrap"><canvas id="servicesChart"></canvas></div></div>
   </div>
   <div class="card">
     <div class="card-title" style="font-size:.95rem;">Cobros recientes</div>
@@ -557,7 +602,7 @@
   </div>
   <div class="dash-grid">
     <div class="card"><div class="card-title" style="font-size:.95rem;">Gastos recientes</div><div id="dash-expense-list" style="margin-top:.6rem;"><div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos.</div></div></div>
-    <div class="card"><div class="card-title" style="font-size:.95rem;">Métodos de pago</div><div class="chart-wrap" style="height:170px;"><canvas id="methodChart" role="img" aria-label="Métodos">Gráfica.</canvas></div></div>
+    <div class="card"><div class="card-title" style="font-size:.95rem;">Métodos de pago</div><div class="chart-wrap" style="height:170px;"><canvas id="methodChart"></canvas></div></div>
   </div>
 </div>
 
@@ -570,10 +615,9 @@
   </div>
   <div class="card">
     <div class="card-title">Registrar Visita Clínica</div>
-    <div class="card-sub">Vincula la visita a un paciente registrado. Se generará un <code style="font-size:.75rem;background:rgba(0,0,0,.2);padding:1px 5px;border-radius:3px;">visit_id</code> que puedes usar al registrar el cobro.</div>
+    <div class="card-sub">Vincula la visita a un paciente registrado.</div>
     <div id="alert-visits" class="alert"></div>
     <div class="form-grid">
-            <!-- Patient autocomplete -->
       <div class="field full">
         <label class="required">Paciente</label>
         <div class="autocomplete-wrap">
@@ -619,10 +663,9 @@
   </div>
   <div class="card">
     <div class="card-title">Registrar Cobro</div>
-    <div class="card-sub">Vincula el cobro a un paciente. Opcionalmente, asocia a una visita clínica para trazabilidad completa.</div>
+    <div class="card-sub">Vincula el cobro a un paciente.</div>
     <div id="alert-billing" class="alert"></div>
     <div class="form-grid">
-      <!-- Patient autocomplete -->
       <div class="field full">
         <label class="required">Paciente</label>
         <div class="autocomplete-wrap">
@@ -640,11 +683,9 @@
         <input type="hidden" id="b-patient-id"/>
         <input type="hidden" id="b-patient-name"/>
       </div>
-      <!-- Optional visit link -->
       <div class="field full">
-        <label>Visita asociada <span style="color:var(--muted);font-weight:400;">(opcional — para trazabilidad)</span></label>
+        <label>Visita asociada <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
         <select id="b-visit-id"><option value="">Sin visita asociada</option></select>
-        <div style="font-size:.68rem;color:var(--muted);margin-top:.2rem;">Selecciona un paciente primero para ver sus visitas.</div>
       </div>
       <div class="field"><label class="required">Fecha</label><input type="date" id="b-date"/></div>
       <div class="field"><label class="required">Servicio realizado</label>
@@ -699,11 +740,10 @@
 </div>
 
 <script>
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════
    CONFIGURACIÓN
-══════════════════════════════════════ */
+═══════════════════════════════════════ */
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1CVHqZ8GY_GVDgR44pQFyG2GWx9m2AWN6koA9lX7D_N5vzl82g2MxWkfBPByUS-M/exec';
-/* ══════════════════════════════════════ */
 
 const IS_CONFIGURED = APPS_SCRIPT_URL.includes('macros/s/');
 let billingData=[], expenseData=[], visitsData=[], patientsData=[];
@@ -722,16 +762,19 @@ window.addEventListener('DOMContentLoaded',()=>{
   setToday('b-date'); setToday('e-date'); setToday('i-consent-date'); setToday('v-fecha');
   buildDiseaseTable();
   initSignaturePad();
-  /* Single delegated handler for ALL .rtoggle buttons.
-     Each button carries data-group (unique per question) and data-value.
-     Clicking one deselects all others in the same group — zero browser interference. */
+
+  /* Single delegated handler for ALL .rtoggle buttons */
   document.addEventListener('click', e => {
     const btn = e.target.closest('.rtoggle');
     if (!btn) return;
     const group = btn.dataset.group;
     document.querySelectorAll(`.rtoggle[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    // Clear "missing" highlight from this group
+    const grpEl = btn.closest('.radio-group');
+    if(grpEl) grpEl.classList.remove('missing');
   });
+
   document.addEventListener('click', e => {
     if(!e.target.closest('.autocomplete-wrap'))
       document.querySelectorAll('.autocomplete-list').forEach(l => l.classList.remove('show'));
@@ -740,6 +783,12 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 function setToday(id){const el=document.getElementById(id);if(el)el.value=new Date().toISOString().split('T')[0];}
 
+/* ── MOBILE NAV ── */
+function handleMobileNav(pageId){
+  if(pageId==='intake'){showPage('intake',null);return;}
+  requireAuth(pageId, null);
+}
+
 /* ── TOGGLE HELPERS ── */
 function radioVal(group){
   const sel=document.querySelector(`.rtoggle[data-group="${group}"].selected`);
@@ -747,16 +796,40 @@ function radioVal(group){
 }
 function resetToggles(){document.querySelectorAll('.rtoggle').forEach(b=>b.classList.remove('selected'));}
 
-/* ── DISEASE TABLE — each row = unique data-group="enf-N" ── */
+/* ── VALIDATE REQUIRED RADIO GROUPS ──
+   Finds all .radio-group.required-group in the currently visible step,
+   checks each has a .selected button. Highlights missing ones in red. */
+function validateRequiredRadios(stepEl) {
+  const groups = stepEl.querySelectorAll('.radio-group.required-group');
+  let allOk = true;
+  groups.forEach(grp => {
+    const hasSelected = grp.querySelector('.rtoggle.selected');
+    if(!hasSelected){
+      grp.classList.add('missing');
+      allOk = false;
+    } else {
+      grp.classList.remove('missing');
+    }
+  });
+  return allOk;
+}
+
+/* ── DISEASE TABLE — each row = unique data-group="enf-N" ──
+   FIX: removed the duplicate/broken </td> tag that was causing raw CSS text to appear */
 function buildDiseaseTable(){
   document.getElementById('disease-tbody').innerHTML = DISEASES.map((d,i) => `
     <tr>
       <td>${d}</td>
-      <td><button type="button" class="rtoggle" data-group="enf-${i}" data-value="Sí" style="padding:.18rem .6rem;font-size:.74rem;">Sí</button></td>
-      <td><button type="button" class="rtoggle selected" data-group="enf-${i}" data-value="No" style="padding:.18rem .6rem;font-size:.74rem;">No</button></td>6rem;font-size:.74rem;">No</button></td>
+      <td>
+        <button type="button" class="rtoggle" data-group="enf-${i}" data-value="Sí" style="padding:.18rem .6rem;font-size:.74rem;">Sí</button>
+      </td>
+      <td>
+        <button type="button" class="rtoggle selected" data-group="enf-${i}" data-value="No" style="padding:.18rem .6rem;font-size:.74rem;">No</button>
+      </td>
       <td><input class="trat-input" type="text" id="enf-trat-${i}" placeholder="Tratamiento..." style="width:100%;"></td>
     </tr>`).join('');
 }
+
 function getDiseaseData(){
   return DISEASES.map((d,i)=>({
     enfermedad:d,
@@ -765,11 +838,7 @@ function getDiseaseData(){
   }));
 }
 
-/* ── DUPLICATE DETECTION ──────────────────────────────────────
-   Key = normalize(nombre) + "|" + dob + "|" + normalize(telMadre)
-   Fires 400ms after input on nombre, dob, tel-madre.
-   Checks in-memory patientsData loaded after staff login.
-────────────────────────────────────────────────────────────── */
+/* ── DUPLICATE DETECTION ── */
 function normKey(s){return String(s||'').toLowerCase().replace(/[\s\-\+\(\)]/g,'');}
 function buildDupKey(nombre,dob,tel){return normKey(nombre)+'|'+(dob||'')+'|'+normKey(tel);}
 
@@ -795,6 +864,12 @@ function checkDuplicate(){
 async function sha256hex(str){
   const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
   return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+/* ── CONSENT CHECKBOX helpers ── */
+function clearConsentError(){
+  const lbl=document.getElementById('consent-check-label');
+  if(lbl) lbl.classList.remove('error');
 }
 
 /* ── SIGNATURE ── */
@@ -841,24 +916,44 @@ function patientSearch(query,prefix){
   },280);
 }
 
+// Also wire up billing patient search
+function searchPatients(query, listId, prefix){
+  patientSearch(query, prefix);
+}
+
 function renderAcList(list,patients,prefix){
   if(!patients.length){list.classList.remove('show');return;}
   list.innerHTML=patients.map(p=>`
     <div class="autocomplete-item" onclick="selectPatient('${p.patient_id}','${esc(p.nombre)}','${esc(p.dob||'')}','${esc(p.alergias||'')}','${esc(p.medic||'')}','${prefix}')">
-      ${esc(p.nombre)}<span class="ac-id">${p.patient_id}</span>
+      <span class="ac-name">${esc(p.nombre)}</span><span class="ac-id">${p.patient_id}</span>
     </div>`).join('');
   list.classList.add('show');
+  list.style.display='block';
 }
 
 function selectPatient(pid,nombre,dob,alergias,medic,prefix){
-  const nameEl=document.getElementById(prefix+'-patient-name');
+  const nameEl=document.getElementById(prefix+'-patient-name')||document.getElementById(prefix+'-patient-search');
   const idEl=document.getElementById(prefix+'-patient-id');
   const badge=document.getElementById(prefix+'-pid-badge');
   if(nameEl) nameEl.value=nombre;
   if(idEl) idEl.value=pid;
   if(badge){badge.textContent=pid;badge.classList.add('show');}
-  document.getElementById(prefix+'-ac-list').classList.remove('show');
-  // Store clinical extras for WA summary (visits page only)
+
+  // For billing prefix, show the patient badge
+  if(prefix==='b'){
+    const bb=document.getElementById('b-patient-badge');
+    const bn=document.getElementById('b-badge-name');
+    const bi=document.getElementById('b-badge-id');
+    const bname=document.getElementById('b-patient-name');
+    if(bb){bb.style.display='block';}
+    if(bn) bn.textContent=nombre;
+    if(bi) bi.textContent=pid;
+    if(bname) bname.value=nombre;
+  }
+
+  const listEl=document.getElementById(prefix+'-ac-list');
+  if(listEl){listEl.classList.remove('show');listEl.style.display='none';}
+
   const dobEl=document.getElementById(prefix+'-patient-dob');
   const alrgEl=document.getElementById(prefix+'-patient-alergias');
   const medicEl=document.getElementById(prefix+'-patient-medic');
@@ -866,6 +961,18 @@ function selectPatient(pid,nombre,dob,alergias,medic,prefix){
   if(alrgEl) alrgEl.value=alergias;
   if(medicEl) medicEl.value=medic;
 }
+
+function clearPatientSelection(prefix){
+  const searchEl=document.getElementById(prefix+'-patient-search');
+  const idEl=document.getElementById(prefix+'-patient-id');
+  const nameEl=document.getElementById(prefix+'-patient-name');
+  const badge=document.getElementById(prefix+'-patient-badge');
+  if(searchEl) searchEl.value='';
+  if(idEl) idEl.value='';
+  if(nameEl) nameEl.value='';
+  if(badge) badge.style.display='none';
+}
+
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 /* ── NAV ── */
@@ -873,9 +980,13 @@ function showPage(pageId,tabEl){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+pageId).classList.add('active');
-  if(tabEl)tabEl.classList.add('active');
-  if(pageId==='dashboard')setTimeout(renderDashboard,50);
+  if(tabEl) tabEl.classList.add('active');
+  // Sync mobile select
+  const sel=document.getElementById('nav-mobile-select');
+  if(sel) sel.value=pageId;
+  if(pageId==='dashboard') setTimeout(renderDashboard,50);
 }
+
 function requireAuth(pageId,tabEl){
   if(sessionUnlocked){showPage(pageId,tabEl);return;}
   pendingPage=pageId;pendingTab=tabEl;
@@ -884,6 +995,7 @@ function requireAuth(pageId,tabEl){
   document.getElementById('pin-error').classList.remove('show');
   setTimeout(()=>document.getElementById('pin-input').focus(),100);
 }
+
 async function checkPin(){
   const pinVal=document.getElementById('pin-input').value;if(!pinVal)return;
   const btn=document.getElementById('pin-btn');btn.disabled=true;btn.textContent='Verificando...';
@@ -913,6 +1025,7 @@ function lockSession(){
   document.getElementById('lock-btn').style.display='none';
   showPage('intake',document.querySelector('.nav-tab'));
   document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  const sel=document.getElementById('nav-mobile-select');if(sel)sel.value='intake';
 }
 
 /* ── INTAKE STEPS ── */
@@ -930,14 +1043,38 @@ function nextStep(n){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 const gv=id=>document.getElementById(id)?document.getElementById(id).value.trim():'';
+
 function validateStep(step){
   const al=document.getElementById('alert-intake');
-  if(step===1&&(!gv('i-nombre')||!gv('i-dob')||!gv('i-domicilio')||!gv('i-padre')||!gv('i-tel-padre')||!gv('i-madre')||!gv('i-tel-madre')||!gv('i-motivo'))){
-    showAlert(al,'error','Por favor completa todos los campos obligatorios (*).'); return false;
+  if(step===1){
+    if(!gv('i-nombre')||!gv('i-dob')||!gv('i-domicilio')||!gv('i-padre')||!gv('i-tel-padre')||!gv('i-madre')||!gv('i-tel-madre')||!gv('i-motivo')){
+      showAlert(al,'error','Por favor completa todos los campos obligatorios (*).'); return false;
+    }
+  }
+  if(step===2){
+    const stepEl=document.getElementById('intake-step-2');
+    const radiosOk = validateRequiredRadios(stepEl);
+    if(!radiosOk){
+      showAlert(al,'error','Por favor responde todas las preguntas marcadas con * (las opciones resaltadas en rojo).');
+      return false;
+    }
+    if(!document.getElementById('i-ultima-visita').value){
+      showAlert(al,'error','Selecciona cuándo fue la última visita al dentista.');
+      return false;
+    }
   }
   if(step===4){
-    if(!gv('i-tutor-nombre')||!document.getElementById('i-tutor-rel').value){showAlert(al,'error','Completa el nombre y relación del tutor.');return false;}
-    if(!document.getElementById('i-acepto').checked){showAlert(al,'error','Debes aceptar el consentimiento informado.');return false;}
+    if(!gv('i-tutor-nombre')||!document.getElementById('i-tutor-rel').value){
+      showAlert(al,'error','Completa el nombre y relación del tutor.');return false;
+    }
+    // FIX: Properly validate the consent checkbox
+    const checkbox=document.getElementById('i-acepto');
+    if(!checkbox||!checkbox.checked){
+      const lbl=document.getElementById('consent-check-label');
+      if(lbl) lbl.classList.add('error');
+      showAlert(al,'error','Debes leer y aceptar el consentimiento informado para continuar.');
+      return false;
+    }
   }
   al.classList.remove('show');return true;
 }
@@ -984,16 +1121,18 @@ async function submitIntake(){
   }else{showAlert(al,'error','Error al enviar. Por favor pide ayuda al personal.');}
   btn.disabled=false;btn.textContent='Enviar y Finalizar ✓';
 }
+
 function resetIntakeForm(){
   document.querySelectorAll('#page-intake input[type="text"],#page-intake input[type="number"],#page-intake input[type="tel"],#page-intake input[type="date"],#page-intake textarea').forEach(el=>el.value='');
   document.querySelectorAll('#page-intake select').forEach(el=>el.selectedIndex=0);
-  document.getElementById('i-acepto').checked=false;clearSig();
-  resetToggles();
+  document.getElementById('i-acepto').checked=false;
+  clearSig();resetToggles();
   DISEASES.forEach((_,i)=>{
     const nb=document.querySelector(`.rtoggle[data-group="enf-${i}"][data-value="No"]`);if(nb)nb.classList.add('selected');
     const t=document.getElementById(`enf-trat-${i}`);if(t)t.value='';
   });
   const dw=document.getElementById('dup-warning');if(dw)dw.classList.remove('show');
+  const lbl=document.getElementById('consent-check-label');if(lbl)lbl.classList.remove('error');
   setToday('i-consent-date');
 }
 
@@ -1020,7 +1159,7 @@ async function submitVisit(){
   };
   if(await sendToSheets(entry)){
     visitsData.unshift(entry);renderVisits();
-    showAlert(al,'success',`✓ Visita de ${nombre} registrada. Recordatorio WhatsApp se enviará 1h antes (${hora}).`);
+    showAlert(al,'success',`✓ Visita de ${nombre} registrada.`);
     ['v-patient-name','v-patient-id','v-motivo','v-tratamiento','v-proxima-cita','v-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     ['v-patient-alergias','v-patient-medic','v-patient-dob'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('v-odontologo').value='Dra. Ana Lucía González';
@@ -1047,8 +1186,8 @@ async function submitBilling(){
   if(await sendToSheets(entry)){
     billingData.unshift(entry);renderBilling();renderDashboard();
     showAlert(al,'success',`✓ Cobro de $${amount.toFixed(2)} registrado para ${nombre}.`);
-    ['b-patient-name','b-patient-id','b-amount','b-notes','b-visit-id'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    const badge=document.getElementById('b-pid-badge');if(badge)badge.classList.remove('show');
+    ['b-patient-search','b-patient-id','b-amount','b-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    const badge=document.getElementById('b-patient-badge');if(badge)badge.style.display='none';
     ['b-service','b-method'].forEach(id=>document.getElementById(id).selectedIndex=0);
     document.getElementById('b-factura').selectedIndex=0;document.getElementById('b-status').selectedIndex=0;setToday('b-date');
   }else{showAlert(al,'error','Error al guardar. Verifica tu conexión.');}
@@ -1081,12 +1220,11 @@ function renderVisits(){
   list.innerHTML=visitsData.slice(0,25).map(e=>{
     const ini=(e.paciente||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     return`<div class="entry-item">
-      <div class="entry-avatar visit">${ini}</div>
+      <div class="entry-avatar">${ini}</div>
       <div class="entry-body">
         <div class="entry-name">${e.paciente||''}</div>
         <div class="entry-meta">${e.fecha||''}${e.hora?' · '+e.hora:''} · ${(e.motivo||'').substring(0,45)}${(e.motivo||'').length>45?'...':''}</div>
       </div>
-      ${e.visit_id?`<div class="entry-id">${e.visit_id}</div>`:''}
     </div>`;
   }).join('');
 }
@@ -1100,7 +1238,7 @@ function renderBilling(){
   list.innerHTML=billingData.slice(0,25).map(e=>{
     const ini=(e.patient||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     const factTag=e.factura==='Sí'?'<span class="method-pill pill-transfer" style="margin-left:4px;">Fact.</span>':'';
-    return`<div class="entry-item"><div class="entry-avatar">${ini}</div><div class="entry-body"><div class="entry-name">${e.patient||''}</div><div class="entry-meta">${e.service||''} · ${e.date||''} <span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span>${factTag}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;"><div class="entry-amount income">+$${Number(e.amount||0).toFixed(2)}</div>${e.billing_id?`<div class="entry-id">${e.billing_id}</div>`:''}</div></div>`;
+    return`<div class="entry-item"><div class="entry-avatar">${ini}</div><div class="entry-body"><div class="entry-name">${e.patient||''}</div><div class="entry-meta">${e.service||''} · ${e.date||''} <span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span>${factTag}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;"><div class="entry-amount income">+$${Number(e.amount||0).toFixed(2)}</div></div></div>`;
   }).join('');
 }
 function renderExpenses(){
@@ -1109,7 +1247,7 @@ function renderExpenses(){
   document.getElementById('e-month').textContent='$'+expenseData.reduce((s,e)=>s+Number(e.amount||0),0).toFixed(0);
   document.getElementById('e-largest').textContent='$'+Math.max(...expenseData.map(e=>Number(e.amount||0))).toFixed(0);
   document.getElementById('e-count').textContent=expenseData.length;
-  list.innerHTML=expenseData.slice(0,25).map(e=>`<div class="entry-item"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc||''}</div><div class="entry-meta">${e.category||''} · ${e.date||''}${e.vendor?' · '+e.vendor:''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;"><div class="entry-amount expense">-$${Number(e.amount||0).toFixed(2)}</div>${e.expense_id?`<div class="entry-id">${e.expense_id}</div>`:''}</div></div>`).join('');
+  list.innerHTML=expenseData.slice(0,25).map(e=>`<div class="entry-item"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc||''}</div><div class="entry-meta">${e.category||''} · ${e.date||''}${e.vendor?' · '+e.vendor:''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;"><div class="entry-amount expense">-$${Number(e.amount||0).toFixed(2)}</div></div></div>`).join('');
 }
 function renderDashboard(){
   const totalRev=billingData.reduce((s,e)=>s+Number(e.amount||e['Monto (MXN)']||0),0);
@@ -1125,8 +1263,8 @@ function renderDashboard(){
   document.getElementById('d-patients').textContent=patientsData.length||'—';
   document.getElementById('d-patients-sub').textContent=patientsData.length===1?'paciente':'pacientes';
   const tbody=document.getElementById('dash-recent-body');
-  if(!billingData.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos aún.</td></tr>';}
-  else{tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td class="mono">${e.billing_id||''}</td><td>${e.patient||''}</td><td style="color:var(--muted)">${e.service||''}</td><td style="color:var(--muted)">${e.date||''}</td><td style="color:var(--success)">$${Number(e.amount||0).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span></td><td style="color:var(--muted)">${e.factura||'No'}</td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status||''}</span></td></tr>`).join('');}
+  if(!billingData.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin datos aún.</td></tr>';}
+  else{tbody.innerHTML=billingData.slice(0,8).map(e=>`<tr><td>${e.patient||''}</td><td style="color:var(--muted)">${e.service||''}</td><td style="color:var(--muted)">${e.date||''}</td><td style="color:var(--success)">$${Number(e.amount||0).toFixed(2)}</td><td><span class="method-pill ${methodClass[e.method]||'pill-card'}">${e.method||''}</span></td><td style="color:var(--muted)">${e.factura||'No'}</td><td><span class="status-pill ${statusClass[e.status]||'s-paid'}">${e.status||''}</span></td></tr>`).join('');}
   const deList=document.getElementById('dash-expense-list');
   deList.innerHTML=!expenseData.length?'<div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos aún.</div>':expenseData.slice(0,4).map(e=>`<div class="entry-item" style="margin-bottom:.4rem;"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc||''}</div><div class="entry-meta">${e.category||''}</div></div><div class="entry-amount expense">-$${Number(e.amount||0).toFixed(2)}</div></div>`).join('');
   buildCharts();
