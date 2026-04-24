@@ -214,6 +214,12 @@
   .dup-warning{background:var(--warn-bg);border:1px solid rgba(251,191,36,.3);border-radius:var(--radius-sm);padding:.65rem .9rem;font-size:.8rem;color:var(--warn);margin-top:.5rem;display:none;}
   .dup-warning.show{display:block;}
 
+  /* TEL INPUT ERROR STATE */
+  input.tel-error{border-color:var(--danger)!important;box-shadow:0 0 0 3px var(--danger-bg)!important;}
+  input.tel-error::placeholder{color:var(--danger);}
+  .tel-hint{font-size:.68rem;margin-top:.2rem;display:none;}
+  .tel-hint.show{display:block;color:var(--danger);}
+
   /* CONSENT CHECKBOX ERROR STATE */
   .consent-check.error{color:var(--danger);}
   .consent-check.error input{outline:2px solid var(--danger);border-radius:2px;}
@@ -254,7 +260,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">🦷 Dra. Anilu Glz </div>
+  <div class="nav-brand">🦷 Dra. Anilu Glz</div>
 
   <!-- Desktop: individual tab buttons -->
   <div class="nav-tabs">
@@ -330,14 +336,14 @@
         <div class="field full"><label>Lugar y fecha de nacimiento</label><input type="text" id="i-lugar-nac" placeholder="Ciudad, Estado — Fecha"/></div>
         <div class="field"><label class="required">Nombre(s) del padre</label><input type="text" id="i-padre-nombre" placeholder="Nombre(s)"/></div>
         <div class="field"><label class="required">Apellidos del padre</label><input type="text" id="i-padre-apellidos" placeholder="Apellido paterno y materno"/></div>
-        <div class="field"><label class="required">Tel/Cel del padre</label><input type="tel" id="i-tel-padre" placeholder="+52 833 000 0000"/></div>
+        <div class="field"><label class="required">Tel/Cel del padre</label><input type="tel" id="i-tel-padre" placeholder="833 000 00 00" maxlength="12" oninput="fmtTel(this)" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-padre">Ingresa 10 dígitos: 833 000 00 00</span></div>
         <div class="field"></div>
         <div class="field"><label class="required">Nombre(s) de la madre</label><input type="text" id="i-madre-nombre" placeholder="Nombre(s)" oninput="updateNombreCompleto();checkDuplicate()"/></div>
         <div class="field"><label class="required">Apellidos de la madre</label><input type="text" id="i-madre-apellidos" placeholder="Apellido paterno y materno"/></div>
-        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="+52 833 000 0000" oninput="updateNombreCompleto();checkDuplicate()"/></div>
+        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="833 000 00 00" maxlength="12" oninput="fmtTel(this);updateNombreCompleto();checkDuplicate()" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-madre">Ingresa 10 dígitos: 833 000 00 00</span></div>
         <div class="field"></div>
         <div class="field"><label>Nombre del pediatra</label><input type="text" id="i-pediatra"/></div>
-        <div class="field"><label>Tel/Cel del pediatra</label><input type="tel" id="i-tel-pediatra"/></div>
+        <div class="field"><label>Tel/Cel del pediatra</label><input type="tel" id="i-tel-pediatra" placeholder="833 000 00 00" maxlength="12" oninput="fmtTel(this)" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-pediatra">Ingresa 10 dígitos: 833 000 00 00</span></div>
         <div class="field full"><label class="required">Motivo de consulta</label><textarea id="i-motivo" placeholder="¿Por qué trae al paciente hoy?"></textarea></div>
       </div>
       <!-- hidden composed fields used by JS -->
@@ -622,6 +628,32 @@
     <div class="card"><div class="card-title" style="font-size:.95rem;">Gastos recientes</div><div id="dash-expense-list" style="margin-top:.6rem;"><div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos.</div></div></div>
     <div class="card"><div class="card-title" style="font-size:.95rem;">Métodos de pago</div><div class="chart-wrap" style="height:170px;"><canvas id="methodChart"></canvas></div></div>
   </div>
+  <!-- FACTURAS DEL MES -->
+  <div class="card">
+    <div style="display:flex;align-items:baseline;gap:.75rem;margin-bottom:.2rem;">
+      <div class="card-title" style="font-size:.95rem;">🧾 Facturas requeridas — mes actual</div>
+      <span id="d-factura-count" style="font-size:.72rem;color:var(--warn);background:var(--warn-bg);padding:1px 8px;border-radius:20px;font-weight:500;">0</span>
+    </div>
+    <div class="card-sub" style="margin-bottom:.75rem;">Cobros donde el paciente solicitó factura este mes</div>
+    <div style="overflow-x:auto;">
+      <table class="recent-table" id="factura-table">
+        <thead><tr>
+          <th style="width:22%">Paciente</th>
+          <th style="width:18%">Servicio</th>
+          <th style="width:11%">Fecha</th>
+          <th style="width:12%">Monto</th>
+          <th style="width:15%">Método</th>
+          <th style="width:22%">🔑 ID Paciente</th>
+        </tr></thead>
+        <tbody id="factura-tbody">
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin facturas este mes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="factura-total-row" style="display:none;text-align:right;font-size:.82rem;color:var(--success);font-weight:500;margin-top:.65rem;padding-top:.65rem;border-top:1px solid var(--border);">
+      Total facturable: <span id="factura-total">$0</span>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════ VISITAS ═══════════ -->
@@ -636,26 +668,13 @@
     <div class="card-sub">Vincula la visita a un paciente registrado.</div>
     <div id="alert-visits" class="alert"></div>
     <div class="form-grid">
+      <!-- Paciente: nombre autocomplete -->
       <div class="field full">
-        <label class="required">Paciente</label>
+        <label class="required">Nombre del paciente</label>
         <div class="autocomplete-wrap">
           <input type="text" id="v-patient-name" placeholder="Escribe el nombre del paciente..."
-            autocomplete="off" oninput="patientSearch(this.value,'v')" onfocus="patientSearch(this.value,'v')"/>
+            autocomplete="off" oninput="patientSearch(this.value,'v');onVisitFieldChange('v')" onfocus="patientSearch(this.value,'v')"/>
           <div class="autocomplete-list" id="v-ac-list"></div>
-        </div>
-        <!-- Patient info card — shown after selection -->
-        <div id="v-patient-card" style="display:none;margin-top:.5rem;background:#0a1628;border:1px solid var(--teal-dim);border-radius:var(--radius-sm);padding:.65rem .9rem;font-size:.78rem;">
-          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem;">
-            <span style="color:var(--ink);font-weight:500;" id="v-card-nombre">—</span>
-            <span class="id-pill" id="v-card-pid">—</span>
-            <button type="button" onclick="clearPatientSelection('v')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.78rem;margin-left:auto;">✕ Cambiar</button>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem .75rem;">
-            <div><span style="color:var(--muted);">🔑 ID Paciente:</span> <span style="font-family:monospace;color:var(--teal);font-size:.74rem;" id="v-card-key">—</span></div>
-            <div><span style="color:var(--muted);">📱 Tel. madre:</span> <span style="color:var(--ink-soft);" id="v-card-tel">—</span></div>
-            <div><span style="color:var(--muted);">⚠️ Alergias:</span> <span style="color:var(--warn);" id="v-card-alergias">—</span></div>
-            <div><span style="color:var(--muted);">💊 Medicamentos:</span> <span style="color:var(--ink-soft);" id="v-card-medic">—</span></div>
-          </div>
         </div>
         <input type="hidden" id="v-patient-id"/>
         <input type="hidden" id="v-patient-key"/>
@@ -666,6 +685,26 @@
         <input type="hidden" id="v-patient-dob"/>
         <input type="hidden" id="v-patient-ap-paterno"/>
         <input type="hidden" id="v-patient-ap-materno"/>
+      </div>
+      <!-- Tel. madre — always visible -->
+      <div class="field">
+        <label class="required">📱 Tel. madre</label>
+        <input type="tel" id="v-tel-madre-input" placeholder="833 000 00 00" maxlength="12"
+          oninput="fmtTel(this);onTelMadreChange('v')" onblur="validateTel(this)"/>
+      </div>
+      <!-- ID key — live preview -->
+      <div class="field">
+        <label>🔑 ID paciente (nombre + tel)</label>
+        <div id="v-card-key" style="font-family:monospace;font-size:.78rem;color:var(--teal);padding:.55rem .8rem;background:#0f172a;border:1px solid var(--border);border-radius:var(--radius-sm);min-height:2.4rem;word-break:break-all;">—</div>
+      </div>
+      <!-- Alergias / Medicamentos — auto-filled from patient record -->
+      <div class="field">
+        <label>⚠️ Alergias</label>
+        <input type="text" id="v-card-alergias" placeholder="Auto-llenado al seleccionar paciente" readonly style="color:var(--warn);"/>
+      </div>
+      <div class="field">
+        <label>💊 Medicamentos</label>
+        <input type="text" id="v-card-medic" placeholder="Auto-llenado al seleccionar paciente" readonly style="color:var(--ink-soft);"/>
       </div>
       <div class="field"><label class="required">Fecha de visita</label><input type="date" id="v-fecha"/></div>
       <div class="field"><label class="required">Hora de inicio</label><input type="time" id="v-hora"/></div>
@@ -702,24 +741,13 @@
     <div class="card-sub">Vincula el cobro a un paciente.</div>
     <div id="alert-billing" class="alert"></div>
     <div class="form-grid">
+      <!-- Paciente: nombre autocomplete -->
       <div class="field full">
-        <label class="required">Paciente</label>
+        <label class="required">Nombre del paciente</label>
         <div class="autocomplete-wrap">
           <input type="text" id="b-patient-search" placeholder="Escribe el nombre del paciente…" autocomplete="off"
-            oninput="searchPatients(this.value,'b-ac-list','b')" onfocus="searchPatients(this.value,'b-ac-list','b')"/>
+            oninput="searchPatients(this.value,'b-ac-list','b');onVisitFieldChange('b')" onfocus="searchPatients(this.value,'b-ac-list','b')"/>
           <div class="autocomplete-list" id="b-ac-list" style="display:none;"></div>
-        </div>
-        <!-- Patient info card — shown after selection -->
-        <div id="b-patient-card" style="display:none;margin-top:.5rem;background:#0a1628;border:1px solid var(--teal-dim);border-radius:var(--radius-sm);padding:.65rem .9rem;font-size:.78rem;">
-          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem;">
-            <span style="color:var(--ink);font-weight:500;" id="b-card-nombre">—</span>
-            <span class="id-pill" id="b-card-pid">—</span>
-            <button type="button" onclick="clearPatientSelection('b')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.78rem;margin-left:auto;">✕ Cambiar</button>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem .75rem;">
-            <div><span style="color:var(--muted);">🔑 ID Paciente:</span> <span style="font-family:monospace;color:var(--teal);font-size:.74rem;" id="b-card-key">—</span></div>
-            <div><span style="color:var(--muted);">📱 Tel. madre:</span> <span style="color:var(--ink-soft);" id="b-card-tel">—</span></div>
-          </div>
         </div>
         <input type="hidden" id="b-patient-id"/>
         <input type="hidden" id="b-patient-name"/>
@@ -727,6 +755,17 @@
         <input type="hidden" id="b-patient-tel-madre"/>
         <input type="hidden" id="b-patient-ap-paterno"/>
         <input type="hidden" id="b-patient-ap-materno"/>
+      </div>
+      <!-- Tel. madre — always visible -->
+      <div class="field">
+        <label class="required">📱 Tel. madre</label>
+        <input type="tel" id="b-tel-madre-input" placeholder="833 000 00 00" maxlength="12"
+          oninput="fmtTel(this);onTelMadreChange('b')" onblur="validateTel(this)"/>
+      </div>
+      <!-- ID key — live preview -->
+      <div class="field">
+        <label>🔑 ID paciente (nombre + tel)</label>
+        <div id="b-card-key" style="font-family:monospace;font-size:.78rem;color:var(--teal);padding:.55rem .8rem;background:#0f172a;border:1px solid var(--border);border-radius:var(--radius-sm);min-height:2.4rem;word-break:break-all;">—</div>
       </div>
       <div class="field full">
         <label>Visita asociada <span style="color:var(--muted);font-weight:400;">(opcional)</span></label>
@@ -827,6 +866,61 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 function setToday(id){const el=document.getElementById(id);if(el)el.value=new Date().toISOString().split('T')[0];}
+
+/* ── PHONE FORMATTING & VALIDATION ──────────────────────────
+   Format: NXX NXX XX XX  (10 digits, displayed as "833 000 00 00")
+   fmtTel()      — live mask as user types
+   validateTel() — on blur, shows error if digit count != 10
+   digitsOnly()  — strips everything except digits
+   isTelValid()  — returns true if exactly 10 digits present
+──────────────────────────────────────────────────────────── */
+function digitsOnly(s){ return String(s||'').replace(/\D/g,''); }
+
+function fmtTel(input){
+  const raw   = digitsOnly(input.value).substring(0,10);
+  let out = '';
+  if(raw.length <= 3)       out = raw;
+  else if(raw.length <= 6)  out = raw.slice(0,3)+' '+raw.slice(3);
+  else if(raw.length <= 8)  out = raw.slice(0,3)+' '+raw.slice(3,6)+' '+raw.slice(6);
+  else                      out = raw.slice(0,3)+' '+raw.slice(3,6)+' '+raw.slice(6,8)+' '+raw.slice(8);
+  // Preserve cursor position
+  const pos = input.selectionStart;
+  input.value = out;
+  // clear error state while typing
+  input.classList.remove('tel-error');
+  const hint = document.getElementById('hint-'+input.id);
+  if(hint) hint.classList.remove('show');
+}
+
+function isTelValid(input){
+  return digitsOnly(input.value).length === 10;
+}
+
+function validateTel(input){
+  // Pediatra and other optional fields — skip if empty
+  const isRequired = input.closest('.field')&&
+    input.closest('.field').querySelector('label.required');
+  if(!isRequired && digitsOnly(input.value).length === 0) return true;
+  if(!isTelValid(input)){
+    input.classList.add('tel-error');
+    const hint = document.getElementById('hint-'+input.id);
+    if(hint) hint.classList.add('show');
+    return false;
+  }
+  input.classList.remove('tel-error');
+  const hint = document.getElementById('hint-'+input.id);
+  if(hint) hint.classList.remove('show');
+  return true;
+}
+
+/* Validate all visible tel inputs in a given container element.
+   Returns true only if all pass. */
+function validateAllTels(containerEl){
+  const inputs = containerEl.querySelectorAll('input[type="tel"]');
+  let ok = true;
+  inputs.forEach(inp => { if(!validateTel(inp)) ok = false; });
+  return ok;
+}
 
 /* ── MOBILE NAV ── */
 function handleMobileNav(pageId){
@@ -1026,11 +1120,21 @@ function selectPatient(pid,nombre,dob,alergias,medic,prefix,pkey,telMadre,apPate
   pkey=pkey||''; telMadre=telMadre||''; apPaterno=apPaterno||''; apMaterno=apMaterno||'';
   alergias=alergias||'Ninguna'; medic=medic||'Ninguno';
 
-  // Set the search input value
+  // Fill the visible name input
   const nameEl=document.getElementById(prefix+'-patient-name')||document.getElementById(prefix+'-patient-search');
-  if(nameEl){ nameEl.value=nombre; nameEl.style.display='none'; } // hide input, show card instead
+  if(nameEl) nameEl.value=nombre;
 
-  // Store all hidden fields
+  // Fill the always-visible tel input
+  const telInput=document.getElementById(prefix+'-tel-madre-input');
+  if(telInput) telInput.value=telMadre;
+
+  // Fill alergias/medic inputs (visits only)
+  const alrgEl=document.getElementById(prefix+'-card-alergias');
+  if(alrgEl) alrgEl.value=alergias;
+  const medicEl=document.getElementById(prefix+'-card-medic');
+  if(medicEl) medicEl.value=medic;
+
+  // Store hidden fields
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
   set(prefix+'-patient-id', pid);
   set(prefix+'-patient-dob', dob);
@@ -1046,34 +1150,51 @@ function selectPatient(pid,nombre,dob,alergias,medic,prefix,pkey,telMadre,apPate
   const listEl=document.getElementById(prefix+'-ac-list');
   if(listEl){listEl.classList.remove('show');listEl.style.display='none';}
 
-  // Show the patient info card
-  const card=document.getElementById(prefix+'-patient-card');
-  if(card) card.style.display='block';
-
-  // Populate card fields
-  const g=(id)=>{const el=document.getElementById(id);return el?el:null;};
-  const cardNombre=g(prefix+'-card-nombre'); if(cardNombre) cardNombre.textContent=nombre;
-  const cardPid=g(prefix+'-card-pid');       if(cardPid) cardPid.textContent=pid;
-  const cardKey=g(prefix+'-card-key');       if(cardKey) cardKey.textContent=pkey||'—';
-  const cardTel=g(prefix+'-card-tel');       if(cardTel) cardTel.textContent=telMadre||'—';
-  const cardAlrg=g(prefix+'-card-alergias'); if(cardAlrg) cardAlrg.textContent=alergias;
-  const cardMedic=g(prefix+'-card-medic');   if(cardMedic) cardMedic.textContent=medic;
+  // Update live key display
+  recomputeKey(prefix);
 }
 
 function clearPatientSelection(prefix){
-  const fields=[prefix+'-patient-search',prefix+'-patient-id',prefix+'-patient-name',
+  const ids=[prefix+'-patient-search',prefix+'-patient-id',prefix+'-patient-name',
     prefix+'-patient-key',prefix+'-patient-tel-madre',prefix+'-patient-dob',
     prefix+'-patient-alergias',prefix+'-patient-medic',
     prefix+'-patient-ap-paterno',prefix+'-patient-ap-materno'];
-  fields.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  // Show the search input again, hide the card
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const nameEl=document.getElementById(prefix+'-patient-name')||document.getElementById(prefix+'-patient-search');
-  if(nameEl){nameEl.value='';nameEl.style.display='';}
-  const card=document.getElementById(prefix+'-patient-card');
-  if(card) card.style.display='none';
-  const badge=document.getElementById(prefix+'-patient-badge');
-  if(badge) badge.style.display='none';
+  if(nameEl) nameEl.value='';
+  const telInput=document.getElementById(prefix+'-tel-madre-input');
+  if(telInput) telInput.value='';
+  const alrgEl=document.getElementById(prefix+'-card-alergias');
+  if(alrgEl) alrgEl.value='';
+  const medicEl=document.getElementById(prefix+'-card-medic');
+  if(medicEl) medicEl.value='';
+  const keyEl=document.getElementById(prefix+'-card-key');
+  if(keyEl) keyEl.textContent='—';
 }
+
+/* ── TEL MADRE / NAME → live patient_key recomputation ── */
+function getPatientNameForPrefix(prefix){
+  // Try both possible name input ids
+  const a = document.getElementById(prefix+'-patient-name');
+  const b = document.getElementById(prefix+'-patient-search');
+  return (a&&a.value.trim()) || (b&&b.value.trim()) || '';
+}
+
+function recomputeKey(prefix){
+  const nombre  = getPatientNameForPrefix(prefix);
+  const telInput= document.getElementById(prefix+'-tel-madre-input');
+  const tel     = telInput ? telInput.value.trim() : '';
+  const pkey    = makePatientKey(nombre, tel);
+  const hiddenKey = document.getElementById(prefix+'-patient-key');
+  if(hiddenKey) hiddenKey.value = pkey;
+  const hiddenTel = document.getElementById(prefix+'-patient-tel-madre');
+  if(hiddenTel) hiddenTel.value = tel;
+  const cardKey = document.getElementById(prefix+'-card-key');
+  if(cardKey) cardKey.textContent = pkey || '—';
+}
+
+function onTelMadreChange(prefix){ recomputeKey(prefix); }
+function onVisitFieldChange(prefix){ recomputeKey(prefix); }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
@@ -1198,6 +1319,10 @@ function validateStep(step){
        !gv('i-madre-nombre')||!gv('i-madre-apellidos')||!gv('i-tel-madre')||!gv('i-motivo')){
       showAlert(al,'error','Por favor completa todos los campos obligatorios (*).'); return false;
     }
+    const step1El = document.getElementById('intake-step-1');
+    if(!validateAllTels(step1El)){
+      showAlert(al,'error','Verifica que los teléfonos sean de 10 dígitos (ej. 833 000 00 00).'); return false;
+    }
   }
   if(step===2){
     const stepEl=document.getElementById('intake-step-2');
@@ -1304,12 +1429,19 @@ async function submitVisit(){
   if(!nombre||!fecha||!hora||!motivo||!tratamiento){
     showAlert(al,'error','Completa los campos obligatorios: paciente, fecha, hora, motivo y tratamiento.');return;
   }
+  const vTelInput=document.getElementById('v-tel-madre-input');
+  if(vTelInput && !isTelValid(vTelInput)){
+    vTelInput.classList.add('tel-error');
+    showAlert(al,'error','El teléfono de la madre debe tener 10 dígitos (ej. 833 000 00 00).');return;
+  }
   const pid=document.getElementById('v-patient-id').value;
   const alergias=(document.getElementById('v-patient-alergias')||{value:'Ninguna'}).value||'Ninguna';
   const medic=(document.getElementById('v-patient-medic')||{value:'Ninguno'}).value||'Ninguno';
   const dob=(document.getElementById('v-patient-dob')||{value:''}).value||'';
   const pkey=(document.getElementById('v-patient-key')||{value:''}).value||'';
-  const telMadre=(document.getElementById('v-patient-tel-madre')||{value:''}).value||'';
+  // Tel madre: prefer the hidden field, fall back to the visible input
+  const telMadre=(document.getElementById('v-patient-tel-madre')||{value:''}).value||
+                 (document.getElementById('v-tel-madre-input')||{value:''}).value||'';
   const apPaterno=(document.getElementById('v-patient-ap-paterno')||{value:''}).value||'';
   const apMaterno=(document.getElementById('v-patient-ap-materno')||{value:''}).value||'';
   // Load previous visits for this patient to include in calendar/WA
@@ -1346,10 +1478,16 @@ async function submitBilling(){
         factura=document.getElementById('b-factura').value,
         status=document.getElementById('b-status').value,notes=gv('b-notes');
   if(!nombre||!date||!service||!amount||!method){showAlert(al,'error','Completa todos los campos obligatorios.');return;}
+  const bTelInput=document.getElementById('b-tel-madre-input');
+  if(bTelInput && !isTelValid(bTelInput)){
+    bTelInput.classList.add('tel-error');
+    showAlert(al,'error','El teléfono de la madre debe tener 10 dígitos (ej. 833 000 00 00).');return;
+  }
   const pid=document.getElementById('b-patient-id').value;
   const vid=gv('b-visit-id');
   const bpkey=(document.getElementById('b-patient-key')||{value:''}).value||'';
-  const btelMadre=(document.getElementById('b-patient-tel-madre')||{value:''}).value||'';
+  const btelMadre=(document.getElementById('b-patient-tel-madre')||{value:''}).value||
+                  (document.getElementById('b-tel-madre-input')||{value:''}).value||'';
   const bapPaterno=(document.getElementById('b-patient-ap-paterno')||{value:''}).value||'';
   const bapMaterno=(document.getElementById('b-patient-ap-materno')||{value:''}).value||'';
   const entry={sheet:'Billing',pinHash:sessionPinHash,timestamp:new Date().toISOString(),
@@ -1441,6 +1579,41 @@ function renderDashboard(){
   const deList=document.getElementById('dash-expense-list');
   deList.innerHTML=!expenseData.length?'<div class="empty" style="padding:1rem;"><div class="empty-icon">🧾</div>Sin gastos aún.</div>':expenseData.slice(0,4).map(e=>`<div class="entry-item" style="margin-bottom:.4rem;"><div class="entry-avatar expense">${(e.category||'O')[0].toUpperCase()}</div><div class="entry-body"><div class="entry-name">${e.desc||''}</div><div class="entry-meta">${e.category||''}</div></div><div class="entry-amount expense">-$${Number(e.amount||0).toFixed(2)}</div></div>`).join('');
   buildCharts();
+  renderFacturas();
+}
+
+function renderFacturas(){
+  const now   = new Date();
+  const month = now.getMonth();
+  const year  = now.getFullYear();
+  const facturas = billingData.filter(e=>{
+    if((e.factura||e['Factura']||'').toString().toLowerCase() !== 'sí') return false;
+    const d = new Date(e.date||e['Fecha']||e.timestamp||'');
+    return !isNaN(d) && d.getMonth()===month && d.getFullYear()===year;
+  });
+  const countEl = document.getElementById('d-factura-count');
+  if(countEl) countEl.textContent = facturas.length;
+  const tbody = document.getElementById('factura-tbody');
+  if(!tbody) return;
+  if(!facturas.length){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;">Sin facturas este mes.</td></tr>';
+    const tr=document.getElementById('factura-total-row');if(tr)tr.style.display='none';
+    return;
+  }
+  const total = facturas.reduce((s,e)=>s+Number(e.amount||e['Monto (MXN)']||0),0);
+  tbody.innerHTML = facturas.map(e=>`
+    <tr>
+      <td>${e.patient||e['Paciente']||''}</td>
+      <td style="color:var(--muted)">${e.service||e['Servicio']||''}</td>
+      <td style="color:var(--muted)">${e.date||e['Fecha']||''}</td>
+      <td style="color:var(--success)">$${Number(e.amount||e['Monto (MXN)']||0).toFixed(2)}</td>
+      <td><span class="method-pill ${methodClass[e.method||e['Método de Pago']]||'pill-card'}">${e.method||e['Método de Pago']||''}</span></td>
+      <td style="font-family:monospace;font-size:.7rem;color:var(--teal)">${e.patient_key||e['patient_key']||'—'}</td>
+    </tr>`).join('');
+  const tr=document.getElementById('factura-total-row');
+  if(tr){tr.style.display='block';}
+  const tEl=document.getElementById('factura-total');
+  if(tEl) tEl.textContent='$'+total.toFixed(2);
 }
 function buildCharts(){
   const gc='rgba(100,116,139,0.15)',tc='#64748b';
