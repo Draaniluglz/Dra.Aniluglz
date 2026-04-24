@@ -254,7 +254,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">🦷 Dra. González</div>
+  <div class="nav-brand">🦷 Dra. González — Odontopediatría</div>
 
   <!-- Desktop: individual tab buttons -->
   <div class="nav-tabs">
@@ -639,11 +639,24 @@
       <div class="field full">
         <label class="required">Paciente</label>
         <div class="autocomplete-wrap">
-          <input type="text" id="v-patient-name" placeholder="Escribe el nombre..."
+          <input type="text" id="v-patient-name" placeholder="Escribe el nombre del paciente..."
             autocomplete="off" oninput="patientSearch(this.value,'v')" onfocus="patientSearch(this.value,'v')"/>
           <div class="autocomplete-list" id="v-ac-list"></div>
         </div>
-        <span class="pid-badge" id="v-pid-badge"></span>
+        <!-- Patient info card — shown after selection -->
+        <div id="v-patient-card" style="display:none;margin-top:.5rem;background:#0a1628;border:1px solid var(--teal-dim);border-radius:var(--radius-sm);padding:.65rem .9rem;font-size:.78rem;">
+          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem;">
+            <span style="color:var(--ink);font-weight:500;" id="v-card-nombre">—</span>
+            <span class="id-pill" id="v-card-pid">—</span>
+            <button type="button" onclick="clearPatientSelection('v')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.78rem;margin-left:auto;">✕ Cambiar</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem .75rem;">
+            <div><span style="color:var(--muted);">🔑 ID Paciente:</span> <span style="font-family:monospace;color:var(--teal);font-size:.74rem;" id="v-card-key">—</span></div>
+            <div><span style="color:var(--muted);">📱 Tel. madre:</span> <span style="color:var(--ink-soft);" id="v-card-tel">—</span></div>
+            <div><span style="color:var(--muted);">⚠️ Alergias:</span> <span style="color:var(--warn);" id="v-card-alergias">—</span></div>
+            <div><span style="color:var(--muted);">💊 Medicamentos:</span> <span style="color:var(--ink-soft);" id="v-card-medic">—</span></div>
+          </div>
+        </div>
         <input type="hidden" id="v-patient-id"/>
         <input type="hidden" id="v-patient-key"/>
         <input type="hidden" id="v-patient-madre-nombre"/>
@@ -696,12 +709,17 @@
             oninput="searchPatients(this.value,'b-ac-list','b')" onfocus="searchPatients(this.value,'b-ac-list','b')"/>
           <div class="autocomplete-list" id="b-ac-list" style="display:none;"></div>
         </div>
-        <div id="b-patient-badge" style="display:none;">
-          <span class="patient-badge">
-            <span id="b-badge-name">—</span>
-            <span class="id-pill" id="b-badge-id">—</span>
-            <button class="badge-clear" onclick="clearPatientSelection('b')">✕</button>
-          </span>
+        <!-- Patient info card — shown after selection -->
+        <div id="b-patient-card" style="display:none;margin-top:.5rem;background:#0a1628;border:1px solid var(--teal-dim);border-radius:var(--radius-sm);padding:.65rem .9rem;font-size:.78rem;">
+          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem;">
+            <span style="color:var(--ink);font-weight:500;" id="b-card-nombre">—</span>
+            <span class="id-pill" id="b-card-pid">—</span>
+            <button type="button" onclick="clearPatientSelection('b')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.78rem;margin-left:auto;">✕ Cambiar</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem .75rem;">
+            <div><span style="color:var(--muted);">🔑 ID Paciente:</span> <span style="font-family:monospace;color:var(--teal);font-size:.74rem;" id="b-card-key">—</span></div>
+            <div><span style="color:var(--muted);">📱 Tel. madre:</span> <span style="color:var(--ink-soft);" id="b-card-tel">—</span></div>
+          </div>
         </div>
         <input type="hidden" id="b-patient-id"/>
         <input type="hidden" id="b-patient-name"/>
@@ -964,12 +982,12 @@ function patientSearch(query,prefix){
   if(!query||query.length<1){list.classList.remove('show');return;}
   acDebounce=setTimeout(async()=>{
     const q=query.toLowerCase();
-    const matches=patientsData.filter(p=>(p['Nombre']||p.nombre||'').toLowerCase().includes(q)).slice(0,8);
+    const matches=patientsData.filter(p=>(p['Nombre Completo']||p['Nombre']||p.nombre||'').toLowerCase().includes(q)).slice(0,8);
     if(matches.length){
       renderAcList(list,matches.map(p=>({
         patient_id:p['patient_id']||'',
         patient_key:p['patient_key']||p['Llave Paciente']||'',
-        nombre:p['Nombre']||p.nombre||'',
+        nombre:p['Nombre Completo']||p['Nombre']||p.nombre||'',
         dob:p['Fecha Nacimiento']||p.dob||'',
         alergias:p['Alergias (detalle)']||p.alergiasDetalle||'Ninguna',
         medic:p['Medicamento (detalle)']||p.medicDetalle||'Ninguno',
@@ -1006,30 +1024,15 @@ function renderAcList(list,patients,prefix){
 
 function selectPatient(pid,nombre,dob,alergias,medic,prefix,pkey,telMadre,apPaterno,apMaterno){
   pkey=pkey||''; telMadre=telMadre||''; apPaterno=apPaterno||''; apMaterno=apMaterno||'';
+  alergias=alergias||'Ninguna'; medic=medic||'Ninguno';
+
+  // Set the search input value
   const nameEl=document.getElementById(prefix+'-patient-name')||document.getElementById(prefix+'-patient-search');
-  const idEl=document.getElementById(prefix+'-patient-id');
-  const badge=document.getElementById(prefix+'-pid-badge');
-  if(nameEl) nameEl.value=nombre;
-  if(idEl) idEl.value=pid;
-  if(badge){badge.textContent=pkey||pid;badge.classList.add('show');}
+  if(nameEl){ nameEl.value=nombre; nameEl.style.display='none'; } // hide input, show card instead
 
-  // For billing prefix, show the patient badge
-  if(prefix==='b'){
-    const bb=document.getElementById('b-patient-badge');
-    const bn=document.getElementById('b-badge-name');
-    const bi=document.getElementById('b-badge-id');
-    const bname=document.getElementById('b-patient-name');
-    if(bb){bb.style.display='block';}
-    if(bn) bn.textContent=nombre;
-    if(bi) bi.textContent=pkey||pid;
-    if(bname) bname.value=nombre;
-  }
-
-  const listEl=document.getElementById(prefix+'-ac-list');
-  if(listEl){listEl.classList.remove('show');listEl.style.display='none';}
-
-  // Store all extra fields
+  // Store all hidden fields
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
+  set(prefix+'-patient-id', pid);
   set(prefix+'-patient-dob', dob);
   set(prefix+'-patient-alergias', alergias);
   set(prefix+'-patient-medic', medic);
@@ -1037,16 +1040,38 @@ function selectPatient(pid,nombre,dob,alergias,medic,prefix,pkey,telMadre,apPate
   set(prefix+'-patient-tel-madre', telMadre);
   set(prefix+'-patient-ap-paterno', apPaterno);
   set(prefix+'-patient-ap-materno', apMaterno);
+  set(prefix+'-patient-name', nombre);
+
+  // Hide autocomplete list
+  const listEl=document.getElementById(prefix+'-ac-list');
+  if(listEl){listEl.classList.remove('show');listEl.style.display='none';}
+
+  // Show the patient info card
+  const card=document.getElementById(prefix+'-patient-card');
+  if(card) card.style.display='block';
+
+  // Populate card fields
+  const g=(id)=>{const el=document.getElementById(id);return el?el:null;};
+  const cardNombre=g(prefix+'-card-nombre'); if(cardNombre) cardNombre.textContent=nombre;
+  const cardPid=g(prefix+'-card-pid');       if(cardPid) cardPid.textContent=pid;
+  const cardKey=g(prefix+'-card-key');       if(cardKey) cardKey.textContent=pkey||'—';
+  const cardTel=g(prefix+'-card-tel');       if(cardTel) cardTel.textContent=telMadre||'—';
+  const cardAlrg=g(prefix+'-card-alergias'); if(cardAlrg) cardAlrg.textContent=alergias;
+  const cardMedic=g(prefix+'-card-medic');   if(cardMedic) cardMedic.textContent=medic;
 }
 
 function clearPatientSelection(prefix){
-  const searchEl=document.getElementById(prefix+'-patient-search');
-  const idEl=document.getElementById(prefix+'-patient-id');
-  const nameEl=document.getElementById(prefix+'-patient-name');
+  const fields=[prefix+'-patient-search',prefix+'-patient-id',prefix+'-patient-name',
+    prefix+'-patient-key',prefix+'-patient-tel-madre',prefix+'-patient-dob',
+    prefix+'-patient-alergias',prefix+'-patient-medic',
+    prefix+'-patient-ap-paterno',prefix+'-patient-ap-materno'];
+  fields.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  // Show the search input again, hide the card
+  const nameEl=document.getElementById(prefix+'-patient-name')||document.getElementById(prefix+'-patient-search');
+  if(nameEl){nameEl.value='';nameEl.style.display='';}
+  const card=document.getElementById(prefix+'-patient-card');
+  if(card) card.style.display='none';
   const badge=document.getElementById(prefix+'-patient-badge');
-  if(searchEl) searchEl.value='';
-  if(idEl) idEl.value='';
-  if(nameEl) nameEl.value='';
   if(badge) badge.style.display='none';
 }
 
