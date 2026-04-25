@@ -266,6 +266,7 @@
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('intake',this)">Registro</button>
     <button class="nav-tab"        onclick="requireAuth('dashboard',this)">Panel</button>
+    <button class="nav-tab"        onclick="requireAuth('patients',this)">Pacientes</button>
     <button class="nav-tab"        onclick="requireAuth('visits',this)">Visitas</button>
     <button class="nav-tab"        onclick="requireAuth('billing',this)">Cobros</button>
     <button class="nav-tab"        onclick="requireAuth('expenses',this)">Gastos</button>
@@ -276,6 +277,7 @@
     <select class="nav-select" id="nav-mobile-select" onchange="handleMobileNav(this.value)">
       <option value="intake">📋 Registro</option>
       <option value="dashboard">📊 Panel</option>
+      <option value="patients">👤 Pacientes</option>
       <option value="visits">🗓️ Visitas</option>
       <option value="billing">💳 Cobros</option>
       <option value="expenses">🧾 Gastos</option>
@@ -336,14 +338,14 @@
         <div class="field full"><label>Lugar y fecha de nacimiento</label><input type="text" id="i-lugar-nac" placeholder="Ciudad, Estado — Fecha"/></div>
         <div class="field"><label class="required">Nombre(s) del padre</label><input type="text" id="i-padre-nombre" placeholder="Nombre(s)"/></div>
         <div class="field"><label class="required">Apellidos del padre</label><input type="text" id="i-padre-apellidos" placeholder="Apellido paterno y materno"/></div>
-        <div class="field"><label class="required">Tel/Cel del padre</label><input type="tel" id="i-tel-padre" placeholder="833 000 00 00" maxlength="12" oninput="fmtTel(this)" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-padre">Ingresa 10 dígitos: 833 000 00 00</span></div>
+        <div class="field"><label class="required">Tel/Cel del padre</label><input type="tel" id="i-tel-padre" placeholder="833 000 00 00" maxlength="13" oninput="fmtTel(this)" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-padre">Ingresa 10 dígitos: 833 000 00 00</span></div>
         <div class="field"></div>
         <div class="field"><label class="required">Nombre(s) de la madre</label><input type="text" id="i-madre-nombre" placeholder="Nombre(s)" oninput="updateNombreCompleto();checkDuplicate()"/></div>
         <div class="field"><label class="required">Apellidos de la madre</label><input type="text" id="i-madre-apellidos" placeholder="Apellido paterno y materno"/></div>
-        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="833 000 00 00" maxlength="12" oninput="fmtTel(this);updateNombreCompleto();checkDuplicate()" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-madre">Ingresa 10 dígitos: 833 000 00 00</span></div>
+        <div class="field"><label class="required">Tel/Cel de la madre</label><input type="tel" id="i-tel-madre" placeholder="833 000 00 00" maxlength="13" oninput="fmtTel(this);updateNombreCompleto();checkDuplicate()" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-madre">Ingresa 10 dígitos: 833 000 00 00</span></div>
         <div class="field"></div>
         <div class="field"><label>Nombre del pediatra</label><input type="text" id="i-pediatra"/></div>
-        <div class="field"><label>Tel/Cel del pediatra</label><input type="tel" id="i-tel-pediatra" placeholder="833 000 00 00" maxlength="12" oninput="fmtTel(this)" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-pediatra">Ingresa 10 dígitos: 833 000 00 00</span></div>
+        <div class="field"><label>Tel/Cel del pediatra</label><input type="tel" id="i-tel-pediatra" placeholder="833 000 00 00" maxlength="13" oninput="fmtTel(this)" onblur="validateTel(this)"/><span class="tel-hint" id="hint-tel-pediatra">Ingresa 10 dígitos: 833 000 00 00</span></div>
         <div class="field full"><label class="required">Motivo de consulta</label><textarea id="i-motivo" placeholder="¿Por qué trae al paciente hoy?"></textarea></div>
       </div>
       <!-- hidden composed fields used by JS -->
@@ -656,6 +658,132 @@
   </div>
 </div>
 
+<!-- ═══════════ PACIENTES ═══════════ -->
+<div id="page-patients" class="page">
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-title">Expediente del Paciente</div>
+    <div class="card-sub">Selecciona un paciente para ver su historial clínico completo</div>
+    <div class="autocomplete-wrap" style="margin-bottom:.5rem;">
+      <input type="text" id="ps-search" placeholder="Escribe el nombre del paciente..."
+        autocomplete="off"
+        oninput="patientSearch(this.value,'ps');psSyncSearch()"
+        onfocus="patientSearch(this.value,'ps')"/>
+      <div class="autocomplete-list" id="ps-ac-list"></div>
+    </div>
+    <input type="hidden" id="ps-patient-id"/>
+    <input type="hidden" id="ps-patient-key"/>
+    <input type="hidden" id="ps-patient-alergias"/>
+    <input type="hidden" id="ps-patient-medic"/>
+    <input type="hidden" id="ps-patient-dob"/>
+    <input type="hidden" id="ps-patient-tel-madre"/>
+    <input type="hidden" id="ps-patient-ap-paterno"/>
+    <input type="hidden" id="ps-patient-ap-materno"/>
+    <!-- Or pick from full list -->
+    <div style="margin-top:.5rem;">
+      <select id="ps-dropdown" onchange="loadPatientSummaryFromDropdown()"
+        style="font-size:.84rem;padding:.5rem .75rem;width:100%;">
+        <option value="">— O elige de la lista completa —</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- SUMMARY PANEL — hidden until patient selected -->
+  <div id="ps-summary" style="display:none;">
+
+    <!-- Header card -->
+    <div class="card" style="background:linear-gradient(135deg,#0f2744 0%,#1e293b 100%);border-color:var(--teal-dim);">
+      <div style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+        <div id="ps-avatar" style="width:52px;height:52px;border-radius:50%;background:var(--teal-glow);border:2px solid var(--teal);color:var(--teal);font-family:'DM Serif Display',serif;font-size:1.3rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">—</div>
+        <div style="flex:1;min-width:0;">
+          <div id="ps-nombre" style="font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);"></div>
+          <div id="ps-meta" style="font-size:.78rem;color:var(--muted);margin-top:.2rem;"></div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem;">
+            <span class="id-pill" id="ps-pid-display"></span>
+            <span style="font-size:.72rem;font-family:monospace;color:var(--teal-dim);background:rgba(45,212,191,.06);padding:1px 7px;border-radius:4px;border:1px solid rgba(45,212,191,.15);" id="ps-key-display"></span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <div id="ps-alergias-badge" style="display:none;background:var(--danger-bg);border:1px solid rgba(248,113,113,.3);border-radius:var(--radius-sm);padding:.25rem .65rem;font-size:.72rem;color:var(--danger);">⚠️ <span id="ps-alergias-txt"></span></div>
+          <div id="ps-medic-badge" style="display:none;background:var(--warn-bg);border:1px solid rgba(251,191,36,.25);border-radius:var(--radius-sm);padding:.25rem .65rem;font-size:.72rem;color:var(--warn);">💊 <span id="ps-medic-txt"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics row -->
+    <div class="metrics-row metrics-4" style="margin-bottom:1rem;">
+      <div class="metric-card"><div class="metric-label">Total visitas</div><div class="metric-value" id="ps-m-visits">0</div></div>
+      <div class="metric-card"><div class="metric-label">Total cobrado</div><div class="metric-value green" id="ps-m-billed">$0</div></div>
+      <div class="metric-card"><div class="metric-label">Último cobro</div><div class="metric-value" id="ps-m-last-bill">—</div></div>
+      <div class="metric-card"><div class="metric-label">Próxima cita</div><div class="metric-value" style="font-size:1rem;" id="ps-m-next">—</div></div>
+    </div>
+
+    <!-- Visitas -->
+    <div class="card">
+      <div class="card-title" style="font-size:.95rem;">🗓 Historial de Visitas</div>
+      <div style="overflow-x:auto;margin-top:.75rem;">
+        <table class="recent-table">
+          <thead><tr>
+            <th style="width:12%">Fecha</th>
+            <th style="width:12%">Hora</th>
+            <th style="width:30%">Motivo / Diagnóstico</th>
+            <th style="width:33%">Tratamiento</th>
+            <th style="width:13%">Odontólogo</th>
+          </tr></thead>
+          <tbody id="ps-visits-tbody">
+            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.2rem;">Sin visitas registradas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cobros -->
+    <div class="card">
+      <div class="card-title" style="font-size:.95rem;">💳 Historial de Cobros</div>
+      <div style="overflow-x:auto;margin-top:.75rem;">
+        <table class="recent-table">
+          <thead><tr>
+            <th style="width:13%">Fecha</th>
+            <th style="width:25%">Servicio</th>
+            <th style="width:13%">Monto</th>
+            <th style="width:16%">Método</th>
+            <th style="width:10%">Factura</th>
+            <th style="width:13%">Estado</th>
+          </tr></thead>
+          <tbody id="ps-billing-tbody">
+            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.2rem;">Sin cobros registrados.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="ps-billing-total" style="text-align:right;font-size:.82rem;font-weight:500;color:var(--success);margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border);display:none;">
+        Total: <span id="ps-billing-total-val">$0</span>
+      </div>
+    </div>
+
+    <!-- Tratamientos resumen -->
+    <div class="card">
+      <div class="card-title" style="font-size:.95rem;">🦷 Resumen de Tratamientos</div>
+      <div id="ps-treatments-list" style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.4rem;">
+        <span style="color:var(--muted);font-size:.82rem;">Sin tratamientos registrados.</span>
+      </div>
+    </div>
+
+    <!-- Datos del paciente -->
+    <div class="card">
+      <div class="card-title" style="font-size:.95rem;">📋 Datos Clínicos del Registro</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem .75rem;font-size:.8rem;margin-top:.75rem;" id="ps-clinical-grid">
+      </div>
+    </div>
+
+  </div><!-- /ps-summary -->
+
+  <div id="ps-empty" style="text-align:center;padding:3rem 1rem;color:var(--muted);">
+    <div style="font-size:2.5rem;margin-bottom:.75rem;opacity:.25;">👤</div>
+    <div style="font-size:.9rem;">Busca o selecciona un paciente para ver su expediente</div>
+  </div>
+
+</div>
+
 <!-- ═══════════ VISITAS ═══════════ -->
 <div id="page-visits" class="page">
   <div class="metrics-row metrics-3">
@@ -689,7 +817,7 @@
       <!-- Tel. madre — always visible -->
       <div class="field">
         <label class="required">📱 Tel. madre</label>
-        <input type="tel" id="v-tel-madre-input" placeholder="833 000 00 00" maxlength="12"
+        <input type="tel" id="v-tel-madre-input" placeholder="833 000 00 00" maxlength="13"
           oninput="fmtTel(this);onTelMadreChange('v')" onblur="validateTel(this)"/>
       </div>
       <!-- ID key — live preview -->
@@ -759,7 +887,7 @@
       <!-- Tel. madre — always visible -->
       <div class="field">
         <label class="required">📱 Tel. madre</label>
-        <input type="tel" id="b-tel-madre-input" placeholder="833 000 00 00" maxlength="12"
+        <input type="tel" id="b-tel-madre-input" placeholder="833 000 00 00" maxlength="13"
           oninput="fmtTel(this);onTelMadreChange('b')" onblur="validateTel(this)"/>
       </div>
       <!-- ID key — live preview -->
@@ -877,16 +1005,16 @@ function setToday(id){const el=document.getElementById(id);if(el)el.value=new Da
 function digitsOnly(s){ return String(s||'').replace(/\D/g,''); }
 
 function fmtTel(input){
-  const raw   = digitsOnly(input.value).substring(0,10);
-  let out = '';
-  if(raw.length <= 3)       out = raw;
-  else if(raw.length <= 6)  out = raw.slice(0,3)+' '+raw.slice(3);
-  else if(raw.length <= 8)  out = raw.slice(0,3)+' '+raw.slice(3,6)+' '+raw.slice(6);
-  else                      out = raw.slice(0,3)+' '+raw.slice(3,6)+' '+raw.slice(6,8)+' '+raw.slice(8);
-  // Preserve cursor position
-  const pos = input.selectionStart;
-  input.value = out;
-  // clear error state while typing
+  // Strip non-digits, cap at 10
+  const raw = digitsOnly(input.value).slice(0, 10);
+  // Build formatted string: "NXX NXX XX XX" = 13 chars max
+  let out = raw;
+  if(raw.length > 8)      out = raw.slice(0,3)+' '+raw.slice(3,6)+' '+raw.slice(6,8)+' '+raw.slice(8);
+  else if(raw.length > 6) out = raw.slice(0,3)+' '+raw.slice(3,6)+' '+raw.slice(6);
+  else if(raw.length > 3) out = raw.slice(0,3)+' '+raw.slice(3);
+  // Only update if different (avoids cursor jump on non-digit keys)
+  if(input.value !== out) input.value = out;
+  // Clear error while typing
   input.classList.remove('tel-error');
   const hint = document.getElementById('hint-'+input.id);
   if(hint) hint.classList.remove('show');
@@ -1116,43 +1244,7 @@ function renderAcList(list,patients,prefix){
   list.style.display='block';
 }
 
-function selectPatient(pid,nombre,dob,alergias,medic,prefix,pkey,telMadre,apPaterno,apMaterno){
-  pkey=pkey||''; telMadre=telMadre||''; apPaterno=apPaterno||''; apMaterno=apMaterno||'';
-  alergias=alergias||'Ninguna'; medic=medic||'Ninguno';
-
-  // Fill the visible name input
-  const nameEl=document.getElementById(prefix+'-patient-name')||document.getElementById(prefix+'-patient-search');
-  if(nameEl) nameEl.value=nombre;
-
-  // Fill the always-visible tel input
-  const telInput=document.getElementById(prefix+'-tel-madre-input');
-  if(telInput) telInput.value=telMadre;
-
-  // Fill alergias/medic inputs (visits only)
-  const alrgEl=document.getElementById(prefix+'-card-alergias');
-  if(alrgEl) alrgEl.value=alergias;
-  const medicEl=document.getElementById(prefix+'-card-medic');
-  if(medicEl) medicEl.value=medic;
-
-  // Store hidden fields
-  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
-  set(prefix+'-patient-id', pid);
-  set(prefix+'-patient-dob', dob);
-  set(prefix+'-patient-alergias', alergias);
-  set(prefix+'-patient-medic', medic);
-  set(prefix+'-patient-key', pkey);
-  set(prefix+'-patient-tel-madre', telMadre);
-  set(prefix+'-patient-ap-paterno', apPaterno);
-  set(prefix+'-patient-ap-materno', apMaterno);
-  set(prefix+'-patient-name', nombre);
-
-  // Hide autocomplete list
-  const listEl=document.getElementById(prefix+'-ac-list');
-  if(listEl){listEl.classList.remove('show');listEl.style.display='none';}
-
-  // Update live key display
-  recomputeKey(prefix);
-}
+/* selectPatient moved to patient summary section below */
 
 function clearPatientSelection(prefix){
   const ids=[prefix+'-patient-search',prefix+'-patient-id',prefix+'-patient-name',
@@ -1649,7 +1741,7 @@ async function loadSheetData(section){
     const res=await fetch(`${APPS_SCRIPT_URL}?action=get&sheet=${map[section]}&pinHash=${sessionPinHash}`);
     const json=await res.json();
     if(json.data){
-      if(section==='patients'){patientsData=json.data;const el=document.getElementById('d-patients');if(el)el.textContent=json.data.length;}
+      if(section==='patients'){patientsData=json.data;const el=document.getElementById('d-patients');if(el)el.textContent=json.data.length;populatePatientDropdown();}
       else if(section==='billing'){billingData=json.data.map(r=>normalizeRow(r,'Billing'));renderBilling();}
       else if(section==='expenses'){expenseData=json.data.map(r=>normalizeRow(r,'Expenses'));renderExpenses();}
       else if(section==='visits'){visitsData=json.data.map(r=>normalizeRow(r,'Visits'));renderVisits();}
@@ -1666,6 +1758,245 @@ function showAlert(el,type,msg){
   el.className=`alert alert-${type} show`;el.textContent=msg;
   if(type==='success')setTimeout(()=>el.classList.remove('show'),6000);
 }
+
+/* ══════════════════════════════════════
+   PATIENT SUMMARY PAGE (Pacientes tab)
+══════════════════════════════════════ */
+
+/* Sync the search input to also allow selecting from autocomplete */
+function psSyncSearch(){
+  // key recompute not needed here — just searching
+}
+
+/* Populate the dropdown <select> with all loaded patients */
+function populatePatientDropdown(){
+  const sel = document.getElementById('ps-dropdown');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— O elige de la lista completa —</option>';
+  const sorted = [...patientsData].sort((a,b)=>{
+    const na = a['Nombre Completo']||a['Nombre']||a.nombre||'';
+    const nb = b['Nombre Completo']||b['Nombre']||b.nombre||'';
+    return na.localeCompare(nb,'es');
+  });
+  sorted.forEach(p=>{
+    const pid   = p['patient_id']||'';
+    const nombre= p['Nombre Completo']||p['Nombre']||p.nombre||'';
+    const dob   = p['Fecha Nacimiento']||p.dob||'';
+    const opt   = document.createElement('option');
+    opt.value   = pid;
+    opt.textContent = nombre + (dob?' ('+dob+')':'');
+    sel.appendChild(opt);
+  });
+}
+
+/* Called when dropdown changes */
+function loadPatientSummaryFromDropdown(){
+  const sel = document.getElementById('ps-dropdown');
+  const pid = sel?sel.value:'';
+  if(!pid) return;
+  const p = patientsData.find(x=>(x['patient_id']||'')=== pid);
+  if(p) renderPatientSummary(p);
+}
+
+/* Called when autocomplete item is selected on the patients page */
+function selectPatient(pid,nombre,dob,alergias,medic,prefix,pkey,telMadre,apPaterno,apMaterno){
+  pkey=pkey||''; telMadre=telMadre||''; apPaterno=apPaterno||''; apMaterno=apMaterno||'';
+  alergias=alergias||'Ninguna'; medic=medic||'Ninguno';
+
+  if(prefix==='ps'){
+    // Patient summary page — load full summary
+    const p = patientsData.find(x=>(x['patient_id']||'')===pid) || {
+      patient_id:pid,'Nombre Completo':nombre,'patient_key':pkey,
+      'Fecha Nacimiento':dob,'Alergias (detalle)':alergias,'Medicamento (detalle)':medic,
+      'Tel Madre':telMadre
+    };
+    renderPatientSummary(p);
+    const nameEl = document.getElementById('ps-search');
+    if(nameEl) nameEl.value = nombre;
+    const listEl = document.getElementById('ps-ac-list');
+    if(listEl){listEl.classList.remove('show');listEl.style.display='none';}
+    // sync dropdown
+    const sel = document.getElementById('ps-dropdown');
+    if(sel) sel.value = pid;
+    return;
+  }
+
+  // Fill the visible name input for visits/billing
+  const nameEl=document.getElementById(prefix+'-patient-name')||document.getElementById(prefix+'-patient-search');
+  if(nameEl) nameEl.value=nombre;
+
+  const telInput=document.getElementById(prefix+'-tel-madre-input');
+  if(telInput){ telInput.value=telMadre; }
+
+  const alrgEl=document.getElementById(prefix+'-card-alergias');
+  if(alrgEl) alrgEl.value=alergias;
+  const medicEl=document.getElementById(prefix+'-card-medic');
+  if(medicEl) medicEl.value=medic;
+
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
+  set(prefix+'-patient-id', pid);
+  set(prefix+'-patient-dob', dob);
+  set(prefix+'-patient-alergias', alergias);
+  set(prefix+'-patient-medic', medic);
+  set(prefix+'-patient-key', pkey);
+  set(prefix+'-patient-tel-madre', telMadre);
+  set(prefix+'-patient-ap-paterno', apPaterno);
+  set(prefix+'-patient-ap-materno', apMaterno);
+  set(prefix+'-patient-name', nombre);
+
+  const listEl=document.getElementById(prefix+'-ac-list');
+  if(listEl){listEl.classList.remove('show');listEl.style.display='none';}
+
+  recomputeKey(prefix);
+}
+
+/* Main summary renderer */
+function renderPatientSummary(p){
+  const pid   = String(p['patient_id']||'');
+  const pkey  = String(p['patient_key']||'');
+  const nombre= String(p['Nombre Completo']||p['Nombre']||p.nombre||'');
+  const dob   = String(p['Fecha Nacimiento']||p.dob||'');
+  const sexo  = String(p['Sexo']||p.sexo||'');
+  const alrg  = String(p['Alergias (detalle)']||p.alergiasDetalle||'Ninguna');
+  const medic = String(p['Medicamento (detalle)']||p.medicDetalle||'Ninguno');
+  const tel   = String(p['Tel Madre']||p.telMadre||'');
+
+  // Avatar initials
+  const initials = nombre.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
+  const avatarEl = document.getElementById('ps-avatar');
+  if(avatarEl) avatarEl.textContent = initials;
+
+  document.getElementById('ps-nombre').textContent = nombre;
+  document.getElementById('ps-meta').textContent =
+    [sexo, dob?'Nacimiento: '+dob:'', tel?'Tel. madre: '+tel:''].filter(Boolean).join(' · ');
+  document.getElementById('ps-pid-display').textContent = pid;
+  document.getElementById('ps-key-display').textContent = pkey||'—';
+
+  // Alergias / Medicamentos badges
+  const alBadge = document.getElementById('ps-alergias-badge');
+  const alTxt   = document.getElementById('ps-alergias-txt');
+  if(alrg && alrg!=='Ninguna'){
+    alBadge.style.display='block'; alTxt.textContent=alrg;
+  } else { alBadge.style.display='none'; }
+
+  const medBadge = document.getElementById('ps-medic-badge');
+  const medTxt   = document.getElementById('ps-medic-txt');
+  if(medic && medic!=='Ninguno'){
+    medBadge.style.display='block'; medTxt.textContent=medic;
+  } else { medBadge.style.display='none'; }
+
+  // ── Visits for this patient
+  const myVisits = visitsData.filter(v=>
+    (v.patient_id&&v.patient_id===pid)||(v.patient_key&&v.patient_key===pkey)
+  ).sort((a,b)=>(b.fecha||b['Fecha']||'').localeCompare(a.fecha||a['Fecha']||''));
+
+  document.getElementById('ps-m-visits').textContent = myVisits.length;
+
+  // Next upcoming appointment
+  const today = new Date().toISOString().split('T')[0];
+  const nextVisit = myVisits.find(v=>(v.proximaCita||v['Próxima Cita']||'') >= today);
+  document.getElementById('ps-m-next').textContent =
+    nextVisit ? (nextVisit.proximaCita||nextVisit['Próxima Cita']) : '—';
+
+  // Visits table
+  const vtbody = document.getElementById('ps-visits-tbody');
+  if(!myVisits.length){
+    vtbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.2rem;">Sin visitas registradas.</td></tr>';
+  } else {
+    vtbody.innerHTML = myVisits.map(v=>`
+      <tr>
+        <td>${v.fecha||v['Fecha']||'—'}</td>
+        <td style="color:var(--muted)">${v.hora||v['Hora']||'—'}</td>
+        <td>${(v.motivo||v['Motivo / Diagnóstico']||'').substring(0,70)}</td>
+        <td style="color:var(--muted)">${(v.tratamiento||v['Tratamiento Realizado']||'').substring(0,70)}</td>
+        <td style="color:var(--muted);font-size:.72rem;">${v.odontologo||v['Odontólogo']||'—'}</td>
+      </tr>`).join('');
+  }
+
+  // ── Billing for this patient
+  const myBilling = billingData.filter(b=>
+    (b.patient_id&&b.patient_id===pid)||(b.patient_key&&b.patient_key===pkey)
+  ).sort((a,b)=>(b.date||b['Fecha']||'').localeCompare(a.date||a['Fecha']||''));
+
+  const totalBilled = myBilling.reduce((s,b)=>s+Number(b.amount||b['Monto (MXN)']||0),0);
+  document.getElementById('ps-m-billed').textContent = '$'+totalBilled.toFixed(0);
+
+  const lastBill = myBilling[0];
+  document.getElementById('ps-m-last-bill').textContent =
+    lastBill ? (lastBill.date||lastBill['Fecha']||'—') : '—';
+
+  const btbody = document.getElementById('ps-billing-tbody');
+  if(!myBilling.length){
+    btbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.2rem;">Sin cobros registrados.</td></tr>';
+    document.getElementById('ps-billing-total').style.display='none';
+  } else {
+    btbody.innerHTML = myBilling.map(b=>{
+      const fact = (b.factura||b['Factura']||'No')==='Sí'
+        ? '<span class="method-pill pill-transfer">Fact.</span>' : 'No';
+      const stat = b.status||b['Estado']||'Pagado';
+      return `<tr>
+        <td>${b.date||b['Fecha']||'—'}</td>
+        <td>${b.service||b['Servicio']||'—'}</td>
+        <td style="color:var(--success)">$${Number(b.amount||b['Monto (MXN)']||0).toFixed(2)}</td>
+        <td><span class="method-pill ${methodClass[b.method||b['Método de Pago']]||'pill-card'}">${b.method||b['Método de Pago']||'—'}</span></td>
+        <td>${fact}</td>
+        <td><span class="status-pill ${statusClass[stat]||'s-paid'}">${stat}</span></td>
+      </tr>`;
+    }).join('');
+    document.getElementById('ps-billing-total').style.display='block';
+    document.getElementById('ps-billing-total-val').textContent='$'+totalBilled.toFixed(2);
+  }
+
+  // ── Treatments summary — count unique services
+  const servCount={};
+  myBilling.forEach(b=>{
+    const s=b.service||b['Servicio']||'';
+    if(s) servCount[s]=(servCount[s]||0)+1;
+  });
+  myVisits.forEach(v=>{
+    // also pull treatments from visit notes
+    const t=v.tratamiento||v['Tratamiento Realizado']||'';
+    if(t) servCount[t.substring(0,40)]=(servCount[t.substring(0,40)]||0)+1;
+  });
+  const tList = document.getElementById('ps-treatments-list');
+  const entries = Object.entries(servCount);
+  if(!entries.length){
+    tList.innerHTML='<span style="color:var(--muted);font-size:.82rem;">Sin tratamientos registrados.</span>';
+  } else {
+    tList.innerHTML = entries.sort((a,b)=>b[1]-a[1]).map(([srv,cnt])=>`
+      <span style="display:inline-flex;align-items:center;gap:.3rem;background:var(--teal-glow);border:1px solid var(--teal-dim);border-radius:20px;padding:.25rem .75rem;font-size:.76rem;color:var(--teal);">
+        ${srv}${cnt>1?` <span style="background:var(--teal);color:#0a1628;border-radius:50%;width:16px;height:16px;font-size:.6rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">${cnt}</span>`:''}
+      </span>`).join('');
+  }
+
+  // ── Clinical data grid
+  const fields = [
+    ['Domicilio', p['Domicilio']||p.domicilio||'—'],
+    ['Tel. padre', p['Tel Padre']||p.telPadre||'—'],
+    ['Tel. madre', p['Tel Madre']||p.telMadre||'—'],
+    ['Pediatra', p['Pediatra']||p.pediatra||'—'],
+    ['Alergias', alrg],
+    ['Medicamentos', medic],
+    ['Vacunación', p['Cartilla Vacunación']||p.vacunacion||'—'],
+    ['Última visita dental', p['Última Visita']||p.ultimaVisita||'—'],
+    ['Cepillados/día', p['Cepillados/día']||p.cepillado||'—'],
+    ['Dieta balanceada', p['Dieta Balanceada']||p.dieta||'—'],
+    ['Motivo inicial', p['Motivo de Consulta']||p.motivo||'—'],
+    ['Tutor', (p['Tutor Nombre']||p.tutorNombre||'—')+' ('+( p['Tutor Relación']||p.tutorRelacion||'—')+')'],
+  ];
+  document.getElementById('ps-clinical-grid').innerHTML = fields.map(([label,val])=>`
+    <div style="padding:.3rem 0;border-bottom:1px solid rgba(30,41,59,.4);">
+      <div style="font-size:.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">${label}</div>
+      <div style="font-size:.82rem;color:var(--ink-soft);margin-top:1px;">${val}</div>
+    </div>`).join('');
+
+  // Show summary, hide empty state
+  document.getElementById('ps-summary').style.display='block';
+  document.getElementById('ps-empty').style.display='none';
+}
+
+/* Called after patientsData loads — refresh dropdown */
+const _origLoadSheetData = loadSheetData;
 </script>
 </body>
 </html>
